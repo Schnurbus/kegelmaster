@@ -41,7 +41,7 @@ const fetchData = async () => {
     }
     loading.value = true;
     try {
-        const response = await fetch(`/api/v1/statistics/last-competition/${props.competition_type_id}`);
+        const response = await fetch(route('api.statistics.last-competition', { id: props.competition_type_id }));
         if (!response.ok) {
             throw new Error(`HTTP error! Status: ${response.status}`);
         }

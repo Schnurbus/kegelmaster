@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * App\Models\Player
+ *
  * @property float initial_balance
  * @property float balance
  */
@@ -68,8 +69,8 @@ class Player extends Model
     protected function balance(): Attribute
     {
         return Attribute::make(
-            get: fn(int $value) => $value / 100,
-            set: fn(float $value) => $value * 100,
+            get: fn (int $value) => $value / 100,
+            set: fn (float $value) => $value * 100,
         );
     }
 

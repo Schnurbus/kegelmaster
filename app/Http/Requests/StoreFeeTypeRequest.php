@@ -15,6 +15,7 @@ class StoreFeeTypeRequest extends FormRequest
     public function authorize(): bool
     {
         BouncerFacade::scope()->to($this->club_id);
+
         return BouncerFacade::can('create', getClubScopedModel(FeeType::class, $this->club_id));
     }
 

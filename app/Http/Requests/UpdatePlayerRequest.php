@@ -2,7 +2,6 @@
 
 namespace App\Http\Requests;
 
-use App\Models\Player;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 use Silber\Bouncer\BouncerFacade;
@@ -15,6 +14,7 @@ class UpdatePlayerRequest extends FormRequest
     public function authorize(): bool
     {
         BouncerFacade::scope()->to($this->player->club_id);
+
         return BouncerFacade::can('update', $this->player);
     }
 
@@ -26,7 +26,7 @@ class UpdatePlayerRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|string|max:255|unique:players,name,' . $this->player->id . ',id,club_id,' . $this->player->club_id,
+            'name' => 'required|string|max:255|unique:players,name,'.$this->player->id.',id,club_id,'.$this->player->club_id,
             'sex' => 'required|integer|in:1,2',
             'active' => 'boolean',
             'initial_balance' => 'required|numeric',

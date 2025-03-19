@@ -19,7 +19,7 @@ class CompetitionEntryService
         Log::debug('createCompetitionEntry called');
         try {
             $competitionEntry = CompetitionEntry::create($competitionEntryData);
-            Log::info("Competition entry created", ['user_id' => Auth::user()->id, 'competitionEntry' => $competitionEntry]);
+            Log::info('Competition entry created', ['user_id' => Auth::user()->id, 'competitionEntry' => $competitionEntry]);
 
             return $competitionEntry;
         } catch (Exception $exception) {
@@ -45,7 +45,7 @@ class CompetitionEntryService
             }
 
             $competitionEntry->save();
-            Log::info("Competition entry updated", ['user_id' => Auth::user()->id, 'competitionEntry' => $competitionEntry]);
+            Log::info('Competition entry updated', ['user_id' => Auth::user()->id, 'competitionEntry' => $competitionEntry]);
 
             return $competitionEntry;
         } catch (Exception $exception) {
@@ -62,7 +62,7 @@ class CompetitionEntryService
     {
         try {
             $competitionEntry->delete();
-            Log::info("Competition entry deleted", ['user_id' => Auth::user()->id, 'competitionEntry' => $competitionEntry]);
+            Log::info('Competition entry deleted', ['user_id' => Auth::user()->id, 'competitionEntry' => $competitionEntry]);
 
             return true;
         } catch (Exception $exception) {

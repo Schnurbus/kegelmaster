@@ -2,13 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Enums\TransactionType;
 use App\Models\DashboardLayout;
 use App\Models\Player;
-use App\Models\Transaction;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 
 class DashboardController extends Controller
@@ -33,7 +30,7 @@ class DashboardController extends Controller
                 'h' => 1,
                 'id' => '1',
                 'component' => 'Balance',
-                'props' => ['player_id' => $player->id]
+                'props' => ['player_id' => $player->id],
             ],
             [
                 'x' => 0,
@@ -42,7 +39,7 @@ class DashboardController extends Controller
                 'h' => 1,
                 'id' => '2',
                 'component' => 'Balance',
-                'props' => ['club_id' => $club->id]
+                'props' => ['club_id' => $club->id],
             ],
             [
                 'x' => 1,
@@ -51,7 +48,7 @@ class DashboardController extends Controller
                 'h' => 2,
                 'id' => '3',
                 'component' => 'ClubBalanceApex',
-                'props' => ['club_id' => $club->id]
+                'props' => ['club_id' => $club->id],
             ],
             [
                 'x' => 3,
@@ -60,8 +57,8 @@ class DashboardController extends Controller
                 'h' => 2,
                 'id' => '4',
                 'component' => 'LastCompetition',
-                'props' => ['competition_type_id' => $club->competitionTypes()->first()->id]
-            ]
+                'props' => ['competition_type_id' => $club->competitionTypes()->first()->id],
+            ],
         ];
 
         return Inertia::render('Dashboard', [

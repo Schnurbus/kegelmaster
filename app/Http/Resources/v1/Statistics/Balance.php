@@ -5,7 +5,6 @@ namespace App\Http\Resources\v1\Statistics;
 use App\Models\Club;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
-use Illuminate\Support\Facades\Auth;
 use Silber\Bouncer\BouncerFacade;
 
 class Balance extends JsonResource
@@ -24,7 +23,8 @@ class Balance extends JsonResource
         // $club = Club::find($validated['club_id']);
 
         // BouncerFacade::authorize('view', $club);
+        BouncerFacade::authorize('view', $this->resource);
 
-        return ['balance' => $this->balance];
+        return ['balance' => $this->resource->balance];
     }
 }

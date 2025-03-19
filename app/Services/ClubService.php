@@ -36,10 +36,10 @@ class ClubService
             return $club;
         } catch (\Exception $exception) {
             Log::error(
-                'Club Service: ' . $exception->getMessage(),
+                'Club Service: '.$exception->getMessage(),
                 ['user' => $user, 'validated' => $validated]
             );
-            throw new Exception('Fehler beim Erstellen des Clubs: ' . $exception->getMessage(), 500, $exception);
+            throw new Exception('Fehler beim Erstellen des Clubs: '.$exception->getMessage(), 500, $exception);
         }
     }
 
@@ -60,10 +60,10 @@ class ClubService
             return true;
         } catch (Exception $exception) {
             Log::error(
-                'Club Service: ' . $exception->getMessage(),
+                'Club Service: '.$exception->getMessage(),
                 ['user' => $user, 'club' => $club]
             );
-            throw new Exception('Fehler beim Löschen des Clubs: ' . $exception->getMessage(), 500, $exception);
+            throw new Exception('Fehler beim Löschen des Clubs: '.$exception->getMessage(), 500, $exception);
         }
     }
 

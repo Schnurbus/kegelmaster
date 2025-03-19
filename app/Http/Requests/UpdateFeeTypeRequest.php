@@ -14,6 +14,7 @@ class UpdateFeeTypeRequest extends FormRequest
     public function authorize(): bool
     {
         BouncerFacade::scope()->to($this->fee_type->club_id);
+
         return BouncerFacade::can('update', $this->fee_type);
     }
 

@@ -2,8 +2,6 @@
 
 namespace App\Enums;
 
-use Stringable;
-
 enum PermissionType: string
 {
     case LIST = 'list';

@@ -154,6 +154,7 @@ class TransactionController extends Controller
         } catch (Exception $exception) {
             Log::error('Error updating transaction', ['error' => $exception->getMessage()]);
             toast_error('Could not update transaction');
+
             return back();
         }
 

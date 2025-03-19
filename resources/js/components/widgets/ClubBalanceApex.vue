@@ -23,7 +23,8 @@ const loading = ref(true);
 const fetchData = async () => {
     loading.value = true;
     try {
-        const response = await fetch(`/club/${props.club_id}/statistics`);
+        // const response = await fetch(`/club/${props.club_id}/statistics`);
+        const response = await fetch(route('api.statistics.club.transactions', { id: props.club_id }));
         if (!response.ok) {
             throw new Error(`HTTP error! Status: ${response.status}`);
         }

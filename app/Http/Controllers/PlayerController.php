@@ -37,7 +37,7 @@ class PlayerController extends Controller
             $players = $this->playerService->getPlayersWithPermissions($user, $club->id);
         }
 
-        $roles = Role::where('name', '!=', 'owner')->get(['title'])->map(fn($role) => [
+        $roles = Role::where('name', '!=', 'owner')->get(['title'])->map(fn ($role) => [
             'value' => $role->title,
             'label' => $role->title,
         ]);
@@ -58,7 +58,8 @@ class PlayerController extends Controller
     public function create()
     {
         $club = session('currentClub');
-        BouncerFacade::authorize(PermissionType::CREATE, new Player(['club_id' => $club->id]));
+        // BouncerFacade::authorize(PermissionType::CREATE, new Player(['club_id' => $club->id]));
+        BouncerFacade::authorize(PermissionType::CREATE, getClubScopedModel(Player::class, $club->id));
 
         return Inertia::render('players/create', [
             'roles' => Role::all(['id', 'name']),
@@ -124,9 +125,10 @@ class PlayerController extends Controller
 
         $updatedPlayer = $this->playerService->updatePlayer($player, $validated);
         if ($updatedPlayer) {
-            toast_success("Player updated successfully");
+            toast_success('Player updated successfully');
         } else {
-            toast_error("Could not update player.");
+            toast_error('Could not update player.');
+
             return back();
         }
         // $player->update([

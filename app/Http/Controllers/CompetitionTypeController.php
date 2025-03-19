@@ -26,7 +26,7 @@ class CompetitionTypeController extends Controller
         $user = User::findOrFail(Auth::user()->id);
 
         if (BouncerFacade::can('list', getClubScopedModel(CompetitionType::class))) {
-            $competitionTypes = CompetitionType::where('club_id', $club->id)->orderBy('position', 'asc')->get()->map(fn($competitionType) => [
+            $competitionTypes = CompetitionType::where('club_id', $club->id)->orderBy('position', 'asc')->get()->map(fn ($competitionType) => [
                 'id' => $competitionType->id,
                 'name' => $competitionType->name,
                 'type' => $competitionType->type,

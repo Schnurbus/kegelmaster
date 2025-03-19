@@ -25,7 +25,7 @@ class CompetitionEntryController extends Controller
             }
             toast_success('Entries updated successfully');
         } catch (Exception $exception) {
-            Log::error("Error updating competition entries", ['error' => $exception->getMessage()]);
+            Log::error('Error updating competition entries', ['error' => $exception->getMessage()]);
             toast_error('Could not update entries');
         }
 

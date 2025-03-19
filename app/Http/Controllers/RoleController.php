@@ -41,14 +41,14 @@ class RoleController extends Controller
         $user = User::findOrFail(Auth::user()->id);
         BouncerFacade::scope()->to($club->id);
 
-        $dummyRole = new Role();
+        $dummyRole = new Role;
         $dummyRole->scope = $club->id;
 
         if (BouncerFacade::can('list', $dummyRole)) {
             $roles = Role::where('scope', $club->id)
                 // ->where('name', '!=', 'owner')
                 ->get()
-                ->map(fn($role) => [
+                ->map(fn ($role) => [
                     'id' => $role->id,
                     'is_base_fee_active' => $role->is_base_fee_active,
                     'name' => $role->name,
@@ -75,7 +75,7 @@ class RoleController extends Controller
     public function create()
     {
         $club = session('currentClub');
-        $dummyRole = new Role();
+        $dummyRole = new Role;
         $dummyRole->scope = $club->id;
 
         BouncerFacade::authorize('create', $dummyRole);

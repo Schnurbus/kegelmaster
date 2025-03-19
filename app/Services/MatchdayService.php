@@ -4,9 +4,6 @@ namespace App\Services;
 
 use App\Enums\TransactionType;
 use App\Events\FeeEntryDeleted;
-use App\Events\MatchdayCreated;
-use App\Events\MatchdayDeleted;
-use App\Events\TransactionDeleted;
 use App\Models\CompetitionEntry;
 use App\Models\FeeEntry;
 use App\Models\FeeType;
@@ -31,7 +28,7 @@ class MatchdayService
     public function createMatchday($validated): Matchday
     {
         $matchday = Matchday::create($validated);
-        Log::info("Matchday created", ['user_id' => Auth::user()->id, 'matchday' => $matchday]);
+        Log::info('Matchday created', ['user_id' => Auth::user()->id, 'matchday' => $matchday]);
 
         $latestFeeTypeVersions = FeeTypeVersion::select('fee_type_versions.*')
             ->joinSub(
@@ -51,7 +48,7 @@ class MatchdayService
                 ->where('active', true)
                 ->whereHas(
                     'role',
-                    fn($query) => $query->where('is_base_fee_active', true)
+                    fn ($query) => $query->where('is_base_fee_active', true)
                 )
                 ->get();
 
@@ -85,7 +82,8 @@ class MatchdayService
                 $matchday->delete();
             });
 
-            Log::info("Matchday deleted", ['user_id' => Auth::user()->id, 'matchday' => $matchday]);
+            Log::info('Matchday deleted', ['user_id' => Auth::user()->id, 'matchday' => $matchday]);
+
             return true;
         } catch (\Exception $exeption) {
             Log::error('Error deleting matchday', ['exception' => $exeption->getMessage()]);

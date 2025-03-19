@@ -2,7 +2,6 @@
 
 namespace App\Services;
 
-use App\Enums\PermissionType;
 use App\Enums\TransactionType;
 use App\Models\CompetitionEntry;
 use App\Models\FeeEntry;
@@ -28,7 +27,7 @@ class PlayerService
             $player->initial_balance = (float) $playerData['initial_balance'];
             $player->balance = (float) $playerData['initial_balance'];
             $player->save();
-            Log::info("Player created", ['user_id' => Auth::user()->id, 'player' => $player]);
+            Log::info('Player created', ['user_id' => Auth::user()->id, 'player' => $player]);
 
             return $player;
         } catch (Exception $exception) {
@@ -54,7 +53,7 @@ class PlayerService
 
             if ($player->isDirty()) {
                 $player->save();
-                Log::info("Player updated", ['user_id' => Auth::user()->id, 'player' => $player]);
+                Log::info('Player updated', ['user_id' => Auth::user()->id, 'player' => $player]);
                 $this->recalculateBalance($player);
             }
 
@@ -136,7 +135,7 @@ class PlayerService
                 },
                 'feeEntry.feeTypeVersion' => function ($query) {
                     $query->select('id', 'name');
-                }
+                },
             ])
             ->orderByDesc('date')
             ->get();

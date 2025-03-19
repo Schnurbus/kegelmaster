@@ -42,6 +42,7 @@ class PlayerInvitationController extends Controller
         } catch (Exception $exception) {
             Log::error('Error inviting player', ['error' => $exception->getMessage()]);
             toast_error('Could not invite player');
+
             return back();
         }
 
@@ -69,6 +70,7 @@ class PlayerInvitationController extends Controller
             $invitation->delete();
 
             toast_success('Player attached successfully.');
+
             return to_route('dashboard');
         }
 
