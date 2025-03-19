@@ -9,13 +9,18 @@ on:
 jobs:
     build:
         runs-on: ubuntu-latest
+        permissions:
+            contents: read
+            packages: write
 
         steps:
             - name: Checkout Code
               uses: actions/checkout@v4
 
             - name: Prepare
-              run: echo "REPOSITORY=$(echo $GITHUB_REPOSITORY | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
+              run: |
+                  echo "REPOSITORY=$(echo $GITHUB_REPOSITORY | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
+                  echo "OWNER=$(echo $GITHUB_REPOSITORY_OWNER | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
 
             - name: Set up QEMU
               uses: docker/setup-qemu-action@v3
@@ -44,3 +49,5 @@ jobs:
                   file: deployment/Dockerfile
                   tags: ${{ steps.meta.outputs.tags }}
                   labels: ${{ steps.meta.outputs.labels }}
+                  cache-from: type=registry,ref=ghcr.io/${{ env.OWNER }}:cache
+                  cache-to: type=inline
