@@ -14,6 +14,7 @@ class UpdateCompetitionTypeRequest extends FormRequest
     public function authorize(): bool
     {
         BouncerFacade::scope()->to($this->competition_type->club_id);
+
         return BouncerFacade::can('update', $this->competition_type);
     }
 

@@ -4,7 +4,6 @@ namespace App\Http\Requests;
 
 use App\Models\Transaction;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Support\Facades\Log;
 use Silber\Bouncer\BouncerFacade;
 
 class StoreTransactionRequest extends FormRequest
@@ -19,6 +18,7 @@ class StoreTransactionRequest extends FormRequest
     public function authorize(): bool
     {
         BouncerFacade::scope()->to($this->club_id);
+
         return BouncerFacade::can('create', getClubScopedModel(Transaction::class, $this->club_id));
     }
 

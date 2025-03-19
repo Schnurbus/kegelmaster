@@ -20,8 +20,8 @@ const fetchData = async () => {
     loading.value = true;
     try {
         const response = props.club_id
-            ? await fetch(`/api/v1/statistics/club-balance/${props.club_id}`)
-            : await fetch(`/api/v1/statistics/player-balance/${props.player_id}`);
+            ? await fetch(route('api.statistics.club.balance', { id: String(props.club_id) }))
+            : await fetch(route('api.statistics.player.balance', { id: String(props.player_id) }));
         if (!response.ok) {
             throw new Error(`HTTP error! Status: ${response.status}`);
         }

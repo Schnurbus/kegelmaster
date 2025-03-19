@@ -28,7 +28,7 @@ class FeeTypeController extends Controller
         $user = User::findOrFail(Auth::user()->id);
 
         if (BouncerFacade::can('list', new FeeType(['club_id' => $club->id]))) {
-            $feeTypes = FeeType::where('club_id', $club->id)->orderBy('position', 'asc')->get()->map(fn($feeType) => [
+            $feeTypes = FeeType::where('club_id', $club->id)->orderBy('position', 'asc')->get()->map(fn ($feeType) => [
                 'id' => $feeType->id,
                 'name' => $feeType->name,
                 'description' => $feeType->description,

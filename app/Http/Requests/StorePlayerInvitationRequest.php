@@ -13,6 +13,7 @@ class StorePlayerInvitationRequest extends FormRequest
     public function authorize(): bool
     {
         BouncerFacade::scope()->to($this->player->club_id);
+
         return BouncerFacade::can('update', $this->player);
     }
 

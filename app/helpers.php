@@ -52,21 +52,20 @@ if (! function_exists('toast_error')) {
     }
 }
 
-if (!function_exists('resolveClubScopedModel')) {
+if (! function_exists('resolveClubScopedModel')) {
     /**
      * Erzeugt eine neue Instanz eines Models und injiziert die club_id.
      *
-     * @param string $modelClass Der vollqualifizierte Klassenname des Models (z.B. App\Models\Matchday)
-     * @param int|null $clubId Optional. Falls nicht gesetzt, wird die club_id aus der Session verwendet.
-     * @param array $attributes Weitere Attribute, die beim Instanziieren gesetzt werden sollen.
-     * @return \Illuminate\Database\Eloquent\Model
+     * @param  string  $modelClass  Der vollqualifizierte Klassenname des Models (z.B. App\Models\Matchday)
+     * @param  int|null  $clubId  Optional. Falls nicht gesetzt, wird die club_id aus der Session verwendet.
+     * @param  array  $attributes  Weitere Attribute, die beim Instanziieren gesetzt werden sollen.
      *
      * @throws \InvalidArgumentException wenn keine club_id ermittelt werden kann.
      */
     function getClubScopedModel(string $modelClass, ?int $clubId = null, array $attributes = []): \Illuminate\Database\Eloquent\Model
     {
         // Falls keine club_id als Parameter übergeben wird, versuchen wir diese aus der Session zu ermitteln:
-        if (!$clubId) {
+        if (! $clubId) {
             // Hier wird angenommen, dass in der Session ein Objekt oder Array unter 'currentClub' gespeichert ist,
             // das die club_id enthält (z.B. ['id' => 5, ...]).
             $currentClub = session('currentClub');

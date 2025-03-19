@@ -3,12 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreFeeEntryRequest;
-use App\Http\Requests\UpdateFeeEntryRequest;
 use App\Models\FeeEntry;
 use App\Models\Matchday;
 use App\Services\FeeEntryService;
 use Exception;
-use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
@@ -33,7 +31,7 @@ class FeeEntryController extends Controller
             }
             toast_success('Entries updated successfully');
         } catch (Exception $exception) {
-            Log::error("Error updating fee entries", ['error' => $exception->getMessage()]);
+            Log::error('Error updating fee entries', ['error' => $exception->getMessage()]);
             toast_error('Could not update entries');
         }
 

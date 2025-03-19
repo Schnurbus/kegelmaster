@@ -14,6 +14,7 @@ class UpdateClubRequest extends FormRequest
     public function authorize(): bool
     {
         BouncerFacade::scope()->to($this->club->id);
+
         return BouncerFacade::can('update', $this->club);
     }
 

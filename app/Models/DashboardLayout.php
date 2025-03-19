@@ -9,6 +9,6 @@ class DashboardLayout extends Model
     protected $fillable = [
         'club_id',
         'user_id',
-        'layout'
+        'layout',
     ];
 }

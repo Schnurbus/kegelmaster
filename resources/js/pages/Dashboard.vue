@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import Balance from '@/components/widgets/Balance.vue';
-import ClubBalance from '@/components/widgets/ClubBalance.vue';
 import ClubBalanceApex from '@/components/widgets/ClubBalanceApex.vue';
 import ClubBalanceGraph from '@/components/widgets/ClubBalanceGraph.vue';
 import LastCompetition from '@/components/widgets/LastCompetition.vue';
@@ -44,22 +43,12 @@ const props = defineProps<Props>();
 
 const componentMapping: Record<string, any> = {
     Balance: markRaw(Balance),
-    ClubBalance: markRaw(ClubBalance),
     ClubBalanceGraph: markRaw(ClubBalanceGraph),
     ClubBalanceApex: markRaw(ClubBalanceApex),
     LastCompetition: markRaw(LastCompetition),
 };
 
 const currentLayout = props.layout;
-console.log(currentLayout);
-
-// const layoutWithComponents = computed(() => {
-//     return currentLayout.map((item) => ({
-//         ...item,
-//         id: item.i,
-//         component: componentMapping[item.component] || item.component,
-//     }));
-// });
 const layoutWithComponents = ref();
 layoutWithComponents.value = currentLayout.map((item) => {
     return {
@@ -81,20 +70,6 @@ const saveDashboardLayout = (layout: any) => {
     }
 };
 
-// const movedEvent = (i: string, newX: number, newY: number) => {
-//     const index = currentLayout.findIndex((item) => item.i === i);
-//     if (index !== -1) {
-//         currentLayout[index].x = newX;
-//         currentLayout[index].y = newY;
-//         saveDashboardLayout(currentLayout);
-//     }
-// };
-
-// const handleMove = (payload: MovePayload) => {
-//     const message = `MOVE id=${payload.id}, X=${payload.x}, Y=${payload.y}`;
-//     console.log(message);
-// };
-
 const handleMoveEnd = (payload: MovePayload) => {
     const index = currentLayout.findIndex((item) => item.id === payload.id);
     if (index !== -1) {
@@ -103,21 +78,6 @@ const handleMoveEnd = (payload: MovePayload) => {
         saveDashboardLayout(currentLayout);
     }
 };
-
-// const handleResize = (payload: ResizePayload) => {
-//     const message = `RESIZE id=${payload.id}, H=${payload.h}, W=${payload.w}`;
-//     console.log(message);
-// };
-
-// const handleResizeEnd = (payload: ResizePayload) => {
-//     const message = `RESIZE END id=${payload.id}, H=${payload.h}, W=${payload.w}`;
-//     console.log(message);
-// };
-
-// const handleResizeContainer = (payload: ResizePayload) => {
-//     const message = `CONTAINER RESIZE width=${payload.w}, height=${payload.h}`;
-//     console.log(message);
-// };
 </script>
 <template>
     <Head title="Dashboard" />

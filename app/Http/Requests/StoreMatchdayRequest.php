@@ -4,7 +4,6 @@ namespace App\Http\Requests;
 
 use App\Models\Matchday;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Support\Facades\Log;
 use Silber\Bouncer\BouncerFacade;
 
 class StoreMatchdayRequest extends FormRequest
@@ -15,6 +14,7 @@ class StoreMatchdayRequest extends FormRequest
     public function authorize(): bool
     {
         BouncerFacade::scope()->to($this->club_id);
+
         return BouncerFacade::can('create', getClubScopedModel(Matchday::class, $this->club_id));
     }
 

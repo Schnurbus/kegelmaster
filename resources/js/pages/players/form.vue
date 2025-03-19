@@ -36,7 +36,6 @@ const isEdit = computed(() => !!props.player);
 
 const submit = () => {
     if (isEdit.value) {
-        console.log(form);
         form.put(route('players.update', props.player!.id as unknown as RouteParams<'players.update'>));
     } else {
         form.post(route('players.store'));

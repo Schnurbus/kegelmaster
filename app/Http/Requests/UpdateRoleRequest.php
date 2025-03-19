@@ -18,6 +18,7 @@ class UpdateRoleRequest extends FormRequest
         // $role->scope = $this->club_id;
         // dd($this->role);
         BouncerFacade::scope()->to($this->role->scope);
+
         return BouncerFacade::can('update', $this->role);
     }
 

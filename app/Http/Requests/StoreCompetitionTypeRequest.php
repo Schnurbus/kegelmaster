@@ -15,6 +15,7 @@ class StoreCompetitionTypeRequest extends FormRequest
     public function authorize(): bool
     {
         BouncerFacade::scope()->to($this->club_id);
+
         return BouncerFacade::can('create', getClubScopedModel(CompetitionType::class, $this->club_id));
     }
 

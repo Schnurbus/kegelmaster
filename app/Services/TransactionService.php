@@ -108,17 +108,17 @@ class TransactionService
                     $transaction = DB::transaction(function () use ($paymentData, $tipData) {
                         $transaction = Transaction::create($paymentData);
                         Transaction::create($tipData);
-                        Log::info("Transaction created", ['user_id' => Auth::user()->id, 'transaction' => $transaction]);
+                        Log::info('Transaction created', ['user_id' => Auth::user()->id, 'transaction' => $transaction]);
 
                         return $transaction;
                     });
                 } else {
                     $transaction = Transaction::create($transactionData);
-                    Log::info("Transaction created", ['user_id' => Auth::user()->id, 'transaction' => $transaction]);
+                    Log::info('Transaction created', ['user_id' => Auth::user()->id, 'transaction' => $transaction]);
                 }
             } else {
                 $transaction = Transaction::create($transactionData);
-                Log::info("Transaction created", ['user_id' => Auth::user()->id, 'transaction' => $transaction]);
+                Log::info('Transaction created', ['user_id' => Auth::user()->id, 'transaction' => $transaction]);
             }
             if ($transaction->player) {
                 $this->playerService->recalculateBalance($transaction->player);
@@ -145,7 +145,7 @@ class TransactionService
         Log::debug('updateTransaction called');
         try {
             $transaction->update($transactionData);
-            Log::info("Transaction updated", ['user_id' => Auth::user()->id, 'transaction' => $transaction]);
+            Log::info('Transaction updated', ['user_id' => Auth::user()->id, 'transaction' => $transaction]);
             if ($transaction->player) {
                 $this->playerService->recalculateBalance($transaction->player);
             }
@@ -170,7 +170,7 @@ class TransactionService
         Log::debug('deleteTransaction called');
         try {
             $transaction->delete();
-            Log::info("Transaction deleted", ['user_id' => Auth::user()->id, 'transaction' => $transaction]);
+            Log::info('Transaction deleted', ['user_id' => Auth::user()->id, 'transaction' => $transaction]);
             if ($transaction->player) {
                 $this->playerService->recalculateBalance($transaction->player);
             }

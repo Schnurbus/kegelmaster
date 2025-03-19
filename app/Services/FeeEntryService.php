@@ -27,7 +27,7 @@ class FeeEntryService
         Log::debug('createFeeEntry called');
         try {
             $feeEntry = FeeEntry::create($feeEntryData);
-            Log::info("Fee Entry created", ['user_id' => Auth::user()->id, 'feeEntry' => $feeEntry]);
+            Log::info('Fee Entry created', ['user_id' => Auth::user()->id, 'feeEntry' => $feeEntry]);
 
             if ($feeEntry->amount > 0 && $feeEntry->feeTypeVersion->amount != 0) {
                 $this->transactionService->createTransaction([
@@ -65,7 +65,7 @@ class FeeEntryService
             }
 
             $feeEntry->save();
-            Log::info("Fee Entry updated", ['user_id' => Auth::user()->id, 'feeEntry' => $feeEntry]);
+            Log::info('Fee Entry updated', ['user_id' => Auth::user()->id, 'feeEntry' => $feeEntry]);
 
             if ($feeEntry->transaction) {
                 if ($feeEntry->amount === 0) {
@@ -84,7 +84,7 @@ class FeeEntryService
                         ]
                     );
                 }
-            } elseif ($feeEntry->amount != 0 && $feeEntry->feeTypeVersion->amount  !== 0) {
+            } elseif ($feeEntry->amount != 0 && $feeEntry->feeTypeVersion->amount !== 0) {
                 Log::debug('Creating new transaction for existing fee entry', ['feeEntry' => $feeEntry]);
                 $this->transactionService->createTransaction([
                     'club_id' => $feeEntry->matchday->club_id,
@@ -113,7 +113,7 @@ class FeeEntryService
         try {
             $feeEntry->transaction?->delete();
             $feeEntry->delete();
-            Log::info("Fee Entry deleted", ['user_id' => Auth::user()->id, 'feeEntry' => $feeEntry]);
+            Log::info('Fee Entry deleted', ['user_id' => Auth::user()->id, 'feeEntry' => $feeEntry]);
 
             return true;
         } catch (Exception $exception) {

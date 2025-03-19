@@ -15,6 +15,7 @@ class RemovePlayerFromMatchdayRequest extends FormRequest
     public function authorize(): bool
     {
         BouncerFacade::scope()->to($this->matchday->club_id);
+
         return BouncerFacade::can('update', $this->matchday);
     }
 

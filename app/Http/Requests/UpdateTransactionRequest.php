@@ -2,7 +2,6 @@
 
 namespace App\Http\Requests;
 
-use App\Models\Transaction;
 use Illuminate\Foundation\Http\FormRequest;
 use Silber\Bouncer\BouncerFacade;
 
@@ -14,6 +13,7 @@ class UpdateTransactionRequest extends FormRequest
     public function authorize(): bool
     {
         BouncerFacade::scope()->to($this->club_id);
+
         return BouncerFacade::can('update', $this->transaction);
     }
 

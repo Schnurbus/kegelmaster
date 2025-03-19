@@ -16,8 +16,9 @@ class StoreRoleRequest extends FormRequest
     public function authorize(): bool
     {
         Log::debug('StoreRoleRequest->authorize called', ['clubId' => $this->club_id]);
-        $role = new Role();
+        $role = new Role;
         $role->scope = $this->club_id;
+
         return BouncerFacade::can('create', $role);
     }
 
