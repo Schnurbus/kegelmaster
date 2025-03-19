@@ -6,7 +6,6 @@ import AppLayout from '@/layouts/AppLayout.vue';
 import type { BreadcrumbItem, SharedData } from '@/types';
 import type { Club, CompetitionEntry, CompetitionType, FeeEntry, FeeType, Matchday, Player } from '@/types/entities';
 import { Head, usePage } from '@inertiajs/vue3';
-import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 const page = usePage<SharedData>();
@@ -40,21 +39,6 @@ const breadcrumbs: BreadcrumbItem[] = [
         href: '',
     },
 ];
-
-const feeEntryMap = computed(() => {
-    const map: { [playerId: number]: { [feeTypeId: number]: FeeEntry } } = {};
-    props.feeEntries.forEach((entry) => {
-        if (!map[entry.player_id]) {
-            map[entry.player_id] = {};
-        }
-        map[entry.player_id][entry.fee_type_version_id] = entry;
-    });
-    return map;
-});
-
-const getEntryById = (map: Object, id: number) => {
-    return map.find((entry) => entry.id === id);
-};
 </script>
 
 <template>

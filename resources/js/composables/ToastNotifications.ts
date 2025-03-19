@@ -1,3 +1,4 @@
+import { SharedData } from '@/types';
 import { usePage } from '@inertiajs/vue3';
 import { ref, watch } from 'vue';
 import { toast } from 'vue3-toastify';
@@ -10,7 +11,6 @@ function fireToast(notification: any, sticky = false) {
     toast(notification.message, {
         toastId: notification.id,
         type: notification.type,
-        newestOnTop: true,
         theme: toast.THEME.COLORED,
         autoClose: !sticky && (notification.type == 'success' ? 5000 : false),
         closeOnClick: !sticky,
@@ -23,13 +23,17 @@ function fireToasts(sticky = false) {
 }
 
 function toastAgain() {
-    reToasted.value ? toast.remove() : fireToasts(true);
+    if (reToasted.value) {
+        toast.remove();
+    } else {
+        fireToast(true);
+    }
     reToasted.value = !reToasted.value;
 }
 
 watch(
     // NOTE: Since Inertia.js 1.0.1, usePage() may return null initially.
-    () => usePage<ShareData>()?.props?.flash.toasts,
+    () => usePage<SharedData>()?.props?.flash.toasts,
     (newToasts) => {
         reToasted.value = false;
         toasts.value = newToasts;
