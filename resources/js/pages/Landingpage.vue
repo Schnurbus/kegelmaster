@@ -15,7 +15,7 @@ if (user.value) {
         <link rel="stylesheet" href="https://rsms.me/inter/inter.css" />
     </Head>
     <!-- Header -->
-    <header class="bg-gradient-to-r from-indigo-600 to-blue-500 text-white">
+    <header class="bg-linear-to-r from-indigo-600 to-blue-500 text-white">
         <div class="container mx-auto flex items-center justify-between px-6 py-4">
             <h1 class="text-2xl font-bold">🌟 Kegelmaster</h1>
             <nav>
@@ -40,7 +40,7 @@ if (user.value) {
             </p>
             <a
                 href="#features"
-                class="btn-glow rounded-lg bg-gradient-to-r from-orange-400 to-pink-500 px-8 py-3 text-lg font-semibold text-white transition-all hover:shadow-lg"
+                class="btn-glow rounded-lg bg-linear-to-r from-orange-400 to-pink-500 px-8 py-3 text-lg font-semibold text-white transition-all hover:shadow-lg"
             >
                 Jetzt starten
             </a>
@@ -114,7 +114,7 @@ if (user.value) {
     </section>
 
     <!-- Contact Section -->
-    <section id="contact" class="bg-gradient-to-r from-indigo-600 to-blue-500 py-16 text-white">
+    <section id="contact" class="bg-linear-to-r from-indigo-600 to-blue-500 py-16 text-white">
         <div class="container mx-auto px-6 text-center">
             <h3 class="mb-4 text-3xl font-semibold">Kontakt</h3>
             <p class="mb-6 text-lg">Du hast Fragen oder benötigst Hilfe? Kontaktiere uns jederzeit!</p>

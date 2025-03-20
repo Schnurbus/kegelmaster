@@ -62,7 +62,7 @@ const formattedType = (type: number) => {
                     <CardTitle>{{ d(props.transaction.date) }}</CardTitle>
                 </CardHeader>
                 <CardContent>
-                    <div class="grid grid-cols-[minmax(150px,auto),1fr] items-center gap-2">
+                    <div class="grid grid-cols-[minmax(150px,auto)_1fr] items-center gap-2">
                         <Label class="font-semibold">Type:</Label>
                         <Badge class="w-max">
                             {{ formattedType(props.transaction.type) }}
