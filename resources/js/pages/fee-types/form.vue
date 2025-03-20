@@ -42,7 +42,7 @@ const submit = () => {
         <CardHeader></CardHeader>
         <CardContent>
             <form @submit.prevent="submit">
-                <div class="grid grid-cols-[200px_minmax(200px,_1fr)] items-center gap-y-4">
+                <div class="grid grid-cols-[200px_minmax(200px,1fr)] items-center gap-y-4">
                     <Label class="font-semibold">{{ t('Name') }}</Label>
                     <div>
                         <Input v-model="form.name" :placeholder="t('Name')" v-focus />

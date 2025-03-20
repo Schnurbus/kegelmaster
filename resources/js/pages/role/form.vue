@@ -58,7 +58,7 @@ const capitalize = (value: string) => {
         <CardContent>
             <form class="flex w-2/3 flex-col space-y-6" @submit.prevent="submit">
                 <input type="hidden" v-model="form.club_id" />
-                <div class="mb-4 grid grid-cols-[auto,1fr] items-center gap-4">
+                <div class="mb-4 grid grid-cols-[auto_1fr] items-center gap-4">
                     <Label for="name">{{ t('Name') }}</Label>
                     <div>
                         <Input
