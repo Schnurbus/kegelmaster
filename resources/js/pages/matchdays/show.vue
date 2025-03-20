@@ -47,7 +47,7 @@ const breadcrumbs: BreadcrumbItem[] = [
     <AppLayout :breadcrumbs="breadcrumbs">
         <div class="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
             <div class="flex flex-col">
-                <div class="grid grid-cols-[200px_minmax(200px,_1fr)] items-center gap-y-4">
+                <div class="grid grid-cols-[200px_minmax(200px,1fr)] items-center gap-y-4">
                     <Label class="font-semibold">Name</Label>
                     <div>
                         {{ d(props.matchday.date) }}
