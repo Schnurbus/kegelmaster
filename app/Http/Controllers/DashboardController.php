@@ -7,6 +7,7 @@ use App\Models\Player;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
+use Illuminate\Support\Str;
 
 class DashboardController extends Controller
 {
@@ -14,7 +15,9 @@ class DashboardController extends Controller
     {
         $club = session('currentClub');
         $user = User::find(Auth::user()->id)->firstOrFail();
-        $player = Player::where('user_id', $user->id)->firstOrFail();
+        $player = Player::where('user_id', $user->id)
+            ->where('club_id', $club->id)
+            ->first();
 
         $competitionType = $club->competitionTypes->first();
 
@@ -23,15 +26,6 @@ class DashboardController extends Controller
             ->first();
 
         $baseLayout = [
-            [
-                'x' => 0,
-                'y' => 1,
-                'w' => 1,
-                'h' => 1,
-                'id' => '1',
-                'component' => 'Balance',
-                'props' => ['player_id' => $player->id],
-            ],
             [
                 'x' => 0,
                 'y' => 0,
@@ -50,7 +44,21 @@ class DashboardController extends Controller
                 'component' => 'ClubBalanceApex',
                 'props' => ['club_id' => $club->id],
             ],
-            [
+        ];
+        if ($player) {
+            $baseLayout[] = [
+                'x' => 0,
+                'y' => 1,
+                'w' => 1,
+                'h' => 1,
+                'id' => Str::uuid7()->toString(),
+                'component' => 'Balance',
+                'props' => ['player_id' => $player->id],
+            ];
+        }
+        $firstCompetition = $club->competitionTypes()->first();
+        if ($firstCompetition) {
+            $baseLayout[] = [
                 'x' => 3,
                 'y' => 0,
                 'w' => 2,
@@ -58,8 +66,8 @@ class DashboardController extends Controller
                 'id' => '4',
                 'component' => 'LastCompetition',
                 'props' => ['competition_type_id' => $club->competitionTypes()->first()->id],
-            ],
-        ];
+            ];
+        }
 
         return Inertia::render('Dashboard', [
             'club' => $club,

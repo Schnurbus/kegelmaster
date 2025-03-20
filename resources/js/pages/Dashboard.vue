@@ -63,11 +63,12 @@ const saveDashboardLayout = (layout: any) => {
         user_id: page.props.auth.user.id,
         layout: layout,
     });
-    try {
-        form.post(route('save-dashboard'));
-    } catch (e) {
-        console.log('Could not save dashbord: ', typeof e === 'string' ? e : e.message);
-    }
+    form.post(route('save-dashboard'), {
+        preserveState: true,
+        onError: (errors) => {
+            console.log(errors);
+        },
+    });
 };
 
 const handleMoveEnd = (payload: MovePayload) => {
@@ -80,7 +81,7 @@ const handleMoveEnd = (payload: MovePayload) => {
 };
 </script>
 <template>
-    <Head title="Dashboard" />
+    <Head title="Dashboard"></Head>
 
     <AppLayout :breadcrumbs="breadcrumbs">
         <div v-if="props.club" class="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
