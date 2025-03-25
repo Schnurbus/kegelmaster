@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
 use Silber\Bouncer\BouncerFacade;
 
@@ -21,7 +22,7 @@ class BouncerServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        if (!App::runningInConsole()) {
+        if (Schema::hasTable('abilities')) {
             BouncerFacade::useRoleModel(\App\Models\Role::class);
 
             BouncerFacade::allowEveryone()->toOwnEverything();
