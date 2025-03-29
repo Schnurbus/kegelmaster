@@ -4,11 +4,11 @@ namespace App\Http\Middleware;
 
 use App\Models\Club;
 use App\Models\Player;
+use App\Models\User;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cookie;
-use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpFoundation\Response;
 
 class LoadCurrentClubSetting
@@ -21,8 +21,9 @@ class LoadCurrentClubSetting
     public function handle(Request $request, Closure $next): Response
     {
         if (Auth::check()) {
+            /** @var User $user */
             $user = $request->user();
-            $clubs = $request->user()->clubs->merge($request->user()->players->pluck('club')->filter());
+            $clubs = $user->clubs->merge($user->players->pluck('club')->filter());
             session(['userClubs' => $clubs]);
 
             $clubId = $request->cookie('currentClubId');
@@ -32,32 +33,35 @@ class LoadCurrentClubSetting
                 // User has clubs
                 if (count($clubs) > 0) {
                     $currentClub = $clubs->first();
+                    session(['current_club_id' => $currentClub->id]);
                     session(['currentClub' => $currentClub]);
                     Cookie::queue('currentClubId', $currentClub->id, 60 * 24 * 30);
 
                     return $next($request);
                 }
-                // We have club cookie
             } else {
-                $currentClub = Club::find($clubId);
-                // Found club from cookie
+                // We have club cookie
+                $currentClub = Club::find($clubId, 'id');
+
                 if ($currentClub) {
+                    // Found club from cookie
+                    session(['current_club_id' => $currentClub->id]);
                     session(['currentClub' => $currentClub]);
 
-                    $player = Player::where('club_id', $currentClub->id)
-                        ->where('user_id', $user->id)
-                        ->first();
-
+                    //                    $player = Player::where('club_id', $currentClub->id)
+                    //                        ->where('user_id', $user->id)
+                    //                        ->first();
+                    $player = $user->players->where('club_id', $currentClub->id)->first();
                     if ($player) {
                         session(['currentPlayer' => $player]);
                     }
 
                     return $next($request);
-                    // Club not found -> invalid cookie
                 } else {
-                    // Change cookie to existing club
+                    // Club not found -> invalid cookie
                     if (count($clubs) > 0) {
                         $currentClub = $clubs->first();
+                        session(['current_club_id' => $currentClub->id]);
                         session(['currentClub' => $currentClub]);
                         Cookie::queue('currentClubId', $currentClub->id, 60 * 24 * 30);
 
@@ -69,7 +73,6 @@ class LoadCurrentClubSetting
                 }
             }
         }
-        Log::info('Middleware LoadCurrentClubSetting ausgeführt für Route: '.$request->path());
 
         return $next($request);
     }

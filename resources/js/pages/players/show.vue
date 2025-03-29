@@ -6,7 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import AppLayout from '@/layouts/AppLayout.vue';
 import type { BreadcrumbItem, SharedData } from '@/types';
-import type { Player, PlayerStatistics } from '@/types/entities';
+import type { Player, FeeStatistics, CompetitionStatistics, Transaction } from '@/types/entities';
 import { Head, usePage } from '@inertiajs/vue3';
 import { useI18n } from 'vue-i18n';
 import { columns as competitionColumns } from './competition_columns';
@@ -15,7 +15,9 @@ import { columns as transactionColumns } from './transaction_columns';
 
 interface Props {
     player: Player;
-    statistics: PlayerStatistics;
+    feeEntries: FeeStatistics[]
+    competitionEntries: CompetitionStatistics[]
+    transactions: Transaction[]
 }
 
 const page = usePage<SharedData>();
@@ -85,13 +87,13 @@ const breadcrumbs: BreadcrumbItem[] = [
                             <TabsTrigger value="transactions">{{ t('Transaction', 2) }}</TabsTrigger>
                         </TabsList>
                         <TabsContent value="fees">
-                            <DataTable :columns="feeColumns" :data="props.statistics.fees || []" />
+                            <DataTable :columns="feeColumns" :data="props.feeEntries" />
                         </TabsContent>
                         <TabsContent value="competitions">
-                            <DataTable :columns="competitionColumns" :data="props.statistics.competitions || []" />
+                            <DataTable :columns="competitionColumns" :data="props.competitionEntries" />
                         </TabsContent>
                         <TabsContent value="transactions">
-                            <DataTable :columns="transactionColumns" :data="props.statistics.transactions || []" />
+                            <DataTable :columns="transactionColumns" :data="props.transactions" />
                         </TabsContent>
                     </Tabs>
                 </CardContent>

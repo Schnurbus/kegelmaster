@@ -1,8 +1,8 @@
-<script setup lang="ts" generic="TData extends TDataWithPermissions, TValue">
+<script setup lang="ts" generic="TData, TValue">
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { valueUpdater } from '@/lib/utils';
 import { SharedData } from '@/types';
-import { Permissions, TDataWithPermissions } from '@/types/entities';
+import { Permissions } from '@/types/entities';
 import { router, usePage } from '@inertiajs/vue3';
 import type { ColumnDef, ColumnFiltersState, SortingState, Updater, VisibilityState } from '@tanstack/vue-table';
 import {
@@ -17,10 +17,10 @@ import {
 } from '@tanstack/vue-table';
 import { onMounted, Ref, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { RouteParams } from 'ziggy-js';
 import type { DataTableFacetedFilter } from './DataTableFacetedFilter.vue';
 import DataTablePagination from './DataTablePagination.vue';
 import DataTableToolbar from './DataTableToolbar.vue';
+import DataTableDropdown from '@/components/tables/data-table-dropdown.vue';
 
 interface Filter {
     column: string;
@@ -102,7 +102,7 @@ const table = useVueTable({
     getFacetedUniqueValues: getFacetedUniqueValues(),
 });
 
-const facetedfilter: DataTableFacetedFilter<TData>[] = props.filter
+const facetedFilter: DataTableFacetedFilter<TData>[] = props.filter
     ? props.filter
           .map((filter) => {
               if (table.getColumn(filter.column)) {
@@ -124,37 +124,43 @@ const showEntry = (id: number) => {
     if (!props.routeName) {
         return '';
     }
-    router.visit(route(props.routeName + '.show', id as unknown as RouteParams<string>));
+    router.visit(route(props.routeName + '.show', { id }));
 };
 </script>
 
 <template>
     <div class="space-y-4">
-        <DataTableToolbar :table="table" :routeName="props.routeName" :permissions="props.permissions" :filter="facetedfilter" />
+        <DataTableToolbar :table="table" :routeName="props.routeName" :permissions="props.permissions" :filter="facetedFilter" />
         <div class="rounded-md border">
             <Table>
                 <TableHeader>
                     <TableRow v-for="headerGroup in table.getHeaderGroups()" :key="headerGroup.id">
                         <TableHead v-for="header in headerGroup.headers" :key="header.id">
-                            <FlexRender v-if="!header.isPlaceholder" :render="header.column.columnDef.header" :props="header.getContext()" />
+                            <FlexRender v-if="!header.isPlaceholder" :render="header.column.columnDef.header" :props="header.getContext()"/>
+                        </TableHead>
+                        <TableHead v-if="props.permissions && (props.permissions.update || props.permissions.delete)">
+                            Actions
                         </TableHead>
                     </TableRow>
                 </TableHeader>
                 <TableBody>
                     <template v-if="table.getRowModel().rows?.length">
                         <TableRow v-for="row in table.getRowModel().rows" :key="row.id" :data-state="row.getIsSelected() && 'selected'">
-                            <template v-if="row.original.can && row.original.can.view">
+                            <template v-if="permissions?.view">
                                 <TableCell
-                                    v-for="(cell, index) in row.getVisibleCells()"
+                                    v-for="cell in row.getVisibleCells()"
                                     class="cursor-pointer"
                                     :key="cell.id"
-                                    @click="index !== row.getVisibleCells().length - 1 ? showEntry(row.original.id) : null"
+                                    @click="showEntry(row.original.id)"
                                 >
                                     <FlexRender :render="cell.column.columnDef.cell" :props="cell.getContext()" />
                                 </TableCell>
                             </template>
                             <TableCell v-else v-for="cell in row.getVisibleCells()" :key="cell.id">
                                 <FlexRender :render="cell.column.columnDef.cell" :props="cell.getContext()" />
+                            </TableCell>
+                            <TableCell v-if="props.permissions && (props.permissions.update || props.permissions.delete)">
+                                <DataTableDropdown :id="row.original.id" :route-name="props.routeName!" :can="props.permissions" />
                             </TableCell>
                         </TableRow>
                     </template>

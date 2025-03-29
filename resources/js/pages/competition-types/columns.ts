@@ -1,12 +1,11 @@
-import DropdownAction from '@/components/tables/data-table-dropdown.vue';
 import { Button } from '@/components/ui/button';
 import i18n from '@/i18n';
-import type { FeeType } from '@/types/entities';
+import type { CompetitionType } from '@/types/entities';
 import { ColumnDef } from '@tanstack/vue-table';
 import { ArrowUpDown } from 'lucide-vue-next';
 import { h } from 'vue';
 
-export const columns: ColumnDef<FeeType>[] = [
+export const columns: ColumnDef<CompetitionType>[] = [
     {
         accessorKey: 'id',
         header: () => h('div', 'Id'),
@@ -44,12 +43,5 @@ export const columns: ColumnDef<FeeType>[] = [
             );
         },
         cell: ({ row }) => row.getValue('position'),
-    },
-    {
-        id: 'actions',
-        enableHiding: false,
-        cell: ({ row }) => {
-            return h(DropdownAction, { id: row.original.id, routeName: 'competition-type', can: row.original.can });
-        },
     },
 ];

@@ -37,8 +37,10 @@ createInertiaApp({
             } as ToastContainerOptions)
             .use(i18n)
             .directive('focus', {
-                mounted(el) {
-                    el.focus();
+                mounted(el, binding) {
+                    if (binding.value === undefined || binding.value) {
+                        el.focus();
+                    }
                 },
             })
             .mount(el);

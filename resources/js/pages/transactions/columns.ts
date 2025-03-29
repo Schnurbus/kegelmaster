@@ -1,4 +1,3 @@
-import DropdownAction from '@/components/tables/data-table-dropdown.vue';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import i18n from '@/i18n';
@@ -7,20 +6,7 @@ import { ColumnDef } from '@tanstack/vue-table';
 import { ArrowUpDown } from 'lucide-vue-next';
 import { h } from 'vue';
 
-// const customNumberFilter = (rows: RowData[], columnId: string, value: number) => {
-//     return rows.filter(row => {
-//       const cellValue = row.getValue(columnId);
-//       const [min, max] = value;
-//       return cellValue >= min && cellValue <= max;
-//     });
-//   };
-
 export const columns: ColumnDef<Transaction>[] = [
-    // {
-    //     accessorKey: 'id',
-    //     header: () => h('div', 'Id'),
-    //     cell: ({ row }) => row.getValue('id'),
-    // },
     {
         accessorKey: 'date',
         header: ({ column }) => {
@@ -130,13 +116,6 @@ export const columns: ColumnDef<Transaction>[] = [
         cell: ({ row }) => {
             const amount = Number.parseFloat(row.getValue('amount'));
             return h('div', { class: 'text-right font-medium' }, isNaN(amount) ? '-' : i18n.global.n(amount, 'currency'));
-        },
-    },
-    {
-        id: 'actions',
-        enableHiding: false,
-        cell: ({ row }) => {
-            return h(DropdownAction, { id: row.original.id, routeName: 'transactions', can: row.original.can });
         },
     },
 ];

@@ -3,14 +3,16 @@
 namespace App\Http\Controllers;
 
 use App\Enums\TransactionType;
-use App\Http\Requests\StoreTransactionRequest;
-use App\Http\Requests\UpdateTransactionRequest;
+use App\Http\Requests\Transaction\CreateTransactionRequest;
+use App\Http\Requests\Transaction\IndexTransactionRequest;
+use App\Http\Requests\Transaction\ShowTransactionRequest;
+use App\Http\Requests\Transaction\StoreTransactionRequest;
+use App\Http\Requests\Transaction\UpdateTransactionRequest;
 use App\Models\Player;
 use App\Models\Transaction;
 use App\Services\TransactionService;
 use Exception;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 use Silber\Bouncer\BouncerFacade;
@@ -26,51 +28,41 @@ class TransactionController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(IndexTransactionRequest $request)
     {
-        $club = session('currentClub');
+        $currentClubId = session('current_club_id');
 
-        if (BouncerFacade::can('list', getClubScopedModel(Transaction::class))) {
-            $transactions = $this->transactionService->getTransactionsWithPermissions(Auth::user(), $club->id);
-
-            $players = $transactions
-                ->pluck('player')
-                ->filter()
-                ->unique('id')
-                ->sortBy('name')
-                ->values();
-        }
+        $transactions = $this->transactionService->getByClubId($currentClubId);
+        $transactions->load(['matchday', 'player', 'feeEntry.feeTypeVersion']);
+        $players = $transactions
+            ->pluck('player')
+            ->filter()
+            ->unique('id')
+            ->sortBy('name')
+            ->values();
 
         return Inertia::render('transactions/index', [
-            'transactions' => $transactions ?? [],
-            'players' => $players ?? [],
-            'can' => [
-                'create' => BouncerFacade::can('create', getClubScopedModel(Transaction::class)),
-            ],
+            'transactions' => fn () => $transactions,
+            'players' => fn () => $players,
+            'can' => getUserPermissions(Transaction::class),
         ]);
     }
 
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function create(CreateTransactionRequest $request)
     {
+        $currentClubId = session('current_club_id');
 
-        BouncerFacade::authorize('create', getClubScopedModel(Transaction::class));
-
-        $currentClub = session('currentClub');
-
-        $players = Player::where('club_id', $currentClub->id)
+        $players = Player::where('club_id', $currentClubId)
             ->select('id', 'name')
             ->orderBy('name')
             ->get();
 
         return Inertia::render('transactions/create', [
             'players' => $players,
-            'club' => $currentClub,
-            'can' => [
-                'create' => BouncerFacade::can('create', getClubScopedModel(Transaction::class)),
-            ],
+            'can' => getUserPermissions(Transaction::class),
         ]);
     }
 
@@ -88,6 +80,8 @@ class TransactionController extends Controller
         } catch (Exception $exception) {
             Log::error('Error creating transaction', ['error' => $exception->getMessage()]);
             toast_error('Could not create transaction');
+
+            return redirect()->back()->withInput($request->input());
         }
 
         return to_route('transactions.index');
@@ -96,10 +90,8 @@ class TransactionController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Transaction $transaction)
+    public function show(ShowTransactionRequest $request, Transaction $transaction)
     {
-        BouncerFacade::authorize('view', $transaction);
-
         $transaction->load(['player', 'feeEntry', 'feeEntry.feeTypeVersion', 'matchday']);
 
         $transactionArray = [
@@ -112,9 +104,7 @@ class TransactionController extends Controller
 
         return Inertia::render('transactions/show', [
             'transaction' => $transactionArray,
-            'can' => [
-                'create' => BouncerFacade::can('create', getClubScopedModel(Transaction::class)),
-            ],
+            'can' => getUserPermissions(Transaction::class),
         ]);
     }
 
@@ -135,9 +125,7 @@ class TransactionController extends Controller
         return Inertia::render('transactions/edit', [
             'transaction' => $transaction,
             'players' => $players,
-            'can' => [
-                'create' => BouncerFacade::can('create', getClubScopedModel(Transaction::class)),
-            ],
+            'can' => getUserPermissions(Transaction::class),
         ]);
     }
 

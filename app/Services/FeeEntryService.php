@@ -20,7 +20,9 @@ class FeeEntryService
     /**
      * Create a fee entry
      *
-     * @param  array {matchday_id: number, fee_type_version_id: number, player_id: number, amount: number}  $feeEntryData
+     * @param  $feeEntryData  array {matchday_id: number, fee_type_version_id: number, player_id: number, amount: number}
+     *
+     * @throws Exception
      */
     public function createFeeEntry(array $feeEntryData): ?FeeEntry
     {
@@ -44,15 +46,16 @@ class FeeEntryService
             return $feeEntry;
         } catch (Exception $exception) {
             Log::error('Error creating fee enty', ['error' => $exception->getMessage()]);
-
-            return null;
+            throw new Exception($exception->getMessage());
         }
     }
 
     /**
      * Update fee entry
      *
-     * @param  array {matchday_id: number, fee_type_version_id: number, player_id: number, amount: number}  $feeEntryData
+     * @param  array  $feeEntryData  {matchday_id: number, fee_type_version_id: number, player_id: number, amount: number}
+     *
+     * @throws Exception
      */
     public function updateFeeEntry(FeeEntry $feeEntry, array $feeEntryData): ?FeeEntry
     {
@@ -68,7 +71,7 @@ class FeeEntryService
             Log::info('Fee Entry updated', ['user_id' => Auth::user()->id, 'feeEntry' => $feeEntry]);
 
             if ($feeEntry->transaction) {
-                if ($feeEntry->amount === 0) {
+                if ($feeEntry->amount == 0) {
                     $this->transactionService->deleteTransaction($feeEntry->transaction);
                 } else {
                     $this->transactionService->updateTransaction(
@@ -84,7 +87,7 @@ class FeeEntryService
                         ]
                     );
                 }
-            } elseif ($feeEntry->amount != 0 && $feeEntry->feeTypeVersion->amount !== 0) {
+            } elseif ($feeEntry->amount != 0 && $feeEntry->feeTypeVersion->amount != 0) {
                 Log::debug('Creating new transaction for existing fee entry', ['feeEntry' => $feeEntry]);
                 $this->transactionService->createTransaction([
                     'club_id' => $feeEntry->matchday->club_id,
@@ -99,14 +102,15 @@ class FeeEntryService
 
             return $feeEntry;
         } catch (Exception $exception) {
-            Log::error('Error updating fee enty', ['error' => $exception->getMessage()]);
-
-            return null;
+            Log::error('Error updating fee entry', ['error' => $exception->getMessage()]);
+            throw new Exception($exception->getMessage());
         }
     }
 
     /**
      * Delete fee entry
+     *
+     * @throws Exception
      */
     public function deleteFeeEntry(FeeEntry $feeEntry): bool
     {
@@ -118,8 +122,7 @@ class FeeEntryService
             return true;
         } catch (Exception $exception) {
             Log::error('Error deleting fee enty', ['error' => $exception->getMessage()]);
-
-            return false;
+            throw new Exception($exception->getMessage());
         }
     }
 }

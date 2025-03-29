@@ -43,11 +43,4 @@ export const columns: ColumnDef<Role>[] = [
         cell: ({ row }) =>
             row.getValue('is_base_fee_active') ? h(Check, { class: 'color: text-green-500' }) : h(X, { class: 'color: text-red-500' }),
     },
-    {
-        id: 'actions',
-        enableHiding: false,
-        cell: ({ row }) => {
-            return h(DropdownAction, { id: row.original.id, routeName: 'role', can: row.original.can });
-        },
-    },
 ];

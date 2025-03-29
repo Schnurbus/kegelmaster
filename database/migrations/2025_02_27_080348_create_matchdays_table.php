@@ -16,7 +16,6 @@ return new class extends Migration
             $table->foreignId('club_id')->constrained('clubs')->index();
             $table->date('date');
             $table->text('notes')->nullable();
-            $table->boolean('is_calculated')->default(false);
             $table->timestamps();
         });
     }

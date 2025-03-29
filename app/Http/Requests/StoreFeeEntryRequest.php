@@ -26,7 +26,7 @@ class StoreFeeEntryRequest extends FormRequest
     {
         return [
             'entries' => 'required|array',
-            'entries.*.id' => 'exists:fee_entries,id',
+            'entries.*.id' => 'nullable|exists:fee_entries,id',
             'entries.*.amount' => 'numeric|min:0',
             'entries.*.player_id' => 'required|exists:players,id',
             'entries.*.matchday_id' => 'required|exists:matchdays,id',

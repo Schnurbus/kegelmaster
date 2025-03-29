@@ -53,11 +53,4 @@ export const columns: ColumnDef<FeeType>[] = [
             return h('div', { class: 'text-right font-medium' }, i18n.global.n(amount, 'currency'));
         },
     },
-    {
-        id: 'actions',
-        enableHiding: false,
-        cell: ({ row }) => {
-            return h('div', { class: 'relative' }, h(DropdownAction, { id: row.original.id, routeName: 'fee-type', can: row.original.can }));
-        },
-    },
 ];

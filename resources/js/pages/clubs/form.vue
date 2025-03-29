@@ -28,7 +28,7 @@ const isEdit = computed(() => !!props.club);
 
 const submit = () => {
     if (isEdit.value) {
-        form.put(route('club.update', props.club!.id as unknown as RouteParams<'club.update'>));
+        form.put(route('club.update', {id: props.club!.id }));
     } else {
         form.post(route('club.store'));
     }

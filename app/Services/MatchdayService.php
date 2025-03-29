@@ -3,7 +3,6 @@
 namespace App\Services;
 
 use App\Enums\TransactionType;
-use App\Events\FeeEntryDeleted;
 use App\Models\CompetitionEntry;
 use App\Models\FeeEntry;
 use App\Models\FeeType;
@@ -13,6 +12,7 @@ use App\Models\Player;
 use App\Models\Transaction;
 use App\Models\User;
 use Exception;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -21,12 +21,12 @@ use Silber\Bouncer\BouncerFacade;
 class MatchdayService
 {
     public function __construct(
-        private FeeEntryService $feeEntryService,
-        private TransactionService $transactionService
+        private readonly TransactionService $transactionService
     ) {}
 
     public function createMatchday($validated): Matchday
     {
+        /** @var Matchday $matchday */
         $matchday = Matchday::create($validated);
         Log::info('Matchday created', ['user_id' => Auth::user()->id, 'matchday' => $matchday]);
 
@@ -92,6 +92,14 @@ class MatchdayService
         return false;
     }
 
+    public function getByClubId(int $clubId): Collection
+    {
+        return Matchday::where('club_id', $clubId)
+            ->withCount('players')
+            ->orderByDesc('date')
+            ->get();
+    }
+
     public function getMatchdaysWithPermissions(User $user, int $clubId)
     {
         BouncerFacade::scope()->to($clubId);
@@ -123,32 +131,8 @@ class MatchdayService
         }
 
         try {
-
             $matchday->players()->attach($player);
             $matchday->loadMissing('feeTypeVersions', 'club.competitionTypes');
-
-            foreach ($matchday->feeTypeVersions as $feeTypeVersion) {
-                $this->feeEntryService->createFeeEntry([
-                    'matchday_id' => $matchday->id,
-                    'fee_type_version_id' => $feeTypeVersion->id,
-                    'player_id' => $player->id,
-                    'amount' => 0,
-                ]);
-            }
-
-            $competitionEntriesData = [];
-            foreach ($matchday->club->competitionTypes as $competitionType) {
-                $competitionEntriesData[] = [
-                    'matchday_id' => $matchday->id,
-                    'competition_type_id' => $competitionType->id,
-                    'player_id' => $player->id,
-                    'amount' => 0,
-                ];
-            }
-
-            if (! empty($competitionEntriesData)) {
-                CompetitionEntry::insert($competitionEntriesData);
-            }
 
             return true;
         } catch (Exception $exception) {
@@ -167,7 +151,6 @@ class MatchdayService
             ->where('player_id', $player->id)->get();
         foreach ($feeEntries as $feeEntry) {
             $feeEntry->delete();
-            FeeEntryDeleted::dispatch($feeEntry);
         }
 
         CompetitionEntry::where('matchday_id', $matchday->id)
