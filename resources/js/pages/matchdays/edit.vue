@@ -10,7 +10,6 @@ import type { BreadcrumbItem, SharedData } from '@/types';
 import type { Club, CompetitionEntry, CompetitionType, FeeEntry, FeeType, Matchday, Player } from '@/types/entities';
 import { Head, useForm, usePage } from '@inertiajs/vue3';
 import { useI18n } from 'vue-i18n';
-import { RouteParams } from 'ziggy-js';
 import CompetitionEntries from './competition-entries.vue';
 import FeeEntries from './fee-entries.vue';
 import Form from './form.vue';
@@ -52,7 +51,7 @@ const addPlayerForm = useForm({
 });
 
 const addPlayer = () => {
-    addPlayerForm.post(route('matchdays.add-player', props.matchday.id as unknown as RouteParams<string>));
+    addPlayerForm.post(route('matchdays.add-player', {id: props.matchday.id }));
 };
 </script>
 

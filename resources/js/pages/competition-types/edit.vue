@@ -38,7 +38,7 @@ const breadcrumbs: BreadcrumbItem[] = [
     <AppLayout :breadcrumbs="breadcrumbs">
         <div class="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
             <div class="flex flex-col">
-                <Form :competition-type="props.competitionType" />
+                <Form :competitionType="props.competitionType" />
             </div>
         </div>
     </AppLayout>

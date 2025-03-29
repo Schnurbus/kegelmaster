@@ -37,11 +37,8 @@ class HandleInertiaRequests extends Middleware
     public function share(Request $request): array
     {
         $userClubs = session('userClubs');
-        $currentClub = session('currentClub');
-        $currentClubId = null;
-        if ($currentClub) {
-            $currentClubId = $currentClub->id;
-        }
+        $currentClubId = session('current_club_id');
+        $club = Club::find($currentClubId);
 
         return [
             ...parent::share($request),
@@ -51,11 +48,6 @@ class HandleInertiaRequests extends Middleware
             ],
             'auth' => [
                 'user' => $request->user(),
-                'permissions' => [
-                    'club' => [
-                        'create' => $request->user() ? $request->user()->can('create', Club::class) : false,
-                    ],
-                ],
             ],
             'locale' => function () {
                 return app()->getLocale();
@@ -65,9 +57,9 @@ class HandleInertiaRequests extends Middleware
                     resource_path('lang/'.app()->getLocale().'.json')
                 );
             },
-            'userClubs' => $userClubs ? $userClubs : [],
+            'userClubs' => $userClubs ?: [],
             'currentClubId' => $currentClubId,
-            'currentClubName' => $currentClub ? $currentClub->name : '',
+            'currentClubName' => $club ? $club->name : '',
         ];
     }
 }

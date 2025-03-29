@@ -21,7 +21,7 @@ class BouncerServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        if (!App::runningInConsole()) {
+        if (! App::runningInConsole()) {
             BouncerFacade::useRoleModel(\App\Models\Role::class);
 
             BouncerFacade::allowEveryone()->toOwnEverything();
@@ -30,7 +30,7 @@ class BouncerServiceProvider extends ServiceProvider
                 return $club->user_id == $user->id;
             });
             BouncerFacade::ownedVia(\App\Models\Role::class, function ($role, $user) {
-                return $role->club->user_id == $user->id;
+                return $role->club?->user_id === $user->id;
             });
             BouncerFacade::ownedVia(\App\Models\Player::class, function ($player, $user) {
                 return $player->club->user_id == $user->id;

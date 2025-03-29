@@ -3,10 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Club;
+use App\Models\User;
 use App\Services\ClubService;
 use Exception;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
+use Inertia\Inertia;
 use Silber\Bouncer\BouncerFacade;
 
 class ClubController extends Controller
@@ -20,11 +21,13 @@ class ClubController extends Controller
         $this->clubService = $clubService;
     }
 
-    public function index(\Illuminate\Http\Request $request)
+    public function index(\Illuminate\Http\Request $request): \Inertia\Response
     {
-        $clubs = $this->clubService->getClubsWithPermissions($request->user());
+        /** @var User $user */
+        $user = $request->user();
+        $clubs = $this->clubService->getClubsWithPermissions($user);
 
-        return inertia('clubs/index', [
+        return Inertia::render('clubs/index', [
             'clubs' => $clubs,
             'can' => [
                 'list' => BouncerFacade::can('list', Club::class),
@@ -33,61 +36,77 @@ class ClubController extends Controller
         ]);
     }
 
-    public function create()
+    public function create(): \Inertia\Response
     {
-        return inertia('clubs/create');
+        return Inertia::render('clubs/create');
     }
 
-    public function store(\App\Http\Requests\StoreClubRequest $request)
+    public function store(\App\Http\Requests\StoreClubRequest $request): \Illuminate\Http\RedirectResponse
     {
+        /** @var User $user */
+        $user = $request->user();
         $validated = $request->validated();
 
         try {
-            $club = $this->clubService->createClub($request->user(), $validated);
+            $club = $this->clubService->createClub($user, $validated);
 
-            $userClubs = $this->clubService->getUserClubs($request->user());
+            $userClubs = $this->clubService->getUserClubs($user);
 
             if (count($userClubs) === 1) {
+                session(['current_club_id' => $club->id]);
                 session(['currentClub' => $club]);
             }
             toast_success('New club created successfully');
         } catch (Exception $exception) {
             toast_error($exception->getMessage());
+
+            return redirect()->back()->withInput();
         }
 
         return to_route('club.index');
     }
 
-    public function show(Club $club)
+    public function show(Club $club): \Inertia\Response
     {
-        $showClub = $this->clubService->getClubInfo($club);
+        // $showClub = $this->clubService->getClubInfo($club);
+        $club
+            ->load('owner:id,name')
+            ->loadCount('players');
 
-        return inertia('clubs/show', [
-            'club' => $showClub,
+        return Inertia::render('clubs/show', [
+            'club' => $club,
         ]);
     }
 
-    public function edit(Club $club)
+    public function edit(Club $club): \Inertia\Response
     {
-        $editClub = $this->clubService->getClubInfo($club, 'update');
+        // $editClub = $this->clubService->getClubInfo($club, 'update');
+        $club
+            ->load('owner:id,name')
+            ->loadCount('players');
 
-        return inertia('clubs/edit', [
-            'club' => $editClub,
+        return Inertia::render('clubs/edit', [
+            'club' => $club,
         ]);
     }
 
-    public function update(\App\Http\Requests\UpdateClubRequest $request, Club $club)
+    public function update(\App\Http\Requests\UpdateClubRequest $request, Club $club): \Illuminate\Http\RedirectResponse
     {
         $validated = $request->validated();
 
-        Log::info('Updating club {club}', ['club' => $club]);
+        try {
+            $club->update($validated);
+            toast_success('Club updated successfully');
+        } catch (Exception $exception) {
+            toast_error($exception->getMessage());
 
-        $club->update($validated);
+            return redirect()->back()->withInput();
+        }
 
-        return to_route('club.index')->with('success', 'Club updated successfully.');
+        return to_route('club.index');
     }
 
-    public function destroy(Club $club)
+    public function destroy(Club $club): \Illuminate\Http\RedirectResponse
     {
         try {
             $this->clubService->deleteClub(Auth::user(), $club);

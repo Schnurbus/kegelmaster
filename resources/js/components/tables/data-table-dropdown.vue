@@ -15,23 +15,22 @@ import { ItemPermissions } from '@/types/entities';
 import { router, useForm } from '@inertiajs/vue3';
 import { Pencil, Trash2 } from 'lucide-vue-next';
 import { useI18n } from 'vue-i18n';
-import { RouteParams } from 'ziggy-js';
 
 const props = defineProps<{
     id: number;
-    can: ItemPermissions;
+    can?: ItemPermissions;
     routeName: string;
 }>();
 
 const { t } = useI18n();
 
 const editEntity = (id: number) => {
-    router.visit(route(props.routeName + '.edit', id as unknown as RouteParams<string>));
+    router.visit(route(props.routeName + '.edit', { id }));
 };
 
 const deleteEntity = () => {
     const form = useForm({});
-    const deleteRoute = route(props.routeName + '.destroy', props.id as unknown as RouteParams<string>);
+    const deleteRoute = route(props.routeName + '.destroy', { id: props.id });
 
     form.delete(deleteRoute);
 };

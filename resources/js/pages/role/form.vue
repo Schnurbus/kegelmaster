@@ -4,24 +4,25 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
-import type { Club, Permissions, Role } from '@/types/entities';
-import { useForm } from '@inertiajs/vue3';
+import type { Permissions, Role } from '@/types/entities';
+import { useForm, usePage } from '@inertiajs/vue3';
 import { computed, reactive } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { RouteParams } from 'ziggy-js';
+import { SharedData } from '@/types';
 
 interface Props {
-    role: Role | null;
+    role?: Role;
     permissions: Permissions;
-    club?: Club;
 }
 
 const props = defineProps<Props>();
 
+const clubId = usePage<SharedData>().props.currentClubId;
+
 const { t } = useI18n();
 
 const form = useForm({
-    club_id: props.role?.scope ?? props.club?.id,
+    club_id: props.role?.scope ?? clubId,
     name: props.role?.name ?? '',
     is_base_fee_active: props.role?.is_base_fee_active ?? false,
     permissions: props.role?.permissions
@@ -38,7 +39,7 @@ const isEdit = computed(() => !!props.role);
 
 const submit = () => {
     if (isEdit.value) {
-        form.put(route('role.update', props.role!.id as unknown as RouteParams<string>));
+        form.put(route('role.update', {id: props.role!.id }));
     } else {
         form.post(route('role.store'));
     }

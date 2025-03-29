@@ -15,8 +15,8 @@ use App\Http\Controllers\RoleController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Middleware\LoadCurrentClubSetting;
 use App\Http\Middleware\ScopeBouncer;
-use App\Http\Resources\v1\Statistics\ClubTransactions;
 use App\Http\Resources\v1\Statistics\Balance;
+use App\Http\Resources\v1\Statistics\ClubTransactions;
 use App\Http\Resources\v1\Statistics\LastCompetition;
 use App\Models\Club;
 use App\Models\CompetitionType;
@@ -76,5 +76,5 @@ Route::middleware(['auth', 'verified', LoadCurrentClubSetting::class, ScopeBounc
 // Einladung akzeptieren
 Route::get('/invitation/accept/{token}', [PlayerInvitationController::class, 'accept'])->middleware(['auth', 'verified'])->name('players.invitation.accept');
 
-require __DIR__ . '/settings.php';
-require __DIR__ . '/auth.php';
+require __DIR__.'/settings.php';
+require __DIR__.'/auth.php';

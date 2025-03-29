@@ -60,7 +60,7 @@ export const columns: ColumnDef<FeeStatistics>[] = [
                 () => [i18n.global.t('Avg'), h(ArrowUpDown, { class: 'ml-2 h-4 w-4' })],
             );
         },
-        cell: ({ row }) => i18n.global.n(row.getValue('avg_value'), 'decimal'),
+        cell: ({ row }) => i18n.global.n(parseFloat(row.getValue('avg_value')), 'decimal'),
     },
     {
         accessorKey: 'total_entries',

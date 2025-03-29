@@ -11,8 +11,39 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 /**
  * App\Models\Club
  *
- * @property float initial_balance
- * @property float balance
+ * @property int $id
+ * @property string $name
+ * @property float $base_fee
+ * @property float $initial_balance
+ * @property float $balance
+ * @property int $user_id
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\CompetitionType> $competitionTypes
+ * @property-read int|null $competition_types_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Matchday> $matchdays
+ * @property-read int|null $matchdays_count
+ * @property-read \App\Models\User $owner
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Player> $players
+ * @property-read int|null $players_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Transaction> $transactions
+ * @property-read int|null $transactions_count
+ * @property-read \App\Models\User $user
+ *
+ * @method static \Database\Factories\ClubFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Club newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Club newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Club query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Club whereBalance($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Club whereBaseFee($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Club whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Club whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Club whereInitialBalance($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Club whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Club whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Club whereUserId($value)
+ *
+ * @mixin \Eloquent
  */
 class Club extends Model
 {

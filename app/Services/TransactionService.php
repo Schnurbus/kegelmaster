@@ -3,17 +3,14 @@
 namespace App\Services;
 
 use App\Enums\TransactionType;
-use App\Events\TransactionCreated;
-use App\Events\TransactionDeleted;
 use App\Models\FeeEntry;
 use App\Models\Player;
 use App\Models\Transaction;
-use App\Models\User;
 use Exception;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use Silber\Bouncer\BouncerFacade;
 
 class TransactionService
 {
@@ -22,31 +19,38 @@ class TransactionService
         private PlayerService $playerService
     ) {}
 
+    /**
+     * Create a transaction for a fee entry
+     *
+     * @throws Exception
+     */
     public function createForFeeEntry(FeeEntry $feeEntry): ?Transaction
     {
         if ((int) $feeEntry->amount === 0) {
             return null;
         }
 
-        Log::debug('Creating transaction for fee entry', [
-            'feeEntry' => $feeEntry->toArray(),
-        ]);
+        // $matchday = $feeEntry->matchday;
+        // $feeTypeVersion = $feeEntry->feeTypeVersion;
 
-        $transaction = Transaction::create([
-            'club_id' => $feeEntry->matchday->club_id,
-            'player_id' => $feeEntry->player_id,
-            'matchday_id' => $feeEntry->matchday_id,
-            'fee_entry_id' => $feeEntry->id,
-            'amount' => $feeEntry->amount * $feeEntry->feeTypeVersion->amount * -1,
-            'type' => TransactionType::FEE,
-            'date' => $feeEntry->matchday->date,
-        ]);
+        try {
+            $transaction = Transaction::create([
+                'club_id' => $feeEntry->matchday->club->id,
+                'player_id' => $feeEntry->player_id,
+                'matchday_id' => $feeEntry->matchday_id,
+                'fee_entry_id' => $feeEntry->id,
+                'amount' => $feeEntry->amount * $feeEntry->feeTypeVersion->amount * -1,
+                'type' => TransactionType::FEE,
+                'date' => $feeEntry->matchday->date,
+            ]);
 
-        Log::info('Transaction created', [
-            'transaction' => $transaction->toArray(),
-        ]);
-
-        TransactionCreated::dispatch($transaction);
+            Log::info('Transaction created', [
+                'transaction' => $transaction->toArray(),
+            ]);
+        } catch (Exception $exception) {
+            Log::error('Error creating transaction', ['error' => $exception->getMessage()]);
+            throw new Exception($exception->getMessage());
+        }
 
         return $transaction;
     }
@@ -59,7 +63,6 @@ class TransactionService
             ->first();
 
         if ($oldTransaction) {
-            TransactionDeleted::dispatch($oldTransaction);
             $oldTransaction->delete();
         }
 
@@ -76,8 +79,6 @@ class TransactionService
         Log::debug('deleteForFeeEntry: transaction found', ['transaction' => $transaction]);
 
         if ($transaction) {
-            $response = TransactionDeleted::dispatch($transaction);
-            Log::debug('deleteForFeeEntry: event dispatched', ['response' => $response]);
 
             $transaction->delete();
             Log::debug('deleteForFeeEntry: transaction deleted');
@@ -91,7 +92,9 @@ class TransactionService
     /**
      * Create a transaction
      *
-     * @param array { club_id: number, ?player_id: number, ?matchday_id: number, ?fee_entry_id: number, amount: number, type: TransactionType, date: string, auto_tip: boolean, ?notes: string } $transactionData
+     * @param  array  $transactionData  { club_id: number, ?player_id: number, ?matchday_id: number, ?fee_entry_id: number, amount: number, type: TransactionType, date: string, auto_tip: boolean, ?notes: string }
+     *
+     * @throws Exception
      */
     public function createTransaction(array $transactionData): ?Transaction
     {
@@ -130,15 +133,16 @@ class TransactionService
             return $transaction;
         } catch (Exception $exception) {
             Log::error('Error creating transaction', ['error' => $exception->getMessage()]);
-
-            return null;
+            throw new Exception($exception->getMessage());
         }
     }
 
     /**
      * Update a transaction
      *
-     * @param array { ?club_id: number, ?player_id: number, ?matchday_id: number, ?fee_entry_id: number, ?amount: number, ?type: number, ?date: string, ?notes: string } $transactionData
+     * @param  array  $transactionData  { ?club_id: number, ?player_id: number, ?matchday_id: number, ?fee_entry_id: number, ?amount: number, ?type: number, ?date: string, ?notes: string }
+     *
+     * @throws Exception
      */
     public function updateTransaction(Transaction $transaction, array $transactionData): ?Transaction
     {
@@ -157,13 +161,14 @@ class TransactionService
             return $transaction;
         } catch (Exception $exception) {
             Log::error('Error creating transaction', ['error' => $exception->getMessage()]);
-
-            return null;
+            throw new Exception($exception->getMessage());
         }
     }
 
     /**
      * Delete a transaction
+     *
+     * @throws Exception
      */
     public function deleteTransaction(Transaction $transaction): bool
     {
@@ -182,46 +187,16 @@ class TransactionService
             return true;
         } catch (Exception $exception) {
             Log::error('Error deleting transaction', ['error' => $exception->getMessage()]);
-
-            return false;
+            throw new Exception($exception->getMessage());
         }
     }
 
-    public function getTransactionsWithPermissions(User $user, int $clubId)
+    /**
+     * Get transactions by club id
+     */
+    public function getByClubId(int $clubId): Collection
     {
-        BouncerFacade::scope()->to($clubId);
-
-        $transactions = Transaction::where('club_id', $clubId)
-            ->with([
-                'player' => function ($query) {
-                    $query->select('id', 'name');
-                },
-                'matchday' => function ($query) {
-                    $query->select('id', 'date');
-                },
-                'feeEntry.feeTypeVersion' => function ($query) {
-                    $query->select('id', 'name');
-                },
-            ])
-            ->orderByDesc('date')
-            ->orderByDesc('id')
+        return Transaction::where('club_id', $clubId)
             ->get();
-
-        return $transactions->map(function ($transaction) use ($user) {
-            $permissions = [
-                'view' => $user->can('view', $transaction),
-                'update' => $user->can('update', $transaction),
-                'delete' => $user->can('delete', $transaction),
-            ];
-
-            if (! $user->can('view', $transaction)) {
-                $transaction->makeHidden('amount');
-            }
-
-            $transactionArray = $transaction->toArray();
-            $transactionArray['can'] = $permissions;
-
-            return $transactionArray;
-        });
     }
 }

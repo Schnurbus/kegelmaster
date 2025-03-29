@@ -2,8 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StoreRoleRequest;
-use App\Http\Requests\UpdateRoleRequest;
+use App\Http\Requests\Role\CreateRoleRequest;
+use App\Http\Requests\Role\DeleteRoleRequest;
+use App\Http\Requests\Role\EditRoleRequest;
+use App\Http\Requests\Role\IndexRoleRequest;
+use App\Http\Requests\Role\ShowRoleRequest;
+use App\Http\Requests\Role\StoreRoleRequest;
+use App\Http\Requests\Role\UpdateRoleRequest;
 use App\Models\Club;
 use App\Models\CompetitionType;
 use App\Models\FeeType;
@@ -11,16 +16,22 @@ use App\Models\Matchday;
 use App\Models\Player;
 use App\Models\Role;
 use App\Models\Transaction;
-use App\Models\User;
+use App\Services\RoleService;
 use Exception;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
+use Inertia\Inertia;
 use Silber\Bouncer\BouncerFacade;
 
 class RoleController extends Controller
 {
     use AuthorizesRequests;
+
+    protected $roleService;
+
+    public function __construct(RoleService $roleService)
+    {
+        $this->roleService = $roleService;
+    }
 
     protected array $entityMap = [
         'club' => Club::class,
@@ -35,60 +46,34 @@ class RoleController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(IndexRoleRequest $request)
     {
-        $club = session('currentClub');
-        $user = User::findOrFail(Auth::user()->id);
-        BouncerFacade::scope()->to($club->id);
+        $currentClubId = session('current_club_id');
 
-        $dummyRole = new Role;
-        $dummyRole->scope = $club->id;
-
-        if (BouncerFacade::can('list', $dummyRole)) {
-            $roles = Role::where('scope', $club->id)
-                // ->where('name', '!=', 'owner')
-                ->get()
-                ->map(fn ($role) => [
-                    'id' => $role->id,
-                    'is_base_fee_active' => $role->is_base_fee_active,
-                    'name' => $role->name,
-                    'can' => [
-                        'view' => BouncerFacade::can('view', $role),
-                        'update' => BouncerFacade::can('update', $role),
-                        'delete' => BouncerFacade::can('delete', $role),
-                    ],
-                ]);
-        }
-
-        return inertia('role/index', [
-            'roles' => $roles ?? [],
+        return Inertia::render('role/index', [
+            'roles' => $this->roleService->getByClubId($currentClubId),
             'can' => [
-                'create' => BouncerFacade::can('create', $dummyRole),
+                'create' => BouncerFacade::can('create', getClubScopedModel(Role::class)),
+                'delete' => BouncerFacade::can('delete', getClubScopedModel(Role::class)),
+                'update' => BouncerFacade::can('update', getClubScopedModel(Role::class)),
+                'view' => BouncerFacade::can('view', getClubScopedModel(Role::class)),
             ],
-
         ]);
     }
 
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function create(CreateRoleRequest $request)
     {
-        $club = session('currentClub');
-        $dummyRole = new Role;
-        $dummyRole->scope = $club->id;
-
-        BouncerFacade::authorize('create', $dummyRole);
-
-        // $club = Club::find(session('currentClub'))->first();
-
-        // if (! $club) {
-        //     abort(404);
-        // }
-
-        return inertia('role/create', [
-            'club' => $club,
+        return Inertia::render('role/create', [
             'permissions' => $this->getPermissions(),
+            'can' => [
+                'create' => BouncerFacade::can('create', getClubScopedModel(Role::class)),
+                'delete' => BouncerFacade::can('delete', getClubScopedModel(Role::class)),
+                'update' => BouncerFacade::can('update', getClubScopedModel(Role::class)),
+                'view' => BouncerFacade::can('view', getClubScopedModel(Role::class)),
+            ],
         ]);
     }
 
@@ -100,28 +85,12 @@ class RoleController extends Controller
         $validated = $request->validated();
 
         try {
-            $role = BouncerFacade::role()->firstOrCreate([
-                'name' => $validated['name'],
-                'is_base_fee_active' => $validated['is_base_fee_active'],
-            ]);
-
-            foreach ($validated['permissions'] as $entity => $actions) {
-                if (! isset($this->entityMap[$entity])) {
-                    continue; // Falls eine unbekannte Entität dabei ist -> überspringen
-                }
-
-                $modelClass = $this->entityMap[$entity];
-
-                foreach ($actions as $action => $allowed) {
-                    if ($allowed) {
-                        BouncerFacade::allow($role)->to($action, $modelClass);
-                    }
-                }
-            }
+            $this->roleService->create($validated);
             toast_success('Role created successfully');
         } catch (Exception $exception) {
-            Log::error('Error creating role', ['error' => $exception->getMessage()]);
             toast_error('Cloud not create role');
+
+            return redirect()->back()->withInput($request->input());
         }
 
         return to_route('role.index');
@@ -130,73 +99,52 @@ class RoleController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Role $role)
+    public function show(ShowRoleRequest $request, Role $role)
     {
-        if (BouncerFacade::cannot('view', $role)) {
-            abort(403);
-        }
-
-        return inertia('role/show', [
+        return Inertia::render('role/show', [
             'role' => $role,
             'role.permissions' => $this->loadPermissions($role),
+            'can' => [
+                'create' => BouncerFacade::can('create', getClubScopedModel(Role::class)),
+                'delete' => BouncerFacade::can('delete', getClubScopedModel(Role::class)),
+                'update' => BouncerFacade::can('update', getClubScopedModel(Role::class)),
+                'view' => BouncerFacade::can('view', getClubScopedModel(Role::class)),
+            ],
         ]);
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Role $role)
+    public function edit(EditRoleRequest $request, Role $role)
     {
-        if (BouncerFacade::cannot('update', $role)) {
-            abort(403);
-        }
-
-        return inertia('role/edit', [
+        return Inertia::render('role/edit', [
             'role' => $role,
             'role.permissions' => $this->loadPermissions($role),
             'permissions' => $this->getPermissions(),
+            'can' => [
+                'create' => BouncerFacade::can('create', getClubScopedModel(Role::class)),
+                'delete' => BouncerFacade::can('delete', getClubScopedModel(Role::class)),
+                'update' => BouncerFacade::can('update', getClubScopedModel(Role::class)),
+                'view' => BouncerFacade::can('view', getClubScopedModel(Role::class)),
+            ],
         ]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateRoleRequest $request, Role $role)
+    public function update(UpdateRoleRequest $request, Role $role): \Illuminate\Http\RedirectResponse
     {
         $validated = $request->validated();
 
         try {
-            $role->update([
-                'name' => $validated['name'],
-                'title' => $validated['name'],
-                'is_base_fee_active' => $validated['is_base_fee_active'],
-            ]);
-
-            // Vorhandene Berechtigungen entfernen
-            foreach ($this->entityMap as $key => $modelClass) {
-                BouncerFacade::disallow($role)->to(['list', 'view', 'create', 'update', 'delete'], $modelClass);
-            }
-
-            // Neue Berechtigungen setzen
-            foreach ($request->permissions as $entity => $actions) {
-                if (! isset($this->entityMap[$entity])) {
-                    continue;
-                }
-
-                $modelClass = $this->entityMap[$entity];
-
-                foreach ($actions as $action => $allowed) {
-                    if ($allowed) {
-                        BouncerFacade::allow($role)->to($action, $modelClass);
-                    }
-                }
-            }
-
-            BouncerFacade::refresh();
+            $this->roleService->update($role, $validated);
             toast_success('Role updated successfully');
         } catch (Exception $exception) {
-            Log::error('Error updating role', ['error' => $exception->getMessage()]);
             toast_error('Could not update role');
+
+            return redirect()->back()->withInput($request->input());
         }
 
         return to_route('role.index');
@@ -205,21 +153,18 @@ class RoleController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Role $role)
+    public function destroy(DeleteRoleRequest $request, Role $role): \Illuminate\Http\RedirectResponse
     {
-        if (BouncerFacade::cannot('delete', $role)) {
-            abort(403);
-        }
-
         try {
-            $role->delete();
+            $this->roleService->delete($role);
             toast_success('Role deleted successfully');
         } catch (Exception $exception) {
-            Log::error('Error deleting role', ['error' => $exception->getMessage()]);
             toast_error('Could not delete role');
+
+            return redirect()->back();
         }
 
-        return to_route('role.index')->with('success', 'Role deleted successfully.');
+        return to_route('role.index');
     }
 
     private function getPermissions(): array

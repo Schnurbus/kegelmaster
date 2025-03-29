@@ -25,7 +25,7 @@ const removePlayer = () => {
         player_id: props.playerId,
     });
 
-    removePlayerForm.post(route('matchdays.remove-player', props.matchdayId as unknown as RouteParams<string>), {
+    removePlayerForm.post(route('matchdays.remove-player', {matchday: props.matchdayId }), {
         onError: (errors) => {
             console.log('Fehler beim Absenden des Formulars:', errors);
         },

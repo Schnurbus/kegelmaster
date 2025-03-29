@@ -20,6 +20,6 @@ class ClubSelectController extends Controller
 
         Log::info('Changing current club for user {user}', ['user' => Auth::user(), 'club_id' => $club->id]);
 
-        return redirect()->back()->withCookie(cookie('currentClubId', $club->id, 1440));
+        return redirect()->back()->withCookie(cookie('currentClubId', strval($club->id), 1440));
     }
 }

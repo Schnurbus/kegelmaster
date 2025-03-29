@@ -7,8 +7,8 @@ use App\Models\CompetitionEntry;
 use App\Models\FeeEntry;
 use App\Models\Player;
 use App\Models\Transaction;
-use App\Models\User;
 use Exception;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Silber\Bouncer\BouncerFacade;
@@ -18,7 +18,7 @@ class PlayerService
     /**
      * Create player
      *
-     * @param  array {name: string, club_id: number, sex: number, active: bool, initial_balance: number, role_id: number }  $playerData
+     * @param  array  $playerData  {name: string, club_id: number, sex: number, active: bool, initial_balance: number, role_id: number }
      */
     public function createPlayer(array $playerData): ?Player
     {
@@ -38,9 +38,9 @@ class PlayerService
     }
 
     /**
-     * Create player
+     * Update player
      *
-     * @param array {?name: string, ?sex: number, ?active: boolean, ?role_id: number } $playerData
+     * @param  array  $playerData  {?name: string, ?sex: number, ?active: boolean, ?role_id: number }
      */
     public function updatePlayer(Player $player, array $playerData): ?Player
     {
@@ -70,36 +70,22 @@ class PlayerService
         }
     }
 
-    public function getPlayersWithPermissions(User $user, int $clubId)
+    /**
+     * Get players by club id
+     */
+    public function getByClubId(int $clubId): Collection
     {
-        BouncerFacade::scope()->to($clubId);
-
-        $players = Player::where('club_id', $clubId)
-            ->with('role', function ($query) {
-                $query->select('id', 'title');
-            })
-            ->orderBy('name')
+        return Player::where('club_id', $clubId)
+            ->with('role')
             ->get();
-
-        return $players->map(function ($player) use ($user) {
-            $permissions = [
-                'view' => $user->can('view', $player) || $player->user_id === $user->id,
-                'update' => $user->can('update', $player),
-                'delete' => $user->can('delete', $player),
-            ];
-            if (! $user->can('view', $player)) {
-                $player->makeHidden('balance');
-            }
-            $playerArray = $player->toArray();
-            $playerArray['can'] = $permissions;
-
-            return $playerArray;
-        });
     }
 
-    public function getPlayerStatistics(Player $player)
+    /**
+     * Get fee statistic for given player
+     */
+    public function getFeeStatistics(Player $player): Collection
     {
-        $feeStatistics = FeeEntry::join('fee_type_versions', 'fee_entries.fee_type_version_id', '=', 'fee_type_versions.id')
+        return FeeEntry::join('fee_type_versions', 'fee_entries.fee_type_version_id', '=', 'fee_type_versions.id')
             ->join('fee_types', 'fee_types.id', '=', 'fee_type_versions.fee_type_id')
             ->where('fee_entries.player_id', $player->id)
             ->selectRaw('
@@ -113,8 +99,14 @@ class PlayerService
             ->groupBy('fee_type_versions.fee_type_id', 'fee_types.name', 'fee_types.position')
             ->orderBy('fee_types.position', 'asc')
             ->get();
+    }
 
-        $competitionStatistics = CompetitionEntry::join('competition_types', 'competition_entries.competition_type_id', '=', 'competition_types.id')
+    /**
+     * Get competition stattistic for given player
+     */
+    public function getCompetitionStatistics(Player $player): Collection
+    {
+        return CompetitionEntry::join('competition_types', 'competition_entries.competition_type_id', '=', 'competition_types.id')
             ->where('competition_entries.player_id', $player->id)
             ->selectRaw('
                 competition_types.id as competition_type_id,
@@ -127,8 +119,14 @@ class PlayerService
             ->groupBy('competition_entries.competition_type_id', 'competition_types.name', 'competition_types.position', 'competition_types.id')
             ->orderBy('competition_types.position', 'asc')
             ->get();
+    }
 
-        $transactions = Transaction::where('player_id', $player->id)
+    /**
+     * Get transactions for given player
+     */
+    public function getTransactionStatistics(Player $player): Collection
+    {
+        return Transaction::where('player_id', $player->id)
             ->with([
                 'matchday' => function ($query) {
                     $query->select('id', 'date');
@@ -139,10 +137,11 @@ class PlayerService
             ])
             ->orderByDesc('date')
             ->get();
-
-        return ['fees' => $feeStatistics, 'competitions' => $competitionStatistics, 'transactions' => $transactions];
     }
 
+    /**
+     * Recalculate the balance of the given player
+     */
     public function recalculateBalance(Player $player): void
     {
         Log::debug('Recalculating player balance', ['player' => $player]);

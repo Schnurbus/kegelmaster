@@ -2,49 +2,51 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StoreCompetitionTypeRequest;
-use App\Http\Requests\UpdateCompetitionTypeRequest;
+use App\Http\Requests\CompetitionType\CreateCompetitionTypeRequest;
+use App\Http\Requests\CompetitionType\DeleteCompetitionTypeRequest;
+use App\Http\Requests\CompetitionType\EditCompetitionTypeRequest;
+use App\Http\Requests\CompetitionType\IndexCompetitionTypeRequest;
+use App\Http\Requests\CompetitionType\ShowCompetitionTypeRequest;
+use App\Http\Requests\CompetitionType\StoreCompetitionTypeRequest;
+use App\Http\Requests\CompetitionType\UpdateCompetitionTypeRequest;
 use App\Models\CompetitionType;
-use App\Models\User;
+use App\Services\CompetitionTypeService;
 use Exception;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
+use Inertia\Response;
 use Silber\Bouncer\BouncerFacade;
 
 class CompetitionTypeController extends Controller
 {
     use AuthorizesRequests;
 
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        $club = session('currentClub');
-        $user = User::findOrFail(Auth::user()->id);
+    protected CompetitionTypeService $competitionTypeService;
 
-        if (BouncerFacade::can('list', getClubScopedModel(CompetitionType::class))) {
-            $competitionTypes = CompetitionType::where('club_id', $club->id)->orderBy('position', 'asc')->get()->map(fn ($competitionType) => [
-                'id' => $competitionType->id,
-                'name' => $competitionType->name,
-                'type' => $competitionType->type,
-                'is_sex_specific' => $competitionType->is_sex_specific,
-                'description' => $competitionType->description,
-                'position' => $competitionType->position,
-                'can' => [
-                    'view' => BouncerFacade::can('view', $competitionType),
-                    'update' => BouncerFacade::can('update', $competitionType),
-                    'delete' => BouncerFacade::can('delete', $competitionType),
-                ],
-            ]);
-        }
+    /**
+     * Construct the class
+     */
+    public function __construct(CompetitionTypeService $competitionTypeService)
+    {
+        $this->competitionTypeService = $competitionTypeService;
+    }
+
+    /**
+     * List the resources
+     */
+    public function index(IndexCompetitionTypeRequest $request): Response
+    {
+        $currentClubId = session('current_club_id');
 
         return Inertia::render('competition-types/index', [
-            'competitionTypes' => $competitionTypes ?? [],
+            'competitionTypes' => $this->competitionTypeService->getByClubId($currentClubId),
             'can' => [
                 'create' => BouncerFacade::can('create', getClubScopedModel(CompetitionType::class)),
+                'delete' => BouncerFacade::can('delete', getClubScopedModel(CompetitionType::class)),
+                'update' => BouncerFacade::can('update', getClubScopedModel(CompetitionType::class)),
+                'view' => BouncerFacade::can('view', getClubScopedModel(CompetitionType::class)),
             ],
         ]);
     }
@@ -52,28 +54,33 @@ class CompetitionTypeController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function create(CreateCompetitionTypeRequest $request): Response
     {
-        BouncerFacade::authorize('create', getClubScopedModel(CompetitionType::class));
-
         return Inertia::render('competition-types/create', [
-            'club' => session('currentClub'),
+            'can' => [
+                'create' => BouncerFacade::can('create', getClubScopedModel(CompetitionType::class)),
+                'delete' => BouncerFacade::can('delete', getClubScopedModel(CompetitionType::class)),
+                'update' => BouncerFacade::can('update', getClubScopedModel(CompetitionType::class)),
+                'view' => BouncerFacade::can('view', getClubScopedModel(CompetitionType::class)),
+            ],
         ]);
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreCompetitionTypeRequest $request)
+    public function store(StoreCompetitionTypeRequest $request): RedirectResponse
     {
         $validated = $request->validated();
 
         try {
-            CompetitionType::create($validated);
+            $this->competitionTypeService->create($validated);
             toast_success('Competition type created successfully');
         } catch (Exception $exception) {
             Log::error('Error creating competition type', ['error' => $exception->getMessage()]);
             toast_error('Could not create competition type');
+
+            return redirect()->back()->withInput();
         }
 
         return to_route('competition-type.index');
@@ -82,31 +89,39 @@ class CompetitionTypeController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(CompetitionType $competitionType)
+    public function show(ShowCompetitionTypeRequest $request, CompetitionType $competitionType): Response
     {
-        BouncerFacade::authorize('view', $competitionType);
-
         return Inertia::render('competition-types/show', [
             'competitionType' => $competitionType,
+            'can' => [
+                'create' => BouncerFacade::can('create', getClubScopedModel(CompetitionType::class)),
+                'delete' => BouncerFacade::can('delete', getClubScopedModel(CompetitionType::class)),
+                'update' => BouncerFacade::can('update', getClubScopedModel(CompetitionType::class)),
+                'view' => BouncerFacade::can('view', getClubScopedModel(CompetitionType::class)),
+            ],
         ]);
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(CompetitionType $competitionType)
+    public function edit(EditCompetitionTypeRequest $request, CompetitionType $competitionType): Response
     {
-        BouncerFacade::authorize('update', $competitionType);
-
         return Inertia::render('competition-types/edit', [
             'competitionType' => $competitionType,
+            'can' => [
+                'create' => BouncerFacade::can('create', getClubScopedModel(CompetitionType::class)),
+                'delete' => BouncerFacade::can('delete', getClubScopedModel(CompetitionType::class)),
+                'update' => BouncerFacade::can('update', getClubScopedModel(CompetitionType::class)),
+                'view' => BouncerFacade::can('view', getClubScopedModel(CompetitionType::class)),
+            ],
         ]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateCompetitionTypeRequest $request, CompetitionType $competitionType)
+    public function update(UpdateCompetitionTypeRequest $request, CompetitionType $competitionType): RedirectResponse
     {
         BouncerFacade::authorize('update', $competitionType);
 
@@ -124,5 +139,18 @@ class CompetitionTypeController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(CompetitionType $competitionType) {}
+    public function destroy(DeleteCompetitionTypeRequest $request, CompetitionType $competitionType): RedirectResponse
+    {
+        try {
+            $this->competitionTypeService->delete($competitionType);
+            toast_success('Competition type deleted successfully');
+        } catch (Exception $exception) {
+            Log::error('Error deleting competition type', ['error' => $exception->getMessage()]);
+            toast_error('Could not delete competition type');
+
+            return redirect()->back();
+        }
+
+        return to_route('competition-type.index');
+    }
 }

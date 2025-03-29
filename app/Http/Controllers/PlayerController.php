@@ -2,15 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use App\Enums\PermissionType;
-use App\Http\Requests\StorePlayerRequest;
-use App\Http\Requests\UpdatePlayerRequest;
+use App\Http\Requests\Player\CreatePlayerRequest;
+use App\Http\Requests\Player\DeletePlayerRequest;
+use App\Http\Requests\Player\EditPlayerRequest;
+use App\Http\Requests\Player\IndexPlayerRequest;
+use App\Http\Requests\Player\ShowPlayerRequest;
+use App\Http\Requests\Player\StorePlayerRequest;
+use App\Http\Requests\Player\UpdatePlayerRequest;
 use App\Models\Player;
 use App\Models\Role;
-use App\Models\User;
 use App\Services\PlayerService;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
-use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use Silber\Bouncer\BouncerFacade;
 
@@ -28,26 +30,21 @@ class PlayerController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(IndexPlayerRequest $request): \Inertia\Response
     {
-        $club = session('currentClub');
-        $user = User::findOrFail(Auth::user()->id);
-
-        if (BouncerFacade::can('list', new Player(['club_id' => $club->id]))) {
-            $players = $this->playerService->getPlayersWithPermissions($user, $club->id);
-        }
-
-        $roles = Role::where('name', '!=', 'owner')->get(['title'])->map(fn ($role) => [
-            'value' => $role->title,
-            'label' => $role->title,
-        ]);
+        $currentClubId = session('current_club_id');
 
         return Inertia::render('players/index', [
-            'players' => $players ?? [],
-            'roles' => $roles ?? [],
+            'players' => fn () => $this->playerService->getByClubId($currentClubId),
+            'roles' => fn () => Role::where('scope', $currentClubId)->get()->map(fn ($role) => [
+                'value' => $role->title,
+                'label' => $role->title,
+            ]),
             'can' => [
-                // 'create' => BouncerFacade::can('create', Player::class),
-                'create' => BouncerFacade::can('create', new Player(['club_id' => $club->id])),
+                'create' => BouncerFacade::can('create', getClubScopedModel(Player::class)),
+                'view' => BouncerFacade::can('view', getClubScopedModel(Player::class)),
+                'update' => BouncerFacade::can('update', getClubScopedModel(Player::class)),
+                'delete' => BouncerFacade::can('delete', getClubScopedModel(Player::class)),
             ],
         ]);
     }
@@ -55,22 +52,17 @@ class PlayerController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function create(CreatePlayerRequest $request): \Inertia\Response
     {
-        $club = session('currentClub');
-        // BouncerFacade::authorize(PermissionType::CREATE, new Player(['club_id' => $club->id]));
-        BouncerFacade::authorize(PermissionType::CREATE, getClubScopedModel(Player::class, $club->id));
-
         return Inertia::render('players/create', [
             'roles' => Role::all(['id', 'name']),
-            'club' => session('currentClub'),
         ]);
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StorePlayerRequest $request)
+    public function store(StorePlayerRequest $request): \Illuminate\Http\RedirectResponse
     {
         $player = $this->playerService->createPlayer($request->validated());
 
@@ -86,33 +78,26 @@ class PlayerController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Player $player)
+    public function show(ShowPlayerRequest $request, Player $player): \Inertia\Response
     {
-        if (BouncerFacade::cannot('view', $player) && ! $player->user_id === Auth::user()->id) {
-            abort(403);
-        }
-
         $player->load(['user', 'role']);
 
         return Inertia::render('players/show', [
             'player' => $player,
-            'statistics' => $this->playerService->getPlayerStatistics($player),
-            'role' => $player->role,
+            'feeEntries' => $this->playerService->getFeeStatistics($player)->toArray(),
+            'competitionEntries' => $this->playerService->getCompetitionStatistics($player)->toArray(),
+            'transactions' => $this->playerService->getTransactionStatistics($player)->toArray(),
         ]);
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Player $player)
+    public function edit(EditPlayerRequest $request, Player $player): \Inertia\Response
     {
-        if (BouncerFacade::cannot('update', $player)) {
-            abort(403);
-        }
-
         return Inertia::render('players/edit', [
             'player' => $player->load('role'),
-            'roles' => Role::where('name', '!=', 'owner')->get(),
+            'roles' => Role::all(),
         ]);
     }
 
@@ -131,18 +116,6 @@ class PlayerController extends Controller
 
             return back();
         }
-        // $player->update([
-        //     'name' => $validated['name'],
-        //     'sex' => $validated['sex'],
-        //     'active' => $validated['active'],
-        //     'role_id' => $validated['role_id'],
-
-        // ]);
-
-        // if ($player->user_id) {
-        //     $role = $player->role;
-        //     BouncerFacade::sync($player->user)->roles([$role]);
-        // }
 
         return to_route('players.index');
     }
@@ -150,10 +123,8 @@ class PlayerController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Player $player)
+    public function destroy(DeletePlayerRequest $request, Player $player)
     {
-        BouncerFacade::authorize('delete', $player);
-
         if ($player->user) {
             $player->user->retract($player->role);
         }

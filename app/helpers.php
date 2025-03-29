@@ -1,7 +1,9 @@
 <?php
 
 use App\Enums\ToastType;
+use App\Models\Role;
 use Illuminate\Http\RedirectResponse;
+use Silber\Bouncer\BouncerFacade;
 
 function translations(string $json): mixed
 {
@@ -52,7 +54,7 @@ if (! function_exists('toast_error')) {
     }
 }
 
-if (! function_exists('resolveClubScopedModel')) {
+if (! function_exists('getClubScopedModel')) {
     /**
      * Erzeugt eine neue Instanz eines Models und injiziert die club_id.
      *
@@ -79,9 +81,31 @@ if (! function_exists('resolveClubScopedModel')) {
         }
 
         // Setze oder überschreibe das Attribut "club_id"
-        $attributes['club_id'] = $clubId;
+        if ($modelClass == "App\Models\Role") {
+            $role = new Role;
+            $role->scope = $clubId;
+
+            return $role;
+        } else {
+            $attributes['club_id'] = $clubId;
+        }
 
         // Erzeuge eine neue Instanz des gewünschten Models mit den angegebenen Attributen
         return new $modelClass($attributes);
+    }
+}
+
+if (! function_exists('getUserPermissions')) {
+    /**
+     * @param  string  $modelClass  Der vollqualifizierte Klassenname des Models (z.B. App\Models\Matchday)
+     */
+    function getUserPermissions(string $modelClass): array
+    {
+        return [
+            'create' => BouncerFacade::can('create', getClubScopedModel($modelClass)),
+            'delete' => BouncerFacade::can('delete', getClubScopedModel($modelClass)),
+            'update' => BouncerFacade::can('update', getClubScopedModel($modelClass)),
+            'view' => BouncerFacade::can('view', getClubScopedModel($modelClass)),
+        ];
     }
 }

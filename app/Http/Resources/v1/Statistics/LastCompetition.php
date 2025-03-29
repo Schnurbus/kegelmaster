@@ -3,7 +3,6 @@
 namespace App\Http\Resources\v1\Statistics;
 
 use App\Models\CompetitionEntry;
-use App\Models\CompetitionType;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 

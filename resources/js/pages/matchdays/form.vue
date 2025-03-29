@@ -4,48 +4,52 @@ import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { DatePicker } from '@/components/ui/date-picker';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import type { Club, Matchday } from '@/types/entities';
-import { Link, useForm } from '@inertiajs/vue3';
+import type { Matchday } from '@/types/entities';
+import { Link, useForm, usePage } from '@inertiajs/vue3';
 import { computed, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { RouteParams } from 'ziggy-js';
+import { SharedData } from '@/types';
+import { DatePickerInput } from '@/components/ui/date-picker-input';
+import { DateValue, parseDate } from '@internationalized/date';
 
 interface Props {
     matchday?: Matchday;
-    club: Club;
 }
 
 const props = defineProps<Props>();
 
+const clubId = usePage<SharedData>().props.currentClubId;
+
 const { t } = useI18n();
 
 const form = useForm({
-    club_id: props.matchday?.club_id ?? props.club?.id,
-    date: props.matchday?.date ?? null,
+    club_id: props.matchday?.club_id ?? clubId,
+    date: props.matchday?.date ?? undefined,
     notes: props.matchday?.notes ?? '',
 });
 
 // Ref für das ausgewählte Datum
-const selectedDateString = ref<string | undefined>();
+const dateValue = ref<DateValue>();
 
+console.log(props.matchday?.date);
 if (props.matchday && props.matchday.date) {
-    selectedDateString.value = form.date || undefined;
+    dateValue.value = parseDate(props.matchday.date);
 }
 
-// Watch für Änderungen an selectedDateString
-watch(selectedDateString, (newValue) => {
-    form.date = newValue || '';
+watch(dateValue, (newValue) => {
+    form.date= newValue?.toString();
 });
 
 const isEdit = computed(() => !!props.matchday);
 
 const submit = () => {
     if (isEdit.value) {
-        form.put(route('matchdays.update', props.matchday!.id as unknown as RouteParams<'matchdays.update'>));
+        form.put(route('matchdays.update', { id: props.matchday!.id }));
     } else {
         form.post(route('matchdays.store'));
     }
 };
+
 </script>
 <template>
     <Card>
@@ -53,11 +57,16 @@ const submit = () => {
         <CardContent>
             <form @submit.prevent="submit">
                 <div class="grid grid-cols-[200px_minmax(200px,1fr)] items-center gap-y-4">
-                    <Label class="font-semibold">{{ t('Name') }}</Label>
+                    <Label class="font-semibold">{{ t('Date') }}</Label>
                     <div>
-                        <DatePicker v-model="selectedDateString" />
+                        <DatePickerInput v-model:modelValue="dateValue" />
                         <p v-if="form.errors.date" class="text-xs text-red-500">{{ form.errors.date }}</p>
                     </div>
+                    <!--                    <Label class="font-semibold">{{ t('Date') }}</Label>-->
+                    <!--                    <div>-->
+                    <!--                        <DatePicker v-model="selectedDateString" />-->
+                    <!--                        <p v-if="form.errors.date" class="text-xs text-red-500">{{ form.errors.date }}</p>-->
+                    <!--                    </div>-->
                     <Label class="font-semibold">{{ t('Notes') }}</Label>
                     <div>
                         <Textarea v-model="form.notes" />

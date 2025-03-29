@@ -20,7 +20,7 @@ const { t } = useI18n();
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
-        title: page.props.currentClubName ? page.props.currentClubName : t('club'),
+        title: page.props.currentClubName ? page.props.currentClubName : t('Club'),
         href: '/dashboard',
     },
     {

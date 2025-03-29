@@ -6,8 +6,8 @@ use App\Models\DashboardLayout;
 use App\Models\Player;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
-use Inertia\Inertia;
 use Illuminate\Support\Str;
+use Inertia\Inertia;
 
 class DashboardController extends Controller
 {
@@ -15,6 +15,15 @@ class DashboardController extends Controller
     {
         $club = session('currentClub');
         $user = User::find(Auth::user()->id)->firstOrFail();
+
+        if (! $club) {
+            return Inertia::render('Dashboard', [
+                'club' => null,
+                'layout' => null,
+                'competitionType' => null,
+            ]);
+        }
+
         $player = Player::where('user_id', $user->id)
             ->where('club_id', $club->id)
             ->first();
@@ -71,7 +80,7 @@ class DashboardController extends Controller
 
         return Inertia::render('Dashboard', [
             'club' => $club,
-            'layout' => $layout ? json_decode($layout->layout) : $baseLayout,
+            'layout' => isset($layout) ? json_decode($layout->layout) : $baseLayout,
             'competitionType' => $competitionType ?? null,
         ]);
     }

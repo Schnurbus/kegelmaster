@@ -72,7 +72,7 @@ const formattedType = (type: number) => {
                             <Link
                                 v-if="props.transaction.matchday_id"
                                 class="underline"
-                                :href="route('matchdays.show', props.transaction.matchday_id as unknown as RouteParams<string>)"
+                                :href="route('matchdays.show', { id: props.transaction.matchday_id })"
                                 >{{ props.transaction.matchday ? d(props.transaction.matchday?.date) : '-' }}</Link
                             >
                             <span v-else>-</span>
@@ -82,7 +82,7 @@ const formattedType = (type: number) => {
                             <Link
                                 v-if="props.transaction.player"
                                 class="underline"
-                                :href="route('players.show', props.transaction.player_id as unknown as RouteParams<string>)"
+                                :href="route('players.show', {id: props.transaction.player_id})"
                                 >{{ props.transaction.player.name }}</Link
                             >
                             <span v-else>-</span>
