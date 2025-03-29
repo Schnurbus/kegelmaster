@@ -68,7 +68,7 @@ const breadcrumbs: BreadcrumbItem[] = [
                         <TableHeader>
                             <TableRow>
                                 <TableHead>{{ t('Name') }}</TableHead>
-                                <TableHead v-for="feeType in props.feeTypes" :key="feeType.id" class="text-right">
+                                <TableHead v-for="feeType in props.feeTypes" :key="feeType.id" class="text-right whitespace-nowrap">
                                     {{ feeType.name }}
                                 </TableHead>
                             </TableRow>
@@ -96,7 +96,7 @@ const breadcrumbs: BreadcrumbItem[] = [
                         <TableHeader>
                             <TableRow>
                                 <TableHead>{{ t('Name') }}</TableHead>
-                                <TableHead v-for="competitionType in props.competitionTypes" :key="competitionType.id" class="text-right">
+                                <TableHead v-for="competitionType in props.competitionTypes" :key="competitionType.id" class="text-right whitespace-nowrap">
                                     {{ competitionType.name }}
                                 </TableHead>
                             </TableRow>

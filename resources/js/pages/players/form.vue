@@ -5,26 +5,26 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
-import type { RoleItem } from '@/types';
-import type { Club, Player } from '@/types/entities';
-import { Link, useForm } from '@inertiajs/vue3';
+import type { RoleItem, SharedData } from '@/types';
+import type { Player } from '@/types/entities';
+import { Link, useForm, usePage } from '@inertiajs/vue3';
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { RouteParams } from 'ziggy-js';
 import InviteDialog from './inviteDialog.vue';
 
 interface Props {
     player?: Player;
     roles: RoleItem[];
-    club?: Club;
 }
 
 const props = defineProps<Props>();
 
+const current_club_id = usePage<SharedData>().props.currentClubId;
+
 const { t } = useI18n();
 
 const form = useForm({
-    club_id: props.player?.club_id ?? props.club?.id,
+    club_id: props.player?.club_id ?? current_club_id,
     name: props.player?.name ?? '',
     sex: props.player?.sex ?? null,
     initial_balance: props.player?.initial_balance ?? 0,
@@ -36,7 +36,7 @@ const isEdit = computed(() => !!props.player);
 
 const submit = () => {
     if (isEdit.value) {
-        form.put(route('players.update', props.player!.id as unknown as RouteParams<'players.update'>));
+        form.put(route('players.update', {id: props.player!.id }));
     } else {
         form.post(route('players.store'));
     }

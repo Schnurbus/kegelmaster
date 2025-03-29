@@ -10,7 +10,6 @@ const page = usePage<SharedData>();
 
 interface Props {
     permissions: Permissions;
-    club: Club;
 }
 
 const props = defineProps<Props>();

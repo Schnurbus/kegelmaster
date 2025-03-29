@@ -2,15 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StoreFeeTypeRequest;
-use App\Http\Requests\UpdateFeeTypeRequest;
+use App\Http\Requests\FeeType\CreateFeeTypeRequest;
+use App\Http\Requests\FeeType\DeleteFeeTypeRequest;
+use App\Http\Requests\FeeType\EditFeeTypeRequest;
+use App\Http\Requests\FeeType\IndexFeeTypeRequest;
+use App\Http\Requests\FeeType\ShowFeeTypeRequest;
+use App\Http\Requests\FeeType\StoreFeeTypeRequest;
+use App\Http\Requests\FeeType\UpdateFeeTypeRequest;
 use App\Models\FeeType;
-use App\Models\FeeTypeVersion;
-use App\Models\User;
+use App\Services\FeeTypeService;
 use Exception;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 use Silber\Bouncer\BouncerFacade;
@@ -19,33 +21,27 @@ class FeeTypeController extends Controller
 {
     use AuthorizesRequests;
 
+    private FeeTypeService $feeTypeService;
+
+    public function __construct(FeeTypeService $feeTypeService)
+    {
+        $this->feeTypeService = $feeTypeService;
+    }
+
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(IndexFeeTypeRequest $request)
     {
-        $club = session('currentClub');
-        $user = User::findOrFail(Auth::user()->id);
-
-        if (BouncerFacade::can('list', new FeeType(['club_id' => $club->id]))) {
-            $feeTypes = FeeType::where('club_id', $club->id)->orderBy('position', 'asc')->get()->map(fn ($feeType) => [
-                'id' => $feeType->id,
-                'name' => $feeType->name,
-                'description' => $feeType->description,
-                'amount' => $feeType->amount,
-                'position' => $feeType->position,
-                'can' => [
-                    'view' => BouncerFacade::can('view', $feeType),
-                    'update' => BouncerFacade::can('update', $feeType),
-                    'delete' => BouncerFacade::can('delete', $feeType),
-                ],
-            ]);
-        }
+        $currentClubId = session('current_club_id');
 
         return Inertia::render('fee-types/index', [
-            'feeTypes' => $feeTypes ?? [],
+            'feeTypes' => fn () => $this->feeTypeService->getByClubId($currentClubId),
             'can' => [
-                'create' => BouncerFacade::can('create', new FeeType(['club_id' => $club->id])),
+                'create' => BouncerFacade::can('create', getClubScopedModel(FeeType::class)),
+                'delete' => BouncerFacade::can('delete', getClubScopedModel(FeeType::class)),
+                'update' => BouncerFacade::can('update', getClubScopedModel(FeeType::class)),
+                'view' => BouncerFacade::can('view', getClubScopedModel(FeeType::class)),
             ],
         ]);
     }
@@ -53,37 +49,33 @@ class FeeTypeController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function create(CreateFeeTypeRequest $request)
     {
-        $club = session('currentClub');
-        BouncerFacade::authorize('create', new FeeType(['club_id' => $club->id]));
-
         return Inertia::render('fee-types/create', [
-            'club' => session('currentClub'),
+            'can' => [
+                'create' => BouncerFacade::can('create', getClubScopedModel(FeeType::class)),
+                'delete' => BouncerFacade::can('delete', getClubScopedModel(FeeType::class)),
+                'update' => BouncerFacade::can('update', getClubScopedModel(FeeType::class)),
+                'view' => BouncerFacade::can('view', getClubScopedModel(FeeType::class)),
+            ],
         ]);
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreFeeTypeRequest $request)
+    public function store(StoreFeeTypeRequest $request): \Illuminate\Http\RedirectResponse
     {
         $validated = $request->validated();
 
         try {
-            DB::transaction(function () use ($validated) {
-                $feeType = FeeType::create($validated);
-                FeeTypeVersion::create([
-                    'fee_type_id' => $feeType->id,
-                    'name' => $feeType->name,
-                    'description' => $feeType->description,
-                    'amount' => $feeType->amount,
-                ]);
-            });
+            $this->feeTypeService->create($validated);
             toast_success('Fee type created successfully');
         } catch (Exception $exception) {
             Log::error('Error creating fee type', ['error' => $exception->getMessage()]);
             toast_error('Cloud not create fee type');
+
+            return redirect()->back()->withInput($request->input());
         }
 
         return to_route('fee-type.index');
@@ -92,58 +84,67 @@ class FeeTypeController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(FeeType $feeType)
+    public function show(ShowFeeTypeRequest $request, FeeType $feeType): \Inertia\Response
     {
-        BouncerFacade::authorize('view', $feeType);
-
         return Inertia::render('fee-types/show', [
             'feeType' => $feeType,
+            'can' => [
+                'create' => BouncerFacade::can('create', getClubScopedModel(FeeType::class)),
+                'delete' => BouncerFacade::can('delete', getClubScopedModel(FeeType::class)),
+                'update' => BouncerFacade::can('update', getClubScopedModel(FeeType::class)),
+                'view' => BouncerFacade::can('view', getClubScopedModel(FeeType::class)),
+            ],
         ]);
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(FeeType $feeType)
+    public function edit(EditFeeTypeRequest $request, FeeType $feeType): \Inertia\Response
     {
-        BouncerFacade::authorize('update', $feeType);
-
         return Inertia::render('fee-types/edit', [
             'feeType' => $feeType,
+            'can' => [
+                'create' => BouncerFacade::can('create', getClubScopedModel(FeeType::class)),
+                'delete' => BouncerFacade::can('delete', getClubScopedModel(FeeType::class)),
+                'update' => BouncerFacade::can('update', getClubScopedModel(FeeType::class)),
+                'view' => BouncerFacade::can('view', getClubScopedModel(FeeType::class)),
+            ],
         ]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateFeeTypeRequest $request, FeeType $feeType)
+    public function update(UpdateFeeTypeRequest $request, FeeType $feeType): \Illuminate\Http\RedirectResponse
     {
         $validated = $request->validated();
 
-        DB::transaction(function () use ($validated, $feeType) {
-            if ($feeType->amount !== $validated['amount']) {
-                FeeTypeVersion::create([
-                    ...$validated,
-                    'amount' => $validated['amount'],
-                    'fee_type_id' => $feeType->id,
-                ]);
-            }
+        try {
+            $this->feeTypeService->update($feeType, $validated);
+            toast_success('Fee type updated successfully');
+        } catch (Exception $exception) {
+            Log::error('Error updating fee type', ['error' => $exception->getMessage()]);
+            toast_error('Cloud not update fee type');
 
-            $feeType->update([
-                ...$validated,
-                'amount' => $validated['amount'],
-            ]);
-        });
+            return redirect()->back()->withInput($request->input());
+        }
 
-        return to_route('fee-type.index')->with('success', 'Fee Type updated successfully!');
+        return to_route('fee-type.index');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(FeeType $feeType)
+    public function destroy(DeleteFeeTypeRequest $request, FeeType $feeType): \Illuminate\Http\RedirectResponse
     {
-        $feeType->delete();
+        try {
+            $feeType->delete();
+            toast_success('Fee type deleted successfully');
+        } catch (Exception $exception) {
+            Log::error('Error deleting fee type', ['error' => $exception->getMessage()]);
+            toast_error('Cloud not delete fee type');
+        }
 
         return to_route('fee-type.index');
     }

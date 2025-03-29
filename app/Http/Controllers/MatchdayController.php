@@ -2,21 +2,25 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\AddPlayerToMatchdayRequest;
-use App\Http\Requests\RemovePlayerFromMatchdayRequest;
-use App\Http\Requests\StoreMatchdayRequest;
-use App\Http\Requests\UpdateMatchdayRequest;
+use App\Http\Requests\Matchday\AddPlayerToMatchdayRequest;
+use App\Http\Requests\Matchday\CreateMatchdayRequest;
+use App\Http\Requests\Matchday\DeleteMatchdayRequest;
+use App\Http\Requests\Matchday\EditMatchdayRequest;
+use App\Http\Requests\Matchday\IndexMatchdayRequest;
+use App\Http\Requests\Matchday\RemovePlayerFromMatchdayRequest;
+use App\Http\Requests\Matchday\ShowMatchdayRequest;
+use App\Http\Requests\Matchday\StoreMatchdayRequest;
+use App\Http\Requests\Matchday\UpdateMatchdayRequest;
 use App\Models\CompetitionEntry;
 use App\Models\CompetitionType;
 use App\Models\FeeEntry;
 use App\Models\FeeType;
 use App\Models\Matchday;
 use App\Models\Player;
-use App\Models\User;
+use App\Services\FeeTypeService;
 use App\Services\MatchdayService;
 use Exception;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 use Silber\Bouncer\BouncerFacade;
@@ -27,27 +31,28 @@ class MatchdayController extends Controller
 
     protected $matchdayService;
 
-    public function __construct(MatchdayService $matchdayService)
+    protected $feeTypeService;
+
+    public function __construct(MatchdayService $matchdayService, FeeTypeService $feeTypeService)
     {
         $this->matchdayService = $matchdayService;
+        $this->feeTypeService = $feeTypeService;
     }
 
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(IndexMatchdayRequest $request): \Inertia\Response
     {
-        $club = session('currentClub');
-        $user = User::findOrFail(Auth::user()->id);
-
-        if ($user->can('list', getClubScopedModel(Matchday::class))) {
-            $matchdays = $this->matchdayService->getMatchdaysWithPermissions($user, $club->id);
-        }
+        $currentClubId = session('current_club_id');
 
         return Inertia::render('matchdays/index', [
-            'matchdays' => $matchdays ?? [],
+            'matchdays' => fn () => $this->matchdayService->getByClubId($currentClubId),
             'can' => [
                 'create' => BouncerFacade::can('create', getClubScopedModel(Matchday::class)),
+                'delete' => BouncerFacade::can('delete', getClubScopedModel(Matchday::class)),
+                'update' => BouncerFacade::can('update', getClubScopedModel(Matchday::class)),
+                'view' => BouncerFacade::can('view', getClubScopedModel(Matchday::class)),
             ],
         ]);
     }
@@ -55,42 +60,35 @@ class MatchdayController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function create(CreateMatchdayRequest $request): \Inertia\Response
     {
-        $club = session('currentClub');
-        BouncerFacade::authorize('create', getClubScopedModel(Matchday::class));
-
-        return Inertia::render('matchdays/create', [
-            'club' => $club,
-        ]);
+        return Inertia::render('matchdays/create');
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreMatchdayRequest $request)
+    public function store(StoreMatchdayRequest $request): \Illuminate\Http\RedirectResponse
     {
         $validated = $request->validated();
 
         try {
             $matchday = $this->matchdayService->createMatchday($validated);
             toast_success('Matchday created successfully');
+
+            return to_route('matchdays.edit', $matchday);
         } catch (Exception $execption) {
             toast_error('Could not create matchday');
-            Log::error('Error creating matchday', ['error' => $execption->getMessage()]);
-            redirect()->back();
-        }
 
-        return to_route('matchdays.edit', $matchday);
+            return redirect()->back()->withInput($request->input());
+        }
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Matchday $matchday)
+    public function show(ShowMatchdayRequest $request, Matchday $matchday): \Inertia\Response
     {
-        BouncerFacade::authorize('view', $matchday);
-
         $feeEntries = FeeEntry::where('matchday_id', $matchday->id)
             ->with(['feeTypeVersion:id,fee_type_id'])
             ->get(['id', 'matchday_id', 'amount', 'player_id', 'fee_type_version_id']);
@@ -112,7 +110,7 @@ class MatchdayController extends Controller
             ->get(['id', 'matchday_id', 'amount', 'player_id', 'competition_type_id']);
 
         return Inertia::render('matchdays/show', [
-            'club' => session('currentClub'),
+            'club' => $matchday->club,
             'matchday' => $matchday,
             'players' => $players,
             'notAttachedPlayers' => $notAttachedPlayers,
@@ -126,15 +124,8 @@ class MatchdayController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Matchday $matchday)
+    public function edit(EditMatchdayRequest $request, Matchday $matchday): \Inertia\Response
     {
-        BouncerFacade::authorize('update', $matchday);
-
-        $feeEntries = FeeEntry::where('matchday_id', $matchday->id)
-            ->with(['feeTypeVersion:id,fee_type_id'])
-            ->get(['id', 'matchday_id', 'amount', 'player_id', 'fee_type_version_id']);
-
-        $players = $matchday->players->toArray();
         $notAttachedPlayers = Player::where('club_id', $matchday->club_id)
             ->whereNotIn('id', function ($query) use ($matchday) {
                 $query->select('player_id')
@@ -143,19 +134,18 @@ class MatchdayController extends Controller
             })
             ->get();
 
-        $feeTypes = FeeType::where('club_id', $matchday->club_id)->orderBy('position')->with('latestVersion')->get();
-
         $competitionTypes = CompetitionType::where('club_id', $matchday->club_id)->orderBy('position')->get();
         $competitionEntries = CompetitionEntry::where('matchday_id', $matchday->id)
             ->get(['id', 'matchday_id', 'amount', 'player_id', 'competition_type_id']);
 
         return Inertia::render('matchdays/edit', [
-            'club' => session('currentClub'),
+            'club' => $matchday->club,
             'matchday' => $matchday,
-            'players' => $players,
+            'players' => fn () => $matchday->players->toArray(),
             'notAttachedPlayers' => $notAttachedPlayers,
-            'feeTypes' => $feeTypes,
-            'feeEntries' => $feeEntries,
+            'feeTypes' => fn () => $this->feeTypeService->getFeeTypesForMatchday($matchday)->toArray(),
+            // 'feeEntries' => $feeEntries,
+            'feeEntries' => $matchday->feeEntries->toArray(),
             'competitionTypes' => $competitionTypes,
             'competitionEntries' => $competitionEntries,
         ]);
@@ -164,7 +154,7 @@ class MatchdayController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateMatchdayRequest $request, Matchday $matchday)
+    public function update(UpdateMatchdayRequest $request, Matchday $matchday): \Illuminate\Http\RedirectResponse
     {
         $validated = $request->validated();
 
@@ -174,7 +164,8 @@ class MatchdayController extends Controller
         } catch (Exception $execption) {
             toast_error('Could not update matchday');
             Log::error('Error updating matchday', ['error' => $execption->getMessage()]);
-            redirect()->back();
+
+            return redirect()->back()->withInput($request->input());
         }
 
         return to_route('matchdays.index');
@@ -183,10 +174,8 @@ class MatchdayController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Matchday $matchday)
+    public function destroy(DeleteMatchdayRequest $request, Matchday $matchday)
     {
-        BouncerFacade::authorize('delete', $matchday);
-
         if ($this->matchdayService->deleteMatchday($matchday)) {
             toast_success('Matchday deleted successfully');
         } else {

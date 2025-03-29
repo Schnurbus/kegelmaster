@@ -5,24 +5,25 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
-import type { Club, CompetitionType } from '@/types/entities';
-import { Link, useForm } from '@inertiajs/vue3';
+import type { CompetitionType } from '@/types/entities';
+import { Link, useForm, usePage } from '@inertiajs/vue3';
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { RouteParams } from 'ziggy-js';
+import type { SharedData } from '@/types';
 
 interface Props {
     competitionType?: CompetitionType;
-    club?: Club;
 }
 
 const props = defineProps<Props>();
+
+const current_club_id = usePage<SharedData>().props.currentClubId;
 
 const { t } = useI18n();
 
 const form = useForm({
     fee_type_id: props.competitionType?.id ?? null,
-    club_id: props.competitionType?.club_id ?? props.club?.id,
+    club_id: props.competitionType?.club_id ?? current_club_id,
     name: props.competitionType?.name ?? '',
     description: props.competitionType?.description ?? '',
     type: props.competitionType?.type ?? null,
@@ -34,7 +35,7 @@ const isEdit = computed(() => !!props.competitionType);
 
 const submit = () => {
     if (isEdit.value) {
-        form.put(route('competition-type.update', props.competitionType!.id as unknown as RouteParams<'competition-type.update'>));
+        form.put(route('competition-type.update', {id: props.competitionType!.id }));
     } else {
         form.post(route('competition-type.store'));
     }

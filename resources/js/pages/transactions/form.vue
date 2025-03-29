@@ -6,19 +6,20 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
-import type { Club, Player, Transaction } from '@/types/entities';
-import { Link, useForm } from '@inertiajs/vue3';
+import type { Player, Transaction } from '@/types/entities';
+import { Link, useForm, usePage } from '@inertiajs/vue3';
 import { computed, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { RouteParams } from 'ziggy-js';
+import { SharedData } from '@/types';
 
 interface Props {
     players: Player[];
-    transaction: Transaction | null;
-    club?: Club;
+    transaction?: Transaction;
 }
 
 const props = defineProps<Props>();
+
+const currentClubId = usePage<SharedData>().props.currentClubId;
 
 const { t } = useI18n();
 
@@ -31,7 +32,7 @@ const today = () => {
 };
 
 const form = useForm({
-    club_id: props.transaction?.club_id ?? props.club?.id,
+    club_id: props.transaction?.club_id ?? currentClubId,
     type: props.transaction?.type ?? null,
     player_id: props.transaction?.player_id ?? null,
     amount: props.transaction?.amount ?? 0,
@@ -50,7 +51,7 @@ const isEdit = computed(() => !!props.transaction);
 
 const submit = () => {
     if (isEdit.value) {
-        form.put(route('transactions.update', props.transaction!.id as unknown as RouteParams<'transactions.update'>));
+        form.put(route('transactions.update', {id:  props.transaction!.id }));
     } else {
         form.post(route('transactions.store'));
     }

@@ -1,4 +1,3 @@
-import DropdownAction from '@/components/tables/data-table-dropdown.vue';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import i18n from '@/i18n';
@@ -71,13 +70,6 @@ export const columns: ColumnDef<Player>[] = [
         cell: ({ row }) => {
             const balance = Number.parseFloat(row.getValue('balance'));
             return h('div', { class: 'text-right font-medium' }, isNaN(balance) ? '-' : i18n.global.n(balance, 'currency'));
-        },
-    },
-    {
-        id: 'actions',
-        enableHiding: false,
-        cell: ({ row }) => {
-            return h(DropdownAction, { class: 'print:hidden', id: row.original.id, routeName: 'players', can: row.original.can });
         },
     },
 ];

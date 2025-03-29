@@ -45,6 +45,8 @@ const filter = [
         ],
     },
 ];
+
+console.log(props.can);
 </script>
 
 <template>

@@ -13,12 +13,11 @@ import {
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import type { CompetitionEntry, CompetitionType, Matchday, Player } from '@/types/entities';
+import type { CompetitionEntry, CompetitionType, FeeEntry, Matchday, Player } from '@/types/entities';
 import { useForm } from '@inertiajs/vue3';
 import { Check, Pencil, Trash2, X } from 'lucide-vue-next';
 import { computed, nextTick, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { RouteParams } from 'ziggy-js';
 
 interface Props {
     matchday: Matchday;
@@ -32,12 +31,27 @@ const props = defineProps<Props>();
 const { t } = useI18n();
 
 const competitionEntryMap = computed(() => {
-    const map: { [playerId: number]: { [competitionTypeId: number]: CompetitionEntry } } = {};
-    props.competitionEntries.forEach((entry) => {
-        if (!map[entry.player_id]) {
-            map[entry.player_id] = {};
-        }
-        map[entry.player_id][entry.competition_type_id] = entry;
+    const map: { [playerId: number]: { [competitionTypeId: number]: Partial<CompetitionEntry> } } = {};
+    props.players.forEach((player) => {
+        props.competitionTypes.forEach((competitionType) => {
+            if (!map[player.id]) {
+                map[player.id] = {};
+            }
+
+            const competitionEntry = props.competitionEntries.find(
+                (entry) => entry.competition_type_id === competitionType.id && entry.player_id === player.id,
+            );
+
+            map[player.id][competitionType.id] = competitionEntry
+                ? competitionEntry
+                : {
+                    matchday_id: props.matchday.id,
+                    player_id: player.id,
+                    competition_type_id: competitionType.id,
+                    amount: 0,
+                };
+
+        });
     });
     return map;
 });
@@ -61,13 +75,6 @@ async function setFocusToId(id: number) {
 }
 
 const startEditing = (playerId: number) => {
-    form.entries = Object.values(competitionEntryMap.value[playerId]).map((entry) => ({
-        id: entry.id,
-        matchday_id: props.matchday.id,
-        competition_type_id: entry.competition_type_id,
-        player_id: playerId,
-        amount: entry.amount,
-    }));
     editingRows.value[playerId] = true;
     isRowEditing.value = true;
     setFocusToId(playerId);
@@ -80,7 +87,14 @@ const cancelEditing = (playerId: number) => {
 };
 
 const saveRow = async (playerId: number) => {
-    if (form.entries.length === 0) return;
+    form.entries = Object.values(competitionEntryMap.value[playerId]).map((entry) => ({
+        id: entry.id || undefined,
+        player_id: entry.player_id!,
+        competition_type_id: entry.competition_type_id!,
+        matchday_id: entry.matchday_id!,
+        amount: entry.amount || 0,
+    }));
+
 
     form.put(route('competition-entries.bulk-update', { matchday: props.matchday.id }), {
         preserveScroll: true,
@@ -97,12 +111,8 @@ const removePlayer = (playerId: number) => {
         player_id: playerId,
     });
 
-    removePlayerForm.post(route('matchdays.remove-player', props.matchday.id as unknown as RouteParams<string>));
+    removePlayerForm.post(route('matchdays.remove-player', {id: props.matchday.id }));
 };
-const getEntryById = (id: number) => {
-    return form.entries.find((entry) => entry.id === id);
-};
-
 const sortedPlayers = computed(() => [...props.players].sort((a, b) => (a.name < b.name ? -1 : 1)));
 </script>
 <template>
@@ -128,9 +138,10 @@ const sortedPlayers = computed(() => [...props.players].sort((a, b) => (a.name <
                     <Input
                         v-if="editingRows[player.id]"
                         :id="'input_' + player.id + '_' + index"
-                        v-model="getEntryById(competitionEntryMap[player.id][competitionType.id].id)!.amount"
+                        v-model="competitionEntryMap[player.id][competitionType.id].amount"
                         type="number"
                         class="text-right"
+                        :v-focus="index === 0"
                     />
                     <span v-else>
                         {{ competitionEntryMap[player.id][competitionType.id].amount ?? '—' }}

@@ -12,7 +12,9 @@ class CompetitionEntryService
     /**
      * Create a competition entry
      *
-     * @param  array {matchday_id: number, fee_type_version_id: number, player_id: number, amount: number}  $competitionEntryData
+     * @param  array  $competitionEntryData  {matchday_id: number, fee_type_version_id: number, player_id: number, amount: number}
+     *
+     * @throws Exception
      */
     public function createCompetitionEntry(array $competitionEntryData): ?CompetitionEntry
     {
@@ -24,15 +26,14 @@ class CompetitionEntryService
             return $competitionEntry;
         } catch (Exception $exception) {
             Log::error('Error creating competition enty', ['error' => $exception->getMessage()]);
-
-            return null;
+            throw new Exception($exception->getMessage());
         }
     }
 
     /**
      * Update competition entry
      *
-     * @param  array {matchday_id: number, competition_type_id: number, player_id: number, amount: number}  $competitionEntryData
+     * @param  array  $competitionEntryData  {matchday_id: number, competition_type_id: number, player_id: number, amount: number}
      */
     public function updateCompetitionEntry(CompetitionEntry $competitionEntry, array $competitionEntryData): ?CompetitionEntry
     {
@@ -57,6 +58,8 @@ class CompetitionEntryService
 
     /**
      * Delete competition entry
+     *
+     * @throws Exception
      */
     public function deleteCompetitionEntry(CompetitionEntry $competitionEntry): bool
     {
@@ -67,8 +70,7 @@ class CompetitionEntryService
             return true;
         } catch (Exception $exception) {
             Log::error('Error deleting fee enty', ['error' => $exception->getMessage()]);
-
-            return false;
+            throw new Exception($exception->getMessage());
         }
     }
 }

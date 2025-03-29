@@ -1,4 +1,3 @@
-import DropdownAction from '@/components/tables/data-table-dropdown.vue';
 import { Button } from '@/components/ui/button';
 import i18n from '@/i18n';
 import type { Matchday } from '@/types/entities';
@@ -39,12 +38,5 @@ export const columns: ColumnDef<Matchday>[] = [
             );
         },
         cell: ({ row }) => i18n.global.n(row.getValue('players_count')),
-    },
-    {
-        id: 'actions',
-        enableHiding: false,
-        cell: ({ row }) => {
-            return h(DropdownAction, { id: row.original.id, routeName: 'matchdays', can: row.original.can });
-        },
     },
 ];

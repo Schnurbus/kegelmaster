@@ -26,7 +26,7 @@ const form = useForm({
 });
 
 const submit = () => {
-    form.post(route('players.invite.store', props.playerId as unknown as RouteParams<'players.invite.store'>), {
+    form.post(route('players.invite.store', {player: props.playerId }), {
         onSuccess: () => {
             router.visit(route('players.index'));
         },

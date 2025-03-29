@@ -12,22 +12,31 @@ use Illuminate\Support\Facades\Log;
 
 class FeeEntryController extends Controller
 {
-    public function __construct(private FeeEntryService $feeEntryService) {}
+    private FeeEntryService $feeEntryService;
+
+    public function __construct(FeeEntryService $feeEntryService)
+    {
+        $this->feeEntryService = $feeEntryService;
+    }
 
     /**
      * Handle the incoming request.
      */
-    public function __invoke(StoreFeeEntryRequest $request, Matchday $matchday)
+    public function __invoke(StoreFeeEntryRequest $request, Matchday $matchday): \Illuminate\Http\RedirectResponse
     {
         try {
             $validated = $request->validated();
             Log::debug('Updating fee entries', ['data' => $validated]);
             foreach ($validated['entries'] as $entry) {
-                $feeEntry = FeeEntry::find($entry['id']);
-                if (! $feeEntry) {
-                    abort(404);
+                if (isset($entry['id'])) {
+                    $feeEntry = FeeEntry::find($entry['id']);
+                    if (! $feeEntry) {
+                        abort(404);
+                    }
+                    $this->feeEntryService->updateFeeEntry($feeEntry, $entry);
+                } else {
+                    $this->feeEntryService->createFeeEntry($entry);
                 }
-                $this->feeEntryService->updateFeeEntry($feeEntry, $entry);
             }
             toast_success('Entries updated successfully');
         } catch (Exception $exception) {
