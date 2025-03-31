@@ -35,18 +35,19 @@ interface CompetitionStatistics {
 const data = ref<CompetitionStatistics>();
 const loading = ref(true);
 
+
 const fetchData = async () => {
     if (!props.competition_type_id) {
         return;
     }
     loading.value = true;
     try {
-        const response = await fetch(route('api.statistics.last-competition', { id: props.competition_type_id }));
+        const response = await fetch(route('api.v1.competitions.last', { competitionType: props.competition_type_id }));
         if (!response.ok) {
             throw new Error(`HTTP error! Status: ${response.status}`);
         }
         const jsonData = await response.json();
-        data.value = jsonData.data;
+        data.value = jsonData;
     } catch (error) {
         console.error('Fehler beim Laden der Statistics:', error);
     } finally {
@@ -67,13 +68,9 @@ watch(
 </script>
 <template>
     <div class="relative flex h-[250px] flex-col rounded-xl border border-sidebar-border/70 dark:border-sidebar-border">
-        <div class="vue-draggable-handle flex justify-between p-4">
-            <div class="text-sm font-semibold">
-                {{ data?.competition_type.name }}
-            </div>
-            <div>X</div>
+        <div class="vue-draggable-handle flex justify-between p-4 text-sm font-semibold">
+            {{ data?.competition_type.name }}
         </div>
-        <!-- <div class="flex w-full flex-1 items-center justify-center p-2"> -->
         <div v-if="data" class="no-drag flex flex-1 items-center justify-center p-4">
             <Table class="w-full">
                 <TableHeader>

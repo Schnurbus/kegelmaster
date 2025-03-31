@@ -17,7 +17,7 @@ class CompetitionTypeService
         try {
             return CompetitionType::create($data);
         } catch (\Exception $exception) {
-            throw new \Exception('Error creating competition type', ['error' => $exception->getMessage()]);
+            throw new \Exception($exception->getMessage());
         }
     }
 
@@ -31,7 +31,7 @@ class CompetitionTypeService
         try {
             return $competitionType->delete();
         } catch (\Exception $exception) {
-            throw new \Exception('Error deleting competition type', ['error' => $exception->getMessage()]);
+            throw new \Exception($exception->getMessage());
         }
     }
 

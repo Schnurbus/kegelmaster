@@ -2,10 +2,8 @@
 
 namespace Database\Factories;
 
-use App\Models\Club;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Silber\Bouncer\BouncerFacade;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Club>
@@ -19,23 +17,17 @@ class ClubFactory extends Factory
      */
     public function definition(): array
     {
+        // $user = User::factory()->create();
+        $user = User::find(1);
+
+        $balance = $this->faker->randomFloat(2, 100, 1000);
+
         return [
-            //
+            'name' => $this->faker->name(),
+            'initial_balance' => $balance,
+            'balance' => $balance,
+            'base_fee' => $this->faker->randomNumber() + 1,
+            'user_id' => $user->id,
         ];
-    }
-
-    public function configure(): static
-    {
-        return $this->afterCreating(function (Club $club) {
-            BouncerFacade::scope()->to($club->id);
-
-            $user = User::findOrFail($club->user_id);
-            $owner = BouncerFacade::role()->firstOrCreate([
-                'name' => 'owner',
-            ]);
-
-            BouncerFacade::allow($owner)->everything();
-            $user->assign($owner);
-        });
     }
 }

@@ -11,6 +11,8 @@ import { Link, useForm, usePage } from '@inertiajs/vue3';
 import { computed, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { SharedData } from '@/types';
+import { DatePickerInput } from '@/components/ui/date-picker-input';
+import { DateValue, parseDate, today } from '@internationalized/date';
 
 interface Props {
     players: Player[];
@@ -23,13 +25,13 @@ const currentClubId = usePage<SharedData>().props.currentClubId;
 
 const { t } = useI18n();
 
-const today = () => {
-    const date = new Date();
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`;
-};
+// const today = () => {
+//     const date = new Date();
+//     const year = date.getFullYear();
+//     const month = String(date.getMonth() + 1).padStart(2, '0');
+//     const day = String(date.getDate()).padStart(2, '0');
+//     return `${year}-${month}-${day}`;
+// };
 
 const form = useForm({
     club_id: props.transaction?.club_id ?? currentClubId,
@@ -37,11 +39,22 @@ const form = useForm({
     player_id: props.transaction?.player_id ?? null,
     amount: props.transaction?.amount ?? 0,
     auto_tip: true,
-    date: props.transaction?.date ?? today(),
+    date: props.transaction?.date,
     notes: props.transaction?.notes ?? '',
 });
 
 const selectedDateString = ref<string | undefined>(form.date);
+const dateValue = ref<DateValue>();
+
+if (props.transaction && props.transaction.date) {
+    dateValue.value = parseDate(props.transaction.date);
+} else {
+    dateValue.value = today('Europe/Berlin');
+}
+
+watch(dateValue, (newValue) => {
+    form.date= newValue?.toString() ?? "";
+});
 
 watch(selectedDateString, (newValue) => {
     form.date = newValue || '';
@@ -107,7 +120,7 @@ const submit = () => {
                     </div>
                     <Label class="font-semibold">{{ t('Date') }}</Label>
                     <div>
-                        <DatePicker v-model="selectedDateString" />
+                        <DatePickerInput v-model:modelValue="dateValue" />
                         <p v-if="form.errors.date" class="text-xs text-red-500">{{ form.errors.date }}</p>
                     </div>
                     <Label class="font-semibold">{{ t('Notes') }}</Label>

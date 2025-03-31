@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\DashboardLayoutStoreRequest;
 use App\Models\DashboardLayout;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
@@ -12,7 +13,7 @@ class DashboardLayoutController extends Controller
     /**
      * Handle the incoming request.
      */
-    public function __invoke(DashboardLayoutStoreRequest $request)
+    public function __invoke(DashboardLayoutStoreRequest $request): RedirectResponse
     {
         $validated = $request->validated();
 

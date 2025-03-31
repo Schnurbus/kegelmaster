@@ -31,7 +31,6 @@ const form = useForm({
 // Ref für das ausgewählte Datum
 const dateValue = ref<DateValue>();
 
-console.log(props.matchday?.date);
 if (props.matchday && props.matchday.date) {
     dateValue.value = parseDate(props.matchday.date);
 }

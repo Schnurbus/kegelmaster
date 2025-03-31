@@ -1,21 +1,28 @@
 <?php
 
-namespace App\Http\Resources\v1\Statistics;
+namespace App\Http\Controllers\Api\v1\Dashboard;
 
+use App\Http\Controllers\Controller;
 use App\Models\CompetitionEntry;
-use Illuminate\Http\Request;
-use Illuminate\Http\Resources\Json\JsonResource;
+use App\Models\CompetitionType;
+use App\Models\Matchday;
+use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Http\JsonResponse;
+use Silber\Bouncer\BouncerFacade;
 
-class LastCompetition extends JsonResource
+class CompetitionController extends Controller
 {
     /**
-     * Transform the resource into an array.
+     * Get the competition results for the last matchday
      *
-     * @return array<string, mixed>
+     * @param CompetitionType $competitionType
+     * @return array|JsonResponse
+     * @throws AuthorizationException
      */
-    public function toArray(Request $request): array
+    public function last(CompetitionType $competitionType): array|JsonResponse
     {
-        $competitionType = $this->resource;
+        BouncerFacade::authorize('view',
+            getClubScopedModel(Matchday::class, $competitionType->club_id));
 
         $lastEntry = CompetitionEntry::join('matchdays', 'competition_entries.matchday_id', '=', 'matchdays.id')
             ->where('competition_entries.competition_type_id', $competitionType->id)
@@ -36,7 +43,7 @@ class LastCompetition extends JsonResource
             ->get();
 
         $grouped = $competitionType->is_sex_specific ? $entries->groupBy(function ($entry) {
-            return $entry->player && isset($entry->player->sex) ? $entry->player->sex : 'unknown';
+            return $entry->player->sex ?? 'unknown';
         }) : ['all' => $entries];
 
         $results = [];
@@ -47,7 +54,7 @@ class LastCompetition extends JsonResource
             ];
 
             foreach ($groupEntries as $entry) {
-                if (! $entry->player) {
+                if (! isset($entry->player)) {
                     continue;
                 }
 
@@ -81,10 +88,10 @@ class LastCompetition extends JsonResource
             $results[$groupKey] = $resultData;
         }
 
-        return [
+        return \Response::json([
             'matchday_id' => $lastMatchdayId,
             'competition_type' => $competitionType,
             'results' => $results,
-        ];
+        ]);
     }
 }
