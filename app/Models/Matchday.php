@@ -74,7 +74,10 @@ class Matchday extends Model
 
     public function players(): BelongsToMany
     {
-        return $this->belongsToMany(Player::class, 'matchday_player');
+        // return $this->belongsToMany(Player::class, 'matchday_player')->withTimestamps();
+        // return $this->belongsToMany(Player::class, 'matchday_player')->withPivot('position');
+        return $this->belongsToMany(Player::class, 'matchday_player')->withPivot('created_at');
+        // return $this->belongsToMany(Player::class, 'matchday_player');
     }
 
     public function feeTypeVersions(): BelongsToMany

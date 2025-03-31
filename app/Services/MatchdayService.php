@@ -131,8 +131,10 @@ class MatchdayService
         }
 
         try {
+            // $numPlayers = $matchday->players()->count();
+            // $matchday->players()->attach($player, ['position' => $numPlayers + 1]);
             $matchday->players()->attach($player);
-            $matchday->loadMissing('feeTypeVersions', 'club.competitionTypes');
+            // $matchday->loadMissing('feeTypeVersions', 'club.competitionTypes');
 
             return true;
         } catch (Exception $exception) {

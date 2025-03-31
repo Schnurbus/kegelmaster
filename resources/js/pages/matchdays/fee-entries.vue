@@ -131,7 +131,7 @@ const removePlayer = (playerId: number) => {
     removePlayerForm.post(route('matchdays.remove-player', { id: props.matchday.id }));
 };
 
-const sortedPlayers = computed(() => [...props.players].sort((a, b) => (a.name < b.name ? -1 : 1)));
+// const sortedPlayers = computed(() => [...props.players].sort((a, b) => (a.name < b.name ? -1 : 1)));
 const sortedFeeTypes = computed(() => [...props.feeTypes].sort((a, b) => (a.position < b.position ? -1 : 1)));
 
 </script>
@@ -147,7 +147,7 @@ const sortedFeeTypes = computed(() => [...props.feeTypes].sort((a, b) => (a.posi
             </TableRow>
         </TableHeader>
         <TableBody>
-            <TableRow v-for="player in sortedPlayers" :key="player.id">
+            <TableRow v-for="player in props.players" :key="player.id">
                 <TableCell class="font-medium">{{ player.name }}</TableCell>
 
                 <TableCell v-for="(feeType, index) in sortedFeeTypes" :key="feeType.id" class="text-right">
