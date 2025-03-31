@@ -15,12 +15,6 @@ use App\Http\Controllers\RoleController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Middleware\LoadCurrentClubSetting;
 use App\Http\Middleware\ScopeBouncer;
-use App\Http\Resources\v1\Statistics\Balance;
-use App\Http\Resources\v1\Statistics\ClubTransactions;
-use App\Http\Resources\v1\Statistics\LastCompetition;
-use App\Models\Club;
-use App\Models\CompetitionType;
-use App\Models\Player;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -40,20 +34,6 @@ Route::middleware(['auth', 'verified', LoadCurrentClubSetting::class, ScopeBounc
     // UI Helper routes
     Route::post('/set-current-club', ClubSelectController::class)->name('set-club');
     Route::post('/save-dashboard', DashboardLayoutController::class)->name('save-dashboard');
-
-    // Dashboard API routes
-    Route::get('/api/v1/statistics/club-transactions/{id}', function (string $id) {
-        return new ClubTransactions(Club::findOrFail($id));
-    })->name('api.statistics.club.transactions');
-    Route::get('/api/v1/statistics/last-competition/{id}', function (string $id) {
-        return new LastCompetition(CompetitionType::findOrFail($id));
-    })->name('api.statistics.last-competition');
-    Route::get('/api/v1/statistics/club-balance/{id}', function (string $id) {
-        return new Balance(Club::findOrFail($id));
-    })->name('api.statistics.club.balance');
-    Route::get('/api/v1/statistics/player-balance/{id}', function (string $id) {
-        return new Balance(Player::findOrFail($id));
-    })->name('api.statistics.player.balance');
 
     // Resource routes
     Route::resource('/club', ClubController::class);
