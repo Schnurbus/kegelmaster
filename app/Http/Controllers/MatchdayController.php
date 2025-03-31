@@ -93,10 +93,6 @@ class MatchdayController extends Controller
             ->with(['feeTypeVersion:id,fee_type_id'])
             ->get(['id', 'matchday_id', 'amount', 'player_id', 'fee_type_version_id']);
 
-        $players = Player::whereHas('feeEntries', function ($query) use ($matchday) {
-            $query->where('matchday_id', $matchday->id);
-        })->get();
-
         $notAttachedPlayers = Player::where('club_id', $matchday->club_id)
             ->whereDoesntHave('feeEntries', function ($query) use ($matchday) {
                 $query->where('matchday_id', $matchday->id);
@@ -112,7 +108,7 @@ class MatchdayController extends Controller
         return Inertia::render('matchdays/show', [
             'club' => $matchday->club,
             'matchday' => $matchday,
-            'players' => $players,
+            'players' => fn () => $matchday->players()->orderByPivot('created_at')->get()->toArray(),
             'notAttachedPlayers' => $notAttachedPlayers,
             'feeTypes' => $feeTypes,
             'feeEntries' => $feeEntries,
@@ -141,7 +137,7 @@ class MatchdayController extends Controller
         return Inertia::render('matchdays/edit', [
             'club' => $matchday->club,
             'matchday' => $matchday,
-            'players' => fn () => $matchday->players->toArray(),
+            'players' => fn () => $matchday->players()->orderByPivot('created_at')->get()->toArray(),
             'notAttachedPlayers' => $notAttachedPlayers,
             'feeTypes' => fn () => $this->feeTypeService->getFeeTypesForMatchday($matchday)->toArray(),
             // 'feeEntries' => $feeEntries,
