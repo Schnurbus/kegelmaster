@@ -15,15 +15,18 @@ class DashboardController extends Controller
         $currentClubId = session('current_club_id');
         /** @var User $user */
         $user = Auth::user();
-        $player = Player::where('club_id', $currentClubId)
-            ->where('user_id', $user->id)
-            ->first();
-        $dashboardLayout = DashboardLayout::where('club_id', $currentClubId)
-            ->where('user_id', $user->id)
-            ->first();
+
+        if (isset($currentClubId)) {
+            $player = Player::where('club_id', $currentClubId)
+                ->where('user_id', $user->id)
+                ->first();
+            $dashboardLayout = DashboardLayout::where('club_id', $currentClubId)
+                ->where('user_id', $user->id)
+                ->first();
+        }
 
         return Inertia::render('Dashboard', [
-            'playerId' => $player->id,
+            'playerId' => $player?->id,
             'layout' => json_decode($dashboardLayout->layout ?? '[]', true),
         ]);
     }
