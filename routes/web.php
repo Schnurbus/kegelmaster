@@ -19,8 +19,14 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 Route::get('/', function () {
-    return Inertia::render('Landingpage');
+    return Inertia::render('LandingPage');
 })->name('home');
+Route::get('/imprint', function () {
+    return Inertia::render('Imprint');
+})->name('imprint');
+Route::get('/privacy', function () {
+    return Inertia::render('Privacy');
+})->name('privacy');
 
 // Route::get('language/{language}', function ($language) {
 //     Session()->put('locale', $language);
