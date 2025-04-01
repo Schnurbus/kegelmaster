@@ -1,5 +1,22 @@
 # Changelog
 
+## [1.4.0](https://github.com/Schnurbus/kegelmaster/compare/v1.3.0...v1.4.0) (2025-04-01)
+
+
+### Features
+
+* add payment multi player select ([#50](https://github.com/Schnurbus/kegelmaster/issues/50)) ([f7c3ee9](https://github.com/Schnurbus/kegelmaster/commit/f7c3ee9d52416e10afb9b639ee84386ea972b65f))
+
+
+### Bug Fixes
+
+* **deps:** update dependency laravel/octane to v2.8.3 ([#52](https://github.com/Schnurbus/kegelmaster/issues/52)) ([f7b561f](https://github.com/Schnurbus/kegelmaster/commit/f7b561feea837b1424cb9553d57b29ce721ea9f6))
+
+
+### Miscellaneous Chores
+
+* **deps:** update dependency @types/node to v22.13.17 ([#51](https://github.com/Schnurbus/kegelmaster/issues/51)) ([4cbd6a1](https://github.com/Schnurbus/kegelmaster/commit/4cbd6a1cec2351d79beb3d4d270773ccd96e1cfd))
+
 ## [1.3.0](https://github.com/Schnurbus/kegelmaster/compare/v1.2.0...v1.3.0) (2025-04-01)
 
 
