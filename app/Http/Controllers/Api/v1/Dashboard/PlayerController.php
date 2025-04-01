@@ -13,8 +13,6 @@ class PlayerController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param Player $player
-     * @return PlayerResource
      * @throws AuthorizationException
      */
     public function show(Player $player): PlayerResource

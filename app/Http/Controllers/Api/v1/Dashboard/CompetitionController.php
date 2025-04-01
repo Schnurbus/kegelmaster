@@ -15,11 +15,9 @@ class CompetitionController extends Controller
     /**
      * Get the competition results for the last matchday
      *
-     * @param CompetitionType $competitionType
-     * @return array|JsonResponse
      * @throws AuthorizationException
      */
-    public function last(CompetitionType $competitionType): array|JsonResponse
+    public function last(CompetitionType $competitionType): JsonResponse
     {
         BouncerFacade::authorize('view',
             getClubScopedModel(Matchday::class, $competitionType->club_id));
@@ -31,7 +29,9 @@ class CompetitionController extends Controller
             ->first();
 
         if (! $lastEntry) {
-            return ['message' => 'Keine Einträge für diesen Wettbewerb gefunden.'];
+            return \Response::json([
+                'message' => 'Keine Einträge für diesen Wettbewerb gefunden.',
+            ]);
         }
 
         $lastMatchdayId = $lastEntry->matchday_id;
