@@ -77,6 +77,7 @@ class PlayerService
     {
         return Player::where('club_id', $clubId)
             ->with('role')
+            ->orderBy('id')
             ->get();
     }
 

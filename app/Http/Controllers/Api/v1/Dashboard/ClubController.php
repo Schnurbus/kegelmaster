@@ -18,8 +18,6 @@ class ClubController extends Controller
     /**
      * Get a balance list over the last months
      *
-     * @param Club $club
-     * @return AnonymousResourceCollection
      * @throws AuthorizationException
      */
     public function balance(Club $club): AnonymousResourceCollection
@@ -42,8 +40,8 @@ class ClubController extends Controller
     /**
      * Get the current club info
      *
-     * @param Club $club
      * @return ClubResource
+     *
      * @throws AuthorizationException
      */
     public function show(Club $club)

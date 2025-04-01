@@ -79,7 +79,7 @@ const submit = () => {
                     <Label class="font-semibold">Type</Label>
                     <div>
                         <Select v-model="form.type">
-                            <SelectTrigger>
+                            <SelectTrigger v-focus>
                                 <SelectValue :placeholder="t('Select a type')" />
                             </SelectTrigger>
                             <SelectContent>
@@ -96,7 +96,7 @@ const submit = () => {
                     </div>
                     <Label>{{ t('Player') }}</Label>
                     <div>
-                        <Select v-model="form.player_id" :disabled="form.type == 5">
+                        <Select v-model="form.player_id" :disabled="form.type == 5" :multiple="!isEdit && form.type === 3">
                             <SelectTrigger>
                                 <SelectValue :placeholder="t('Select a player')" />
                             </SelectTrigger>
