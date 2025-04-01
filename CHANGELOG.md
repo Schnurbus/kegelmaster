@@ -1,5 +1,28 @@
 # Changelog
 
+## [1.3.0](https://github.com/Schnurbus/kegelmaster/compare/v1.2.0...v1.3.0) (2025-04-01)
+
+
+### Features
+
+* add new landing page ([#49](https://github.com/Schnurbus/kegelmaster/issues/49)) ([20b3f7b](https://github.com/Schnurbus/kegelmaster/commit/20b3f7b3ac49ef0b36c992213147df0bc0bd837e))
+
+
+### Bug Fixes
+
+* **deps:** update dependency laravel/framework to v12.4.1 ([#40](https://github.com/Schnurbus/kegelmaster/issues/40)) ([c13acf4](https://github.com/Schnurbus/kegelmaster/commit/c13acf41e6c3e475792f43701b37c7a66558ad47))
+* **deps:** update dependency reka-ui to v2.1.1 ([#33](https://github.com/Schnurbus/kegelmaster/issues/33)) ([5e71498](https://github.com/Schnurbus/kegelmaster/commit/5e71498482d6f56ef08fd9ee532ca8efa1bd8e94))
+* **deps:** update dependency tailwind-merge to v3.1.0 ([#47](https://github.com/Schnurbus/kegelmaster/issues/47)) ([0f84a63](https://github.com/Schnurbus/kegelmaster/commit/0f84a63cb5026c308099c9c78f41621a34267dec))
+* **deps:** update dependency vite to v6.2.4 ([#35](https://github.com/Schnurbus/kegelmaster/issues/35)) ([476d750](https://github.com/Schnurbus/kegelmaster/commit/476d7503bb595e0e98c649f7f9d239ceb6d3f929))
+* **deps:** update lucide monorepo to ^0.486.0 ([#45](https://github.com/Schnurbus/kegelmaster/issues/45)) ([b08c882](https://github.com/Schnurbus/kegelmaster/commit/b08c88260237c43d9071f48a52103dba644cb530))
+
+
+### Miscellaneous Chores
+
+* **deps:** update dependency @types/node to v22.13.16 ([#48](https://github.com/Schnurbus/kegelmaster/issues/48)) ([657885f](https://github.com/Schnurbus/kegelmaster/commit/657885f6a80b63eb1a69632bce30d4e70f52e73f))
+* **deps:** update dependency pestphp/pest to v3.8.0 ([#39](https://github.com/Schnurbus/kegelmaster/issues/39)) ([7a9c31d](https://github.com/Schnurbus/kegelmaster/commit/7a9c31db4588117de1ad3ec8757a7902a0d1c281))
+* **deps:** update dependency typescript-eslint to v8.29.0 ([#36](https://github.com/Schnurbus/kegelmaster/issues/36)) ([5146e07](https://github.com/Schnurbus/kegelmaster/commit/5146e0791ce4a76edffff32084ef7e727c922921))
+
 ## [1.2.0](https://github.com/Schnurbus/kegelmaster/compare/v1.1.0...v1.2.0) (2025-03-31)
 
 
