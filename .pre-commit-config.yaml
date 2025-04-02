@@ -6,12 +6,12 @@ repos:
   - repo: local
     hooks:
       - id: pint
-        name: PHP Coding Standards Fixer
+        name: Linter
         entry: ./vendor/bin/pint
         language: system
         files: \.php$
       - id: phpstan
-        name: PHP Coding Standards Fixer
-        entry: ./vendor/bin/phpstan
+        name: PHPstan
+        entry: ./vendor/bin/phpstan analyze
         language: system
         files: \.php$
