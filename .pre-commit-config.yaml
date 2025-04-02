@@ -1,0 +1,17 @@
+repos:
+  - repo: https://github.com/gitleaks/gitleaks
+    rev: v8.23.1
+    hooks:
+      - id: gitleaks
+  - repo: local
+    hooks:
+      - id: pint
+        name: Linter
+        entry: ./vendor/bin/pint
+        language: system
+        files: \.php$
+      - id: phpstan
+        name: PHPstan
+        entry: ./vendor/bin/phpstan analyze
+        language: system
+        files: \.php$
