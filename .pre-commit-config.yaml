@@ -1,0 +1,17 @@
+repos:
+  - repo: https://github.com/gitleaks/gitleaks
+    rev: v8.23.1
+    hooks:
+      - id: gitleaks
+  - repo: local
+    hooks:
+      - id: pint
+        name: PHP Coding Standards Fixer
+        entry: ./vendor/bin/pint
+        language: system
+        files: \.php$
+      - id: phpstan
+        name: PHP Coding Standards Fixer
+        entry: ./vendor/bin/phpstan
+        language: system
+        files: \.php$
