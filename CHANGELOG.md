@@ -1,5 +1,32 @@
 # Changelog
 
+## [1.4.1](https://github.com/Schnurbus/kegelmaster/compare/v1.4.0...v1.4.1) (2025-04-05)
+
+
+### Bug Fixes
+
+* **deps:** update dependency @inertiajs/vue3 to v2.0.6 ([#63](https://github.com/Schnurbus/kegelmaster/issues/63)) ([7dd4307](https://github.com/Schnurbus/kegelmaster/commit/7dd4307f0ad2325f8dcc33a32a9ce79e5bbf4ee1))
+* **deps:** update dependency laravel/framework to v12.6.0 ([#54](https://github.com/Schnurbus/kegelmaster/issues/54)) ([48d8392](https://github.com/Schnurbus/kegelmaster/commit/48d83925bec2c9fc318ad179ff1f343359751466))
+* **deps:** update dependency laravel/framework to v12.7.2 ([#69](https://github.com/Schnurbus/kegelmaster/issues/69)) ([ae9e1e5](https://github.com/Schnurbus/kegelmaster/commit/ae9e1e532acca9508ad139846833b6df822e09a4))
+* **deps:** update dependency reka-ui to v2.2.0 ([#60](https://github.com/Schnurbus/kegelmaster/issues/60)) ([1cb4351](https://github.com/Schnurbus/kegelmaster/commit/1cb435176748a44aaced7838949b5c4e80aa8ca0))
+* **deps:** update dependency typescript to v5.8.3 ([#73](https://github.com/Schnurbus/kegelmaster/issues/73)) ([c3484e2](https://github.com/Schnurbus/kegelmaster/commit/c3484e23f15f90e9b95d9c373fc3a4098b150e7c))
+* **deps:** update dependency vite to v6.2.5 ([#65](https://github.com/Schnurbus/kegelmaster/issues/65)) ([f0b42de](https://github.com/Schnurbus/kegelmaster/commit/f0b42dec34f5225febfee2ec3e935bc6f6b091d5))
+* **deps:** update lucide monorepo to ^0.487.0 ([#59](https://github.com/Schnurbus/kegelmaster/issues/59)) ([39703fc](https://github.com/Schnurbus/kegelmaster/commit/39703fc0d8f29c783858bd6451d28ad4d21b1b27))
+* **deps:** update tailwindcss monorepo to v4.1.1 ([#55](https://github.com/Schnurbus/kegelmaster/issues/55)) ([a537f90](https://github.com/Schnurbus/kegelmaster/commit/a537f904aff6940bcc59dbb0a4279e5ae2cd82ca))
+* **deps:** update tailwindcss monorepo to v4.1.2 ([#66](https://github.com/Schnurbus/kegelmaster/issues/66)) ([574060d](https://github.com/Schnurbus/kegelmaster/commit/574060d717468562139eb870672d3d2b649db91d))
+* **deps:** update tailwindcss monorepo to v4.1.3 ([#71](https://github.com/Schnurbus/kegelmaster/issues/71)) ([089cb05](https://github.com/Schnurbus/kegelmaster/commit/089cb05f8072113cc4106015e053dd8ad50279f8))
+
+
+### Miscellaneous Chores
+
+* add CODEOWNERS ([#57](https://github.com/Schnurbus/kegelmaster/issues/57)) ([33438dd](https://github.com/Schnurbus/kegelmaster/commit/33438dd84e364baae560e5e84b4ef1f3d414a198))
+* **deps:** update dependency @rollup/rollup-linux-x64-gnu to v4.39.0 ([#56](https://github.com/Schnurbus/kegelmaster/issues/56)) ([86d6de4](https://github.com/Schnurbus/kegelmaster/commit/86d6de4ec9b1b11514934aa46ed1fe724b809407))
+* **deps:** update dependency @types/node to v22.14.0 ([#64](https://github.com/Schnurbus/kegelmaster/issues/64)) ([cb9cf7d](https://github.com/Schnurbus/kegelmaster/commit/cb9cf7dc36090c70b50605430f0122cde8653bcf))
+* **deps:** update dependency larastan/larastan to v3.3.1 ([#67](https://github.com/Schnurbus/kegelmaster/issues/67)) ([6be58f7](https://github.com/Schnurbus/kegelmaster/commit/6be58f7101647fba4510aa50bb407b1f5f30fb3a))
+* **deps:** update dependency nunomaduro/collision to v8.8.0 ([#68](https://github.com/Schnurbus/kegelmaster/issues/68)) ([5f69373](https://github.com/Schnurbus/kegelmaster/commit/5f69373818c891f4715db570c8fd16ce5515f643))
+* **deps:** update dependency pestphp/pest to v3.8.1 ([#70](https://github.com/Schnurbus/kegelmaster/issues/70)) ([450facc](https://github.com/Schnurbus/kegelmaster/commit/450facc7808ad278d7f80395bbbb4c7c7e491e4d))
+* **deps:** update eslint monorepo to v9.24.0 ([#72](https://github.com/Schnurbus/kegelmaster/issues/72)) ([4d19b9e](https://github.com/Schnurbus/kegelmaster/commit/4d19b9ecabcde88c966dc64f21d8539d4abc6703))
+
 ## [1.4.0](https://github.com/Schnurbus/kegelmaster/compare/v1.3.0...v1.4.0) (2025-04-01)
 
 
