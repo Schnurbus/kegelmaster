@@ -21,12 +21,12 @@ use Inertia\Inertia;
 Route::get('/', function () {
     return Inertia::render('LandingPage');
 })->name('home');
-Route::get('/imprint', function () {
-    return Inertia::render('Imprint');
-})->name('imprint');
-Route::get('/privacy', function () {
-    return Inertia::render('Privacy');
-})->name('privacy');
+// Route::get('/imprint', function () {
+//    return Inertia::render('Imprint');
+// })->name('imprint');
+// Route::get('/privacy', function () {
+//    return Inertia::render('Privacy');
+// })->name('privacy');
 
 // Route::get('language/{language}', function ($language) {
 //     Session()->put('locale', $language);
@@ -61,6 +61,8 @@ Route::middleware(['auth', 'verified', LoadCurrentClubSetting::class, ScopeBounc
 
 // Einladung akzeptieren
 Route::get('/invitation/accept/{token}', [PlayerInvitationController::class, 'accept'])->middleware(['auth', 'verified'])->name('players.invitation.accept');
+
+Route::get('/{page}', \App\Http\Controllers\PageController::class)->name('page')->where('page', 'imprint|privacy');
 
 require __DIR__.'/settings.php';
 require __DIR__.'/auth.php';
