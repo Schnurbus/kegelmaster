@@ -26,7 +26,7 @@ class DashboardController extends Controller
         }
 
         return Inertia::render('Dashboard', [
-            'playerId' => $player?->id,
+            'playerId' => empty($player) ? null : $player->id,
             'layout' => json_decode($dashboardLayout->layout ?? '[]', true),
         ]);
     }

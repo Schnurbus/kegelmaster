@@ -17,7 +17,7 @@ class StoreRoleRequest extends FormRequest
         /** @var User $user */
         $user = $this->user();
 
-        return $user->can('create', getClubScopedModel(Role::class, $this->input('club_id')));
+        return $user->can('create', [Role::class, $this->input('club_id')]);
     }
 
     /**
@@ -32,8 +32,9 @@ class StoreRoleRequest extends FormRequest
             'name' => [
                 'required',
                 'string',
+                'not_regex:/\./',
                 'max:255',
-                Rule::unique('roles')->where('scope', $this->club_id),
+                Rule::unique('roles')->where('club_id', $this->club_id),
             ],
             'is_base_fee_active' => ['required', 'boolean'],
 

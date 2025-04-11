@@ -1,18 +1,22 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\Club;
 
+use App\Models\User;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
-class StoreClubRequest extends FormRequest
+class UpdateClubRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
-        return true;
+        /** @var User $user */
+        $user = auth()->user();
+
+        return $user->can('update', $this->club);
     }
 
     /**
@@ -23,9 +27,9 @@ class StoreClubRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => ['required', 'string', 'max:255', Rule::unique('clubs')],
+            'club_id' => ['required', 'integer', 'exists:clubs,id'],
+            'name' => ['required', 'string', 'max:255', Rule::unique('clubs')->ignore($this->club_id)],
             'base_fee' => ['required', 'numeric', 'min:0'],
-            'initial_balance' => ['required', 'numeric'],
         ];
     }
 }

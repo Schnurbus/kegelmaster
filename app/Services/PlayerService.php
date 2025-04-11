@@ -11,7 +11,6 @@ use Exception;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
-use Silber\Bouncer\BouncerFacade;
 
 class PlayerService
 {
@@ -59,7 +58,7 @@ class PlayerService
 
             if ($player->user_id) {
                 $role = $player->role;
-                BouncerFacade::sync($player->user)->roles([$role]);
+                $player->user->syncRoles($role);
             }
 
             return $player;

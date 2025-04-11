@@ -13,7 +13,6 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
-use Silber\Bouncer\BouncerFacade;
 
 class PlayerInvitationController extends Controller
 {
@@ -56,19 +55,17 @@ class PlayerInvitationController extends Controller
         if (Auth::check()) {
             $user = Auth::user();
 
-            // Player mit der User-ID verknüpfen
             $player = Player::findOrFail($invitation->player_id);
             $player->user_id = $user->id;
             $player->save();
 
-            BouncerFacade::scope()->to($player->club_id);
+            setPermissionsTeamId($player->club_id);
             $role = Role::findOrFail($player->role_id);
-
-            BouncerFacade::assign($role)->to($user);
-            BouncerFacade::refreshFor($user);
+            $user->assignRole($role);
 
             $invitation->delete();
 
+            session(['current_club_id' => $player->club_id]);
             toast_success('Player attached successfully.');
 
             return to_route('dashboard');

@@ -11,8 +11,9 @@ use App\Models\Role;
 use App\Models\Transaction;
 use Exception;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use Silber\Bouncer\BouncerFacade;
+use Throwable;
 
 class RoleService
 {
@@ -29,78 +30,57 @@ class RoleService
     /**
      * Create a new role
      *
-     * @throws Exception
+     * @throws Throwable
      */
     public function create(array $data): Role
     {
-        try {
-            BouncerFacade::scope()->to($data['club_id']);
+        Log::info('Creating new role', [
+            'club_id' => $data['club_id'],
+            'name' => $data['name'],
+        ]);
+
+        return DB::transaction(function () use ($data) {
             /** @var Role $role */
-            $role = BouncerFacade::role()->firstOrCreate([
+            $role = Role::create([
                 'name' => $data['name'],
                 'is_base_fee_active' => $data['is_base_fee_active'],
+                'club_id' => $data['club_id'],
+                'guard_name' => 'web',
             ]);
 
-            foreach ($data['permissions'] as $entity => $actions) {
-                if (! isset($this->entityMap[$entity])) {
-                    continue;
-                }
-
-                $modelClass = $this->entityMap[$entity];
-                foreach ($actions as $action => $allowed) {
-                    if ($allowed) {
-                        BouncerFacade::allow($role)->to($action, $modelClass);
-                    }
-                }
+            if (isset($data['permissions']) && is_array($data['permissions'])) {
+                $this->syncRolePermissions($role, $data['permissions']);
             }
 
-            return $role;
-        } catch (\Exception $exception) {
-            Log::error('Error creating role', ['error' => $exception->getMessage()]);
-            throw new Exception($exception->getMessage());
-        }
+            return $role->fresh();
+        });
     }
 
     /**
      * Update a role
      *
-     * @throws Exception
+     * @throws Throwable
      */
     public function update(Role $role, array $data): Role
     {
-        try {
-            BouncerFacade::scope()->to($role->id);
+        Log::info('Updating role', [
+            'role_id' => $role->id,
+            'club_id' => $data['club_id'],
+            'name' => $data['name'],
+        ]);
 
+        return DB::transaction(function () use ($role, $data) {
             $role->update([
                 'name' => $data['name'],
-                'title' => $data['name'],
                 'is_base_fee_active' => $data['is_base_fee_active'],
             ]);
 
-            foreach ($this->entityMap as $key => $modelClass) {
-                BouncerFacade::disallow($role)->to(['list', 'view', 'create', 'update', 'delete'], $modelClass);
+            if (isset($data['permissions']) && is_array($data['permissions'])) {
+                $this->syncRolePermissions($role, $data['permissions']);
             }
 
-            // Neue Berechtigungen setzen
-            foreach ($data['permissions'] as $entity => $actions) {
-                if (! isset($this->entityMap[$entity])) {
-                    continue;
-                }
-
-                $modelClass = $this->entityMap[$entity];
-                foreach ($actions as $action => $allowed) {
-                    if ($allowed) {
-                        BouncerFacade::allow($role)->to($action, $modelClass);
-                    }
-                }
-            }
-            BouncerFacade::refresh();
-
-            return $role;
-        } catch (\Exception $exception) {
-            Log::error('Error updating role', ['error' => $exception->getMessage()]);
-            throw new Exception($exception->getMessage());
-        }
+            return $role->refresh();
+        });
     }
 
     /**
@@ -111,7 +91,6 @@ class RoleService
     public function delete(Role $role): void
     {
         try {
-            BouncerFacade::scope()->to($role->id);
             $role->delete();
         } catch (\Exception $exception) {
             Log::error('Error deleting role', ['error' => $exception->getMessage()]);
@@ -124,8 +103,93 @@ class RoleService
      */
     public function getByClubId(int $clubId): Collection
     {
-        BouncerFacade::scope()->to($clubId);
+        return Role::where('club_id', $clubId)->get();
+    }
 
-        return Role::all();
+    /**
+     * Get permissions array of role for frontend
+     */
+    public function getPermissionsForFrontend(Role $role): array
+    {
+        $permissions = $role->permissions->pluck('name')->map(function ($permission) {
+            $parts = explode('.', $permission);
+            if (count($parts) !== 2) {
+                return null;
+            }
+            [$action, $entity] = $parts;
+
+            return [$entity => [$action => true]];
+        })->filter()
+            ->reduce(function ($result, $item) {
+                foreach ($item as $entity => $actions) {
+                    foreach ($actions as $action => $value) {
+                        $result[$entity] = array_merge($result[$entity] ?? [], [$action => $value]);
+                    }
+                }
+
+                return $result;
+            }, []);
+
+        //        $allEntities = config('permissions.entities');
+        //        $allActions = config('permissions.actions');
+        $allEntities = config('permissions');
+
+        foreach ($allEntities as $entity => $actions) {
+            if (! isset($permissions[$entity])) {
+                $permissions[$entity] = [];
+            }
+
+            foreach ($actions as $action) {
+                if (! isset($permissions[$entity][$action])) {
+                    $permissions[$entity][$action] = false;
+                }
+            }
+        }
+
+        return $permissions;
+    }
+
+    /**
+     * Sync the permissions of a role based on the given permission structure
+     *
+     * @throws Throwable
+     */
+    protected function syncRolePermissions(Role $role, array $permissions): void
+    {
+        try {
+            // Get existing permissions to avoid unnecessary DB operations
+            $existingPermissions = $role->permissions->pluck('name')->toArray();
+            $permissionsToSync = [];
+            $permissionClass = config('permission.models.permission');
+
+            // Iterate through the permission structure
+            foreach ($permissions as $entity => $actions) {
+                foreach ($actions as $action => $isGranted) {
+                    if ($isGranted) {
+                        $permissionName = "{$action}.{$entity}";
+
+                        // Find or create the permission if it doesn't exist
+                        $permission = $permissionClass::findOrCreate($permissionName, 'web', $role->club_id);
+
+                        $permissionsToSync[] = $permission->id;
+                    }
+                }
+            }
+
+            // Sync permissions to the role
+            $role->permissions()->sync($permissionsToSync);
+
+            Log::info('Role permissions synced', [
+                'role_id' => $role->id,
+                'permissions_count' => count($permissionsToSync),
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Error syncing role permissions', [
+                'role_id' => $role->id,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+            throw $e;
+        }
     }
 }

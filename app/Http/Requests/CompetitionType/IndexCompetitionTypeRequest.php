@@ -4,6 +4,7 @@ namespace App\Http\Requests\CompetitionType;
 
 use App\Models\CompetitionType;
 use App\Models\User;
+use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class IndexCompetitionTypeRequest extends FormRequest
@@ -15,14 +16,15 @@ class IndexCompetitionTypeRequest extends FormRequest
     {
         /** @var User $user */
         $user = $this->user();
+        $currentClubId = session('current_club_id');
 
-        return $user->can('view', getClubScopedModel(CompetitionType::class));
+        return $user->can('list', [CompetitionType::class, $currentClubId]);
     }
 
     /**
      * Get the validation rules that apply to the request.
      *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
+     * @return array<string, ValidationRule|array|string>
      */
     public function rules(): array
     {

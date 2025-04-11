@@ -6,21 +6,20 @@ use App\Http\Controllers\Controller;
 use App\Models\CompetitionEntry;
 use App\Models\CompetitionType;
 use App\Models\Matchday;
-use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\JsonResponse;
-use Silber\Bouncer\BouncerFacade;
+use Illuminate\Support\Facades\Gate;
+use Response;
 
 class CompetitionController extends Controller
 {
     /**
      * Get the competition results for the last matchday
-     *
-     * @throws AuthorizationException
      */
     public function last(CompetitionType $competitionType): JsonResponse
     {
-        BouncerFacade::authorize('view',
-            getClubScopedModel(Matchday::class, $competitionType->club_id));
+        if (! Gate::allows('view', Matchday::class)) {
+            abort(403);
+        }
 
         $lastEntry = CompetitionEntry::join('matchdays', 'competition_entries.matchday_id', '=', 'matchdays.id')
             ->where('competition_entries.competition_type_id', $competitionType->id)
@@ -29,7 +28,7 @@ class CompetitionController extends Controller
             ->first();
 
         if (! $lastEntry) {
-            return \Response::json([
+            return Response::json([
                 'message' => 'Keine Einträge für diesen Wettbewerb gefunden.',
             ]);
         }
@@ -88,7 +87,7 @@ class CompetitionController extends Controller
             $results[$groupKey] = $resultData;
         }
 
-        return \Response::json([
+        return Response::json([
             'matchday_id' => $lastMatchdayId,
             'competition_type' => $competitionType,
             'results' => $results,

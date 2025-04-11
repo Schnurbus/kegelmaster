@@ -47,6 +47,10 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Player whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Player whereUserId($value)
  *
+ * @property int $bouncer_role_id
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Player whereBouncerRoleId($value)
+ *
  * @mixin \Eloquent
  */
 class Player extends Model

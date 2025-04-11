@@ -3,7 +3,6 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Silber\Bouncer\BouncerFacade;
 
 class StorePlayerInvitationRequest extends FormRequest
 {
@@ -12,9 +11,9 @@ class StorePlayerInvitationRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        BouncerFacade::scope()->to($this->player->club_id);
+        $user = $this->user();
 
-        return BouncerFacade::can('update', $this->player);
+        return $user->can('update', $this->player);
     }
 
     /**

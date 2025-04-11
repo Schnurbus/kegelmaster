@@ -16,11 +16,15 @@ use App\Models\Matchday;
 use App\Models\Player;
 use App\Models\Role;
 use App\Models\Transaction;
+use App\Models\User;
 use App\Services\RoleService;
 use Exception;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Http\RedirectResponse;
 use Inertia\Inertia;
-use Silber\Bouncer\BouncerFacade;
+use Inertia\Response;
+
+use function Laravel\Prompts\error;
 
 class RoleController extends Controller
 {
@@ -48,15 +52,17 @@ class RoleController extends Controller
      */
     public function index(IndexRoleRequest $request)
     {
+        /** @var User $user */
+        $user = $request->user();
         $currentClubId = session('current_club_id');
 
         return Inertia::render('role/index', [
             'roles' => $this->roleService->getByClubId($currentClubId),
             'can' => [
-                'create' => BouncerFacade::can('create', getClubScopedModel(Role::class)),
-                'delete' => BouncerFacade::can('delete', getClubScopedModel(Role::class)),
-                'update' => BouncerFacade::can('update', getClubScopedModel(Role::class)),
-                'view' => BouncerFacade::can('view', getClubScopedModel(Role::class)),
+                'create' => $user->can('create', [Role::class, $currentClubId]),
+                'delete' => $user->can('delete', Role::class),
+                'update' => $user->can('update', Role::class),
+                'view' => $user->can('view', Role::class),
             ],
         ]);
     }
@@ -64,15 +70,19 @@ class RoleController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create(CreateRoleRequest $request)
+    public function create(CreateRoleRequest $request): Response
     {
+        /** @var User $user */
+        $user = $request->user();
+        $currentClubId = session('current_club_id');
+
         return Inertia::render('role/create', [
             'permissions' => $this->getPermissions(),
             'can' => [
-                'create' => BouncerFacade::can('create', getClubScopedModel(Role::class)),
-                'delete' => BouncerFacade::can('delete', getClubScopedModel(Role::class)),
-                'update' => BouncerFacade::can('update', getClubScopedModel(Role::class)),
-                'view' => BouncerFacade::can('view', getClubScopedModel(Role::class)),
+                'create' => $user->can('create', [Role::class, $currentClubId]),
+                'delete' => $user->can('delete', Role::class),
+                'update' => $user->can('update', Role::class),
+                'view' => $user->can('view', Role::class),
             ],
         ]);
     }
@@ -80,14 +90,15 @@ class RoleController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreRoleRequest $request)
+    public function store(StoreRoleRequest $request): RedirectResponse
     {
         $validated = $request->validated();
 
         try {
             $this->roleService->create($validated);
             toast_success('Role created successfully');
-        } catch (Exception $exception) {
+        } catch (\Throwable $exception) {
+            Log:error($exception);
             toast_error('Cloud not create role');
 
             return redirect()->back()->withInput($request->input());
@@ -99,16 +110,20 @@ class RoleController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(ShowRoleRequest $request, Role $role)
+    public function show(ShowRoleRequest $request, Role $role): Response
     {
+        /** @var User $user */
+        $user = $request->user();
+        $currentClubId = session('current_club_id');
+
         return Inertia::render('role/show', [
             'role' => $role,
-            'role.permissions' => $this->loadPermissions($role),
+            'role.permissions' => $this->roleService->getPermissionsForFrontend($role),
             'can' => [
-                'create' => BouncerFacade::can('create', getClubScopedModel(Role::class)),
-                'delete' => BouncerFacade::can('delete', getClubScopedModel(Role::class)),
-                'update' => BouncerFacade::can('update', getClubScopedModel(Role::class)),
-                'view' => BouncerFacade::can('view', getClubScopedModel(Role::class)),
+                'create' => $user->can('create', [Role::class, $currentClubId]),
+                'delete' => $user->can('delete', Role::class),
+                'update' => $user->can('update', Role::class),
+                'view' => $user->can('view', Role::class),
             ],
         ]);
     }
@@ -116,17 +131,21 @@ class RoleController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(EditRoleRequest $request, Role $role)
+    public function edit(EditRoleRequest $request, Role $role): Response
     {
+        /** @var User $user */
+        $user = auth()->user();
+        $currentClubId = session('current_club_id');
+
         return Inertia::render('role/edit', [
             'role' => $role,
-            'role.permissions' => $this->loadPermissions($role),
+            'role.permissions' => fn () => $this->roleService->getPermissionsForFrontend($role),
             'permissions' => $this->getPermissions(),
             'can' => [
-                'create' => BouncerFacade::can('create', getClubScopedModel(Role::class)),
-                'delete' => BouncerFacade::can('delete', getClubScopedModel(Role::class)),
-                'update' => BouncerFacade::can('update', getClubScopedModel(Role::class)),
-                'view' => BouncerFacade::can('view', getClubScopedModel(Role::class)),
+                'create' => $user->can('create', [Role::class, $currentClubId]),
+                'delete' => $user->can('delete', Role::class),
+                'update' => $user->can('update', Role::class),
+                'view' => $user->can('view', Role::class),
             ],
         ]);
     }
@@ -134,14 +153,14 @@ class RoleController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateRoleRequest $request, Role $role): \Illuminate\Http\RedirectResponse
+    public function update(UpdateRoleRequest $request, Role $role): RedirectResponse
     {
         $validated = $request->validated();
 
         try {
             $this->roleService->update($role, $validated);
             toast_success('Role updated successfully');
-        } catch (Exception $exception) {
+        } catch (\Throwable $e) {
             toast_error('Could not update role');
 
             return redirect()->back()->withInput($request->input());
@@ -153,7 +172,7 @@ class RoleController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(DeleteRoleRequest $request, Role $role): \Illuminate\Http\RedirectResponse
+    public function destroy(DeleteRoleRequest $request, Role $role): RedirectResponse
     {
         try {
             $this->roleService->delete($role);
@@ -178,21 +197,5 @@ class RoleController extends Controller
             'competitionType' => ['list', 'view', 'create', 'update', 'delete'],
             'transaction' => ['list', 'view', 'create', 'update', 'delete'],
         ];
-    }
-
-    private function loadPermissions(?Role $role): array
-    {
-        $permissions = [];
-        foreach ($this->entityMap as $key => $modelClass) {
-            $permissions[$key] = [
-                'list' => $role->can('list', $modelClass),
-                'view' => $role->can('view', $modelClass),
-                'create' => $role->can('create', $modelClass),
-                'update' => $role->can('update', $modelClass),
-                'delete' => $role->can('delete', $modelClass),
-            ];
-        }
-
-        return $permissions;
     }
 }

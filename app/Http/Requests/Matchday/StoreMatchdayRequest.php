@@ -4,6 +4,7 @@ namespace App\Http\Requests\Matchday;
 
 use App\Models\Matchday;
 use App\Models\User;
+use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StoreMatchdayRequest extends FormRequest
@@ -16,13 +17,13 @@ class StoreMatchdayRequest extends FormRequest
         /** @var User $user */
         $user = $this->user();
 
-        return $user->can('create', getClubScopedModel(Matchday::class, $this->input('club_id')));
+        return $user->can('create', [Matchday::class, $this->input('club_id')]);
     }
 
     /**
      * Get the validation rules that apply to the request.
      *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
+     * @return array<string, ValidationRule|array|string>
      */
     public function rules(): array
     {

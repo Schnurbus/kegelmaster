@@ -15,8 +15,9 @@ class CreateRoleRequest extends FormRequest
     {
         /** @var User $user */
         $user = $this->user();
+        $currentClubId = session('current_club_id');
 
-        return $user->can('create', getClubScopedModel(Role::class));
+        return $user->can('create', [Role::class, $currentClubId]);
     }
 
     /**

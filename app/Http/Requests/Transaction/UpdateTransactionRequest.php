@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Transaction;
 
 use App\Models\User;
+use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateTransactionRequest extends FormRequest
@@ -22,18 +23,17 @@ class UpdateTransactionRequest extends FormRequest
     /**
      * Get the validation rules that apply to the request.
      *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
+     * @return array<string, ValidationRule|array|string>
      */
     public function rules(): array
     {
         return [
-            'club_id' => 'required|exists:clubs,id',
-            'matchday_id' => 'nullable|exists:matchdays,id',
-            'player_id' => 'nullable|exists:players,id',
-            'type' => 'required|in:1,2,3,4,5',
-            'amount' => 'required|numeric',
-            'date' => 'required|date',
-            'notes' => 'nullable|string',
+            'matchday_id' => ['nullable', 'exists:matchdays,id'],
+            'player_id' => ['nullable', 'exists:players,id'],
+            'type' => ['required', 'in:1,2,3,4,5'],
+            'amount' => ['required', 'numeric'],
+            'date' => ['required', 'date'],
+            'notes' => ['nullable', 'string'],
         ];
     }
 }

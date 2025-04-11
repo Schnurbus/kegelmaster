@@ -8,21 +8,20 @@ use App\Http\Resources\BalanceListResource;
 use App\Http\Resources\ClubResource;
 use App\Models\Club;
 use App\Models\Transaction;
-use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Support\Facades\DB;
-use Silber\Bouncer\BouncerFacade;
+use Illuminate\Support\Facades\Gate;
 
 class ClubController extends Controller
 {
     /**
      * Get a balance list over the last months
-     *
-     * @throws AuthorizationException
      */
     public function balance(Club $club): AnonymousResourceCollection
     {
-        BouncerFacade::authorize('view', $club);
+        if (! Gate::allows('view', $club)) {
+            abort(403);
+        }
 
         $balanceList = Transaction::selectRaw('
             DATE(date) as date,
@@ -39,14 +38,12 @@ class ClubController extends Controller
 
     /**
      * Get the current club info
-     *
-     * @return ClubResource
-     *
-     * @throws AuthorizationException
      */
-    public function show(Club $club)
+    public function show(Club $club): ClubResource
     {
-        BouncerFacade::authorize('view', $club);
+        if (! Gate::allows('view', $club)) {
+            abort(403);
+        }
 
         return new ClubResource($club);
     }
