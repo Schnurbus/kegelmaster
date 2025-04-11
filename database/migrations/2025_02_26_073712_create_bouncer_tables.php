@@ -3,7 +3,6 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
-use Silber\Bouncer\Database\Models;
 
 return new class extends Migration
 {
@@ -14,7 +13,7 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create(Models::table('abilities'), function (Blueprint $table) {
+        Schema::create('abilities', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('name');
             $table->string('title')->nullable();
@@ -26,7 +25,7 @@ return new class extends Migration
             $table->timestamps();
         });
 
-        Schema::create(Models::table('roles'), function (Blueprint $table) {
+        Schema::create('roles', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('name');
             $table->string('title')->nullable();
@@ -40,7 +39,7 @@ return new class extends Migration
             );
         });
 
-        Schema::create(Models::table('assigned_roles'), function (Blueprint $table) {
+        Schema::create('assigned_roles', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->bigInteger('role_id')->unsigned()->index();
             $table->bigInteger('entity_id')->unsigned();
@@ -55,11 +54,11 @@ return new class extends Migration
             );
 
             $table->foreign('role_id')
-                ->references('id')->on(Models::table('roles'))
+                ->references('id')->on('roles')
                 ->onUpdate('cascade')->onDelete('cascade');
         });
 
-        Schema::create(Models::table('permissions'), function (Blueprint $table) {
+        Schema::create('permissions', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->bigInteger('ability_id')->unsigned()->index();
             $table->bigInteger('entity_id')->unsigned()->nullable();
@@ -73,7 +72,7 @@ return new class extends Migration
             );
 
             $table->foreign('ability_id')
-                ->references('id')->on(Models::table('abilities'))
+                ->references('id')->on('abilities')
                 ->onUpdate('cascade')->onDelete('cascade');
         });
     }
@@ -85,9 +84,9 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::drop(Models::table('permissions'));
-        Schema::drop(Models::table('assigned_roles'));
-        Schema::drop(Models::table('roles'));
-        Schema::drop(Models::table('abilities'));
+        Schema::drop('permissions');
+        Schema::drop('assigned_roles');
+        Schema::drop('roles');
+        Schema::drop('abilities');
     }
 };
