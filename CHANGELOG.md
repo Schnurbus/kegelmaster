@@ -1,5 +1,29 @@
 # Changelog
 
+## [1.5.0](https://github.com/Schnurbus/kegelmaster/compare/v1.4.1...v1.5.0) (2025-04-11)
+
+
+### Features
+
+* replace bouncer with laravel-permission ([#89](https://github.com/Schnurbus/kegelmaster/issues/89)) ([90dde08](https://github.com/Schnurbus/kegelmaster/commit/90dde086228ce3db9da1ac13fe4a8cc40d864d23))
+
+
+### Bug Fixes
+
+* **deps:** update dependency @inertiajs/vue3 to v2.0.7 ([#80](https://github.com/Schnurbus/kegelmaster/issues/80)) ([3eee79d](https://github.com/Schnurbus/kegelmaster/commit/3eee79d88ed2a892268b62fc749dc29f6bc64e0d))
+* **deps:** update dependency @inertiajs/vue3 to v2.0.8 ([#87](https://github.com/Schnurbus/kegelmaster/issues/87)) ([71049a6](https://github.com/Schnurbus/kegelmaster/commit/71049a6c6c213bda9d4252964ce79a23158a8df6))
+* **deps:** update dependency inertiajs/inertia-laravel to v2.0.2 ([#88](https://github.com/Schnurbus/kegelmaster/issues/88)) ([edbb977](https://github.com/Schnurbus/kegelmaster/commit/edbb977e403636f1f46329db14b692f16aee12b4))
+* **deps:** update dependency laravel/framework to v12.8.1 ([#81](https://github.com/Schnurbus/kegelmaster/issues/81)) ([fdf0709](https://github.com/Schnurbus/kegelmaster/commit/fdf0709c6f78aeae70887768c8586563741e7ed4))
+* **deps:** update dependency laravel/octane to v2.9.0 ([#84](https://github.com/Schnurbus/kegelmaster/issues/84)) ([093bce5](https://github.com/Schnurbus/kegelmaster/commit/093bce5675413da62bec082d335e9445e58578ec))
+* **deps:** update dependency spatie/laravel-permission to v6.17.0 ([#90](https://github.com/Schnurbus/kegelmaster/issues/90)) ([890b78e](https://github.com/Schnurbus/kegelmaster/commit/890b78e9d8cdc71faa0f122a05181301926499ec))
+* **deps:** update dependency vite to v6.2.6 ([#85](https://github.com/Schnurbus/kegelmaster/issues/85)) ([2cb7acc](https://github.com/Schnurbus/kegelmaster/commit/2cb7acc4bcc48ca78673f3ab39f5313cef211557))
+
+
+### Miscellaneous Chores
+
+* **deps:** update dependency eslint-config-prettier to v10.1.2 ([#86](https://github.com/Schnurbus/kegelmaster/issues/86)) ([48e0739](https://github.com/Schnurbus/kegelmaster/commit/48e0739ee710e9d4ba57b9c4458589871286ae90))
+* **deps:** update dependency laravel/pint to v1.22.0 ([#83](https://github.com/Schnurbus/kegelmaster/issues/83)) ([bfd59b0](https://github.com/Schnurbus/kegelmaster/commit/bfd59b099d05b63589399f338e4568c8c233a039))
+
 ## [1.4.1](https://github.com/Schnurbus/kegelmaster/compare/v1.4.0...v1.4.1) (2025-04-08)
 
 
