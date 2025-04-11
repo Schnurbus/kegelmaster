@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.5.1](https://github.com/Schnurbus/kegelmaster/compare/v1.5.0...v1.5.1) (2025-04-11)
+
+
+### Bug Fixes
+
+* club policy ([#91](https://github.com/Schnurbus/kegelmaster/issues/91)) ([fe5a36f](https://github.com/Schnurbus/kegelmaster/commit/fe5a36feddff96fad5ec4124d6427f1bff7afd4a))
+
 ## [1.5.0](https://github.com/Schnurbus/kegelmaster/compare/v1.4.1...v1.5.0) (2025-04-11)
 
 
