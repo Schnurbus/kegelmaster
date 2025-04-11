@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -14,12 +15,23 @@ class ClubSelectController extends Controller
             'club_id' => ['required', 'exists:clubs,id'],
         ]);
 
-        $club = \App\Models\Club::find($validated['club_id']);
+        /** @var User $user */
+        $user = Auth::user();
+        $clubId = $validated['club_id'];
 
-        session(['currentClub' => $club]);
+        setPermissionsTeamId($clubId);
 
-        Log::info('Changing current club for user {user}', ['user' => Auth::user(), 'club_id' => $club->id]);
+        $isClubOwner = $user->clubs()->where('id', $clubId)->exists();
+        $hasPlayer = $user->players()
+            ->where('club_id', $clubId)
+            ->exists();
 
-        return redirect()->back()->withCookie(cookie('currentClubId', strval($club->id), 1440));
+        if (! $isClubOwner && ! $hasPlayer) {
+            abort(403);
+        }
+
+        Log::info('Changing current club for user {user}', ['club_id' => $clubId]);
+
+        return redirect()->back()->withCookie(cookie('currentClubId', strval($clubId), 1440));
     }
 }

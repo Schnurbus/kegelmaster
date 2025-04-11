@@ -45,9 +45,12 @@ const submit = () => {
     }
 };
 
+console.log(props.permissions);
+console.log(props.role);
+
 const capitalize = (value: string) => {
     return value
-        .split(' ')
+        .split('.')
         .map((word: string) => word[0].toUpperCase() + word.slice(1))
         .join(' ');
 };

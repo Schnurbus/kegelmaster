@@ -50,7 +50,7 @@ class RoleController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(IndexRoleRequest $request)
+    public function index(IndexRoleRequest $request): Response
     {
         /** @var User $user */
         $user = $request->user();
