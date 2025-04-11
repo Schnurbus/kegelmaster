@@ -15,8 +15,9 @@ class IndexPlayerRequest extends FormRequest
     {
         /** @var User $user */
         $user = $this->user();
+        $currentClubId = session('current_club_id');
 
-        return $user->can('list', getClubScopedModel(Player::class));
+        return $user->can('list', [Player::class, $currentClubId]);
     }
 
     /**

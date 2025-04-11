@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Role;
 
+use App\Models\Role;
 use App\Models\User;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
@@ -27,13 +28,19 @@ class UpdateRoleRequest extends FormRequest
      */
     public function rules(): array
     {
+        /** @var Role $role */
+        $role = $this->route('role');
+
         return [
             'club_id' => ['required', 'exists:clubs,id'],
             'name' => [
                 'required',
                 'string',
+                'not_regex:/\./',
                 'max:255',
-                Rule::unique('roles')->where('scope', $this->club_id)->ignore($this->role->id),
+                Rule::unique('roles')
+                    ->where('club_id', $role->club_id)
+                    ->ignore($role),
             ],
             'is_base_fee_active' => ['required', 'boolean'],
 

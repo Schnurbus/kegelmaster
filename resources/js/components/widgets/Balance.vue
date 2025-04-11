@@ -30,8 +30,6 @@ const fetchData = async () => {
                 withCredentials: true,
                 maxRedirects: 0
             });
-
-            console.log(response.data);
         }
         response = props.club_id
             ? await fetch(route('api.v1.club.show', { club: String(props.club_id) }),

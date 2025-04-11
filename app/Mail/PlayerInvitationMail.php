@@ -41,6 +41,8 @@ class PlayerInvitationMail extends Mailable
      */
     public function content(): Content
     {
+        $this->player->load('club');
+
         return new Content(
             view: 'emails.player_invitation',
             text: 'emails.player_invitation-text',

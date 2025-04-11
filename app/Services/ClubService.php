@@ -67,20 +67,6 @@ class ClubService
         }
     }
 
-    public function getClubInfo(Club $club, $action = 'view')
-    {
-        BouncerFacade::scope()->to($club->id);
-        if (! BouncerFacade::can($action, $club)) {
-            abort(403);
-        }
-
-        $club
-            ->load('owner:id,name')
-            ->loadCount('players');
-
-        return $club;
-    }
-
     public function getClubsWithPermissions(User $user)
     {
         $clubs = Club::select('id', 'name', 'balance', 'user_id')
@@ -91,8 +77,10 @@ class ClubService
             ->get();
 
         return $clubs->map(function ($club) use ($user) {
-            BouncerFacade::scope()->to($club->id);
             $permissions = [
+                //                'view' => true,
+                //                'update' => true,
+                //                'delete' => true,
                 'view' => $user->can('view', $club),
                 'update' => $user->can('update', $club),
                 'delete' => $user->can('delete', $club),

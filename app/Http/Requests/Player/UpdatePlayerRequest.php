@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests\Player;
 
+use App\Models\Player;
 use App\Models\User;
+use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -22,20 +24,29 @@ class UpdatePlayerRequest extends FormRequest
     /**
      * Get the validation rules that apply to the request.
      *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
+     * @return array<string, ValidationRule|array|string>
      */
     public function rules(): array
     {
+        /** @var Player $player */
+        $player = $this->route('player');
+
         return [
-            'name' => 'required|string|max:255|unique:players,name,'.$this->player->id.',id,club_id,'.$this->player->club_id,
-            'sex' => 'required|integer|in:1,2',
+            'name' => [
+                'required',
+                'string',
+                'max:255',
+                Rule::unique('players', 'name')
+                    ->where('club_id', $player->club_id)
+                    ->ignore($player->id),
+            ],
+            'sex' => ['required', 'integer', 'in:1,2'],
             'active' => 'boolean',
-            'initial_balance' => 'required|numeric',
+            'initial_balance' => ['required', 'numeric'],
             'role_id' => [
                 'required',
                 Rule::exists('roles', 'id')
-                    ->where('scope', $this->club_id)
-                    ->whereNot('name', 'owner'),
+                    ->where('club_id', $player->club_id),
             ],
         ];
     }

@@ -4,12 +4,13 @@ namespace App\Http\Requests\Transaction;
 
 use App\Models\Transaction;
 use App\Models\User;
+use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
 class StoreTransactionRequest extends FormRequest
 {
-    protected $casts = [
+    protected array $casts = [
         'type' => 'TransactionType',
     ];
 
@@ -21,13 +22,13 @@ class StoreTransactionRequest extends FormRequest
         /** @var User $user */
         $user = $this->user();
 
-        return $user->can('create', getClubScopedModel(Transaction::class, $this->input('club_id')));
+        return $user->can('create', [Transaction::class, $this->input('club_id')]);
     }
 
     /**
      * Get the validation rules that apply to the request.
      *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
+     * @return array<string, ValidationRule|array|string>
      */
     public function rules(): array
     {
@@ -35,7 +36,6 @@ class StoreTransactionRequest extends FormRequest
             'club_id' => ['required', 'integer', 'exists:clubs,id'],
             'matchday_id' => ['sometimes', 'integer', 'exists:clubs,id'],
             'type' => ['required', 'in:1,2,3,4,5'],
-            // 'player_id' => 'exclude_if:type,5|required|exists:players,id',
             'player_id' => [
                 Rule::excludeIf($this->input('type') === 5),
                 'required',

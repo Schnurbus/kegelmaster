@@ -5,7 +5,7 @@
 
 /**
  * A helper file for Laravel, to provide autocomplete information to your IDE
- * Generated for Laravel 12.3.0.
+ * Generated for Laravel 12.8.1.
  *
  * This file should not be included in your code, only analyzed by your IDE!
  *
@@ -6563,77 +6563,96 @@ namespace Illuminate\Support\Facades {
      *
      * @see https://carbon.nesbot.com/docs/
      * @see https://github.com/briannesbitt/Carbon/blob/master/src/Carbon/Factory.php
-     * @method static \Illuminate\Support\Carbon create($year = 0, $month = 1, $day = 1, $hour = 0, $minute = 0, $second = 0, $timezone = null)
+     * @method static bool canBeCreatedFromFormat(?string $date, string $format)
+     * @method static \Illuminate\Support\Carbon|null create($year = 0, $month = 1, $day = 1, $hour = 0, $minute = 0, $second = 0, $timezone = null)
      * @method static \Illuminate\Support\Carbon createFromDate($year = null, $month = null, $day = null, $timezone = null)
-     * @method static \Illuminate\Support\Carbon|false createFromFormat($format, $time, $timezone = null)
+     * @method static \Illuminate\Support\Carbon|null createFromFormat($format, $time, $timezone = null)
+     * @method static \Illuminate\Support\Carbon|null createFromIsoFormat(string $format, string $time, $timezone = null, ?string $locale = 'en', ?\Symfony\Contracts\Translation\TranslatorInterface $translator = null)
+     * @method static \Illuminate\Support\Carbon|null createFromLocaleFormat(string $format, string $locale, string $time, $timezone = null)
+     * @method static \Illuminate\Support\Carbon|null createFromLocaleIsoFormat(string $format, string $locale, string $time, $timezone = null)
      * @method static \Illuminate\Support\Carbon createFromTime($hour = 0, $minute = 0, $second = 0, $timezone = null)
-     * @method static \Illuminate\Support\Carbon createFromTimeString($time, $timezone = null)
-     * @method static \Illuminate\Support\Carbon createFromTimestamp($timestamp, $timezone = null)
-     * @method static \Illuminate\Support\Carbon createFromTimestampMs($timestamp, $timezone = null)
-     * @method static \Illuminate\Support\Carbon createFromTimestampUTC($timestamp)
+     * @method static \Illuminate\Support\Carbon createFromTimeString(string $time, \DateTimeZone|string|int|null $timezone = null)
+     * @method static \Illuminate\Support\Carbon createFromTimestamp(string|int|float $timestamp, \DateTimeZone|string|int|null $timezone = null)
+     * @method static \Illuminate\Support\Carbon createFromTimestampMs(string|int|float $timestamp, \DateTimeZone|string|int|null $timezone = null)
+     * @method static \Illuminate\Support\Carbon createFromTimestampMsUTC($timestamp)
+     * @method static \Illuminate\Support\Carbon createFromTimestampUTC(string|int|float $timestamp)
      * @method static \Illuminate\Support\Carbon createMidnightDate($year = null, $month = null, $day = null, $timezone = null)
-     * @method static \Illuminate\Support\Carbon|false createSafe($year = null, $month = null, $day = null, $hour = null, $minute = null, $second = null, $timezone = null)
+     * @method static \Illuminate\Support\Carbon|null createSafe($year = null, $month = null, $day = null, $hour = null, $minute = null, $second = null, $timezone = null)
+     * @method static \Illuminate\Support\Carbon createStrict(?int $year = 0, ?int $month = 1, ?int $day = 1, ?int $hour = 0, ?int $minute = 0, ?int $second = 0, $timezone = null)
      * @method static void disableHumanDiffOption($humanDiffOption)
      * @method static void enableHumanDiffOption($humanDiffOption)
-     * @method static mixed executeWithLocale($locale, $func)
+     * @method static mixed executeWithLocale(string $locale, callable $func)
      * @method static \Illuminate\Support\Carbon fromSerialized($value)
      * @method static array getAvailableLocales()
+     * @method static array getAvailableLocalesInfo()
      * @method static array getDays()
+     * @method static ?string getFallbackLocale()
+     * @method static array getFormatsToIsoReplacements()
      * @method static int getHumanDiffOptions()
      * @method static array getIsoUnits()
-     * @method static array getLastErrors()
+     * @method static array|false getLastErrors()
      * @method static string getLocale()
      * @method static int getMidDayAt()
+     * @method static string getTimeFormatByPrecision(string $unitPrecision)
+     * @method static string|\Closure|null getTranslationMessageWith($translator, string $key, ?string $locale = null, ?string $default = null)
      * @method static \Illuminate\Support\Carbon|null getTestNow()
      * @method static \Symfony\Contracts\Translation\TranslatorInterface getTranslator()
-     * @method static int getWeekEndsAt()
-     * @method static int getWeekStartsAt()
+     * @method static int getWeekEndsAt(?string $locale = null)
+     * @method static int getWeekStartsAt(?string $locale = null)
      * @method static array getWeekendDays()
-     * @method static bool hasFormat($date, $format)
+     * @method static bool hasFormat(string $date, string $format)
+     * @method static bool hasFormatWithModifiers(string $date, string $format)
      * @method static bool hasMacro($name)
-     * @method static bool hasRelativeKeywords($time)
+     * @method static bool hasRelativeKeywords(?string $time)
      * @method static bool hasTestNow()
-     * @method static \Illuminate\Support\Carbon instance($date)
+     * @method static \Illuminate\Support\Carbon instance(\DateTimeInterface $date)
      * @method static bool isImmutable()
      * @method static bool isModifiableUnit($unit)
      * @method static bool isMutable()
      * @method static bool isStrictModeEnabled()
-     * @method static bool localeHasDiffOneDayWords($locale)
-     * @method static bool localeHasDiffSyntax($locale)
-     * @method static bool localeHasDiffTwoDayWords($locale)
+     * @method static bool localeHasDiffOneDayWords(string $locale)
+     * @method static bool localeHasDiffSyntax(string $locale)
+     * @method static bool localeHasDiffTwoDayWords(string $locale)
      * @method static bool localeHasPeriodSyntax($locale)
-     * @method static bool localeHasShortUnits($locale)
-     * @method static void macro($name, $macro)
-     * @method static \Illuminate\Support\Carbon|null make($var)
-     * @method static \Illuminate\Support\Carbon maxValue()
-     * @method static \Illuminate\Support\Carbon minValue()
-     * @method static void mixin($mixin)
-     * @method static \Illuminate\Support\Carbon now($timezone = null)
-     * @method static \Illuminate\Support\Carbon parse($time = null, $timezone = null)
+     * @method static bool localeHasShortUnits(string $locale)
+     * @method static void macro(string $name, ?callable $macro)
+     * @method static \Illuminate\Support\Carbon|null make($var, \DateTimeZone|string|null $timezone = null)
+     * @method static void mixin(object|string $mixin)
+     * @method static \Illuminate\Support\Carbon now(\DateTimeZone|string|int|null $timezone = null)
+     * @method static \Illuminate\Support\Carbon parse(\DateTimeInterface|\Carbon\WeekDay|\Carbon\Month|string|int|float|null $time, \DateTimeZone|string|int|null $timezone = null)
+     * @method static \Illuminate\Support\Carbon parseFromLocale(string $time, ?string $locale = null, \DateTimeZone|string|int|null $timezone = null)
      * @method static string pluralUnit(string $unit)
+     * @method static \Illuminate\Support\Carbon|null rawCreateFromFormat(string $format, string $time, $timezone = null)
+     * @method static \Illuminate\Support\Carbon rawParse(\DateTimeInterface|\Carbon\WeekDay|\Carbon\Month|string|int|float|null $time, \DateTimeZone|string|int|null $timezone = null)
      * @method static void resetMonthsOverflow()
      * @method static void resetToStringFormat()
      * @method static void resetYearsOverflow()
      * @method static void serializeUsing($callback)
+     * @method static void setFallbackLocale(string $locale)
      * @method static void setHumanDiffOptions($humanDiffOptions)
-     * @method static bool setLocale($locale)
+     * @method static void setLocale(string $locale)
      * @method static void setMidDayAt($hour)
-     * @method static void setTestNow($testNow = null)
-     * @method static void setToStringFormat($format)
+     * @method static void setTestNow(mixed $testNow = null)
+     * @method static void setTestNowAndTimezone(mixed $testNow = null, $timezone = null)
+     * @method static void setToStringFormat(string|\Closure|null $format)
      * @method static void setTranslator(\Symfony\Contracts\Translation\TranslatorInterface $translator)
-     * @method static void setUtf8($utf8)
      * @method static void setWeekEndsAt($day)
      * @method static void setWeekStartsAt($day)
      * @method static void setWeekendDays($days)
      * @method static bool shouldOverflowMonths()
      * @method static bool shouldOverflowYears()
      * @method static string singularUnit(string $unit)
-     * @method static \Illuminate\Support\Carbon today($timezone = null)
-     * @method static \Illuminate\Support\Carbon tomorrow($timezone = null)
+     * @method static void sleep(int|float $seconds)
+     * @method static \Illuminate\Support\Carbon today(\DateTimeZone|string|int|null $timezone = null)
+     * @method static \Illuminate\Support\Carbon tomorrow(\DateTimeZone|string|int|null $timezone = null)
+     * @method static string translateTimeString(string $timeString, ?string $from = null, ?string $to = null, int $mode = \Carbon\CarbonInterface::TRANSLATE_ALL)
+     * @method static string translateWith(\Symfony\Contracts\Translation\TranslatorInterface $translator, string $key, array $parameters = [], $number = null)
      * @method static void useMonthsOverflow($monthsOverflow = true)
      * @method static void useStrictMode($strictModeEnabled = true)
      * @method static void useYearsOverflow($yearsOverflow = true)
-     * @method static \Illuminate\Support\Carbon yesterday($timezone = null)
+     * @method static mixed withTestNow(mixed $testNow, callable $callback)
+     * @method static static withTimeZone(\DateTimeZone|string|int|null $timezone)
+     * @method static \Illuminate\Support\Carbon yesterday(\DateTimeZone|string|int|null $timezone = null)
      * @see \Illuminate\Support\DateFactory
      */
     class Date {
@@ -10008,6 +10027,34 @@ namespace Illuminate\Support\Facades {
         }
 
         /**
+         * Create a new PSR-7 response instance for use during stubbing.
+         *
+         * @param array|string|null $body
+         * @param int $status
+         * @param array<string, mixed> $headers
+         * @return \GuzzleHttp\Psr7\Response 
+         * @static 
+         */
+        public static function psr7Response($body = null, $status = 200, $headers = [])
+        {
+            return \Illuminate\Http\Client\Factory::psr7Response($body, $status, $headers);
+        }
+
+        /**
+         * Create a new RequestException instance for use during stubbing.
+         *
+         * @param array|string|null $body
+         * @param int $status
+         * @param array<string, mixed> $headers
+         * @return \Illuminate\Http\Client\RequestException 
+         * @static 
+         */
+        public static function failedRequest($body = null, $status = 200, $headers = [])
+        {
+            return \Illuminate\Http\Client\Factory::failedRequest($body, $status, $headers);
+        }
+
+        /**
          * Create a new connection exception for use during stubbing.
          *
          * @param string|null $message
@@ -10805,13 +10852,14 @@ namespace Illuminate\Support\Facades {
         /**
          * Flush the log context on all currently resolved channels.
          *
+         * @param string[]|null $keys
          * @return \Illuminate\Log\LogManager 
          * @static 
          */
-        public static function withoutContext()
+        public static function withoutContext($keys = null)
         {
             /** @var \Illuminate\Log\LogManager $instance */
-            return $instance->withoutContext();
+            return $instance->withoutContext($keys);
         }
 
         /**
@@ -12684,6 +12732,20 @@ namespace Illuminate\Support\Facades {
         }
 
         /**
+         * Get all of the jobs by listener class, passing an optional truth-test callback.
+         *
+         * @param class-string $listenerClass
+         * @param (\Closure(mixed, \Illuminate\Events\CallQueuedListener, string|null, mixed): bool)|null $callback
+         * @return \Illuminate\Support\Collection<int, \Illuminate\Events\CallQueuedListener> 
+         * @static 
+         */
+        public static function listenersPushed($listenerClass, $callback = null)
+        {
+            /** @var \Illuminate\Support\Testing\Fakes\QueueFake $instance */
+            return $instance->listenersPushed($listenerClass, $callback);
+        }
+
+        /**
          * Determine if there are any stored jobs for a given class.
          *
          * @param string $job
@@ -13540,6 +13602,7 @@ namespace Illuminate\Support\Facades {
     /**
      * 
      *
+     * @method static array|(\Illuminate\Http\UploadedFile|\Illuminate\Http\UploadedFile[]|null file(string|null $key = null, mixed $default = null)
      * @method static array validate(array $rules, ...$params)
      * @method static array validateWithBag(string $errorBag, array $rules, ...$params)
      * @method static bool hasValidSignature(bool $absolute = true)
@@ -15602,7 +15665,7 @@ namespace Illuminate\Support\Facades {
         /**
          * Get an array of all of the files on the request.
          *
-         * @return array 
+         * @return array<string, \Illuminate\Http\UploadedFile|\Illuminate\Http\UploadedFile[]> 
          * @static 
          */
         public static function allFiles()
@@ -15629,7 +15692,7 @@ namespace Illuminate\Support\Facades {
          *
          * @param string|null $key
          * @param mixed $default
-         * @return \Illuminate\Http\UploadedFile|\Illuminate\Http\UploadedFile[]|array|null 
+         * @return ($key is null ? array<string, \Illuminate\Http\UploadedFile|\Illuminate\Http\UploadedFile[]> : \Illuminate\Http\UploadedFile|\Illuminate\Http\UploadedFile[]|null)
          * @static 
          */
         public static function file($key = null, $default = null)
@@ -22469,6 +22532,18 @@ namespace Illuminate\Support\Facades {
         }
 
         /**
+         * Flush state.
+         *
+         * @return void 
+         * @static 
+         */
+        public static function flush()
+        {
+            /** @var \Illuminate\Foundation\Vite $instance */
+            $instance->flush();
+        }
+
+        /**
          * Register a custom macro.
          *
          * @param string $name
@@ -23282,547 +23357,6 @@ namespace Laravel\Octane\Facades {
             }
     }
 
-namespace Silber\Bouncer {
-    /**
-     * 
-     *
-     * @see \Silber\Bouncer\Bouncer
-     */
-    class BouncerFacade {
-        /**
-         * Create a new Bouncer instance.
-         *
-         * @param mixed $user
-         * @return static 
-         * @static 
-         */
-        public static function create($user = null)
-        {
-            return \Silber\Bouncer\Bouncer::create($user);
-        }
-
-        /**
-         * Create a bouncer factory instance.
-         *
-         * @param mixed $user
-         * @return \Silber\Bouncer\Factory 
-         * @static 
-         */
-        public static function make($user = null)
-        {
-            return \Silber\Bouncer\Bouncer::make($user);
-        }
-
-        /**
-         * Start a chain, to allow the given authority an ability.
-         *
-         * @param \Illuminate\Database\Eloquent\Model|string $authority
-         * @return \Silber\Bouncer\Conductors\GivesAbilities 
-         * @static 
-         */
-        public static function allow($authority)
-        {
-            /** @var \Silber\Bouncer\Bouncer $instance */
-            return $instance->allow($authority);
-        }
-
-        /**
-         * Start a chain, to allow everyone an ability.
-         *
-         * @return \Silber\Bouncer\Conductors\GivesAbilities 
-         * @static 
-         */
-        public static function allowEveryone()
-        {
-            /** @var \Silber\Bouncer\Bouncer $instance */
-            return $instance->allowEveryone();
-        }
-
-        /**
-         * Start a chain, to disallow the given authority an ability.
-         *
-         * @param \Illuminate\Database\Eloquent\Model|string $authority
-         * @return \Silber\Bouncer\Conductors\RemovesAbilities 
-         * @static 
-         */
-        public static function disallow($authority)
-        {
-            /** @var \Silber\Bouncer\Bouncer $instance */
-            return $instance->disallow($authority);
-        }
-
-        /**
-         * Start a chain, to disallow everyone the an ability.
-         *
-         * @return \Silber\Bouncer\Conductors\RemovesAbilities 
-         * @static 
-         */
-        public static function disallowEveryone()
-        {
-            /** @var \Silber\Bouncer\Bouncer $instance */
-            return $instance->disallowEveryone();
-        }
-
-        /**
-         * Start a chain, to forbid the given authority an ability.
-         *
-         * @param \Illuminate\Database\Eloquent\Model|string $authority
-         * @return \Silber\Bouncer\Conductors\GivesAbilities 
-         * @static 
-         */
-        public static function forbid($authority)
-        {
-            /** @var \Silber\Bouncer\Bouncer $instance */
-            return $instance->forbid($authority);
-        }
-
-        /**
-         * Start a chain, to forbid everyone an ability.
-         *
-         * @return \Silber\Bouncer\Conductors\GivesAbilities 
-         * @static 
-         */
-        public static function forbidEveryone()
-        {
-            /** @var \Silber\Bouncer\Bouncer $instance */
-            return $instance->forbidEveryone();
-        }
-
-        /**
-         * Start a chain, to unforbid the given authority an ability.
-         *
-         * @param \Illuminate\Database\Eloquent\Model|string $authority
-         * @return \Silber\Bouncer\Conductors\RemovesAbilities 
-         * @static 
-         */
-        public static function unforbid($authority)
-        {
-            /** @var \Silber\Bouncer\Bouncer $instance */
-            return $instance->unforbid($authority);
-        }
-
-        /**
-         * Start a chain, to unforbid an ability from everyone.
-         *
-         * @return \Silber\Bouncer\Conductors\RemovesAbilities 
-         * @static 
-         */
-        public static function unforbidEveryone()
-        {
-            /** @var \Silber\Bouncer\Bouncer $instance */
-            return $instance->unforbidEveryone();
-        }
-
-        /**
-         * Start a chain, to assign the given role to a model.
-         *
-         * @param \Silber\Bouncer\Database\Role|\Illuminate\Support\Collection|string $roles
-         * @return \Silber\Bouncer\Conductors\AssignsRoles 
-         * @static 
-         */
-        public static function assign($roles)
-        {
-            /** @var \Silber\Bouncer\Bouncer $instance */
-            return $instance->assign($roles);
-        }
-
-        /**
-         * Start a chain, to retract the given role from a model.
-         *
-         * @param \Illuminate\Support\Collection|\Silber\Bouncer\Database\Role|string $roles
-         * @return \Silber\Bouncer\Conductors\RemovesRoles 
-         * @static 
-         */
-        public static function retract($roles)
-        {
-            /** @var \Silber\Bouncer\Bouncer $instance */
-            return $instance->retract($roles);
-        }
-
-        /**
-         * Start a chain, to sync roles/abilities for the given authority.
-         *
-         * @param \Illuminate\Database\Eloquent\Model|string $authority
-         * @return \Silber\Bouncer\Conductors\SyncsRolesAndAbilities 
-         * @static 
-         */
-        public static function sync($authority)
-        {
-            /** @var \Silber\Bouncer\Bouncer $instance */
-            return $instance->sync($authority);
-        }
-
-        /**
-         * Start a chain, to check if the given authority has a certain role.
-         *
-         * @return \Silber\Bouncer\Conductors\ChecksRoles 
-         * @static 
-         */
-        public static function is($authority)
-        {
-            /** @var \Silber\Bouncer\Bouncer $instance */
-            return $instance->is($authority);
-        }
-
-        /**
-         * Get the clipboard instance.
-         *
-         * @return \Silber\Bouncer\Contracts\Clipboard 
-         * @static 
-         */
-        public static function getClipboard()
-        {
-            /** @var \Silber\Bouncer\Bouncer $instance */
-            return $instance->getClipboard();
-        }
-
-        /**
-         * Set the clipboard instance used by bouncer.
-         * 
-         * Will also register the given clipboard with the container.
-         *
-         * @param \Silber\Bouncer\Contracts\Clipboard
-         * @return \Silber\Bouncer\Bouncer 
-         * @static 
-         */
-        public static function setClipboard($clipboard)
-        {
-            /** @var \Silber\Bouncer\Bouncer $instance */
-            return $instance->setClipboard($clipboard);
-        }
-
-        /**
-         * Register the guard's clipboard at the container.
-         *
-         * @return \Silber\Bouncer\Bouncer 
-         * @static 
-         */
-        public static function registerClipboardAtContainer()
-        {
-            /** @var \Silber\Bouncer\Bouncer $instance */
-            return $instance->registerClipboardAtContainer();
-        }
-
-        /**
-         * Use a cached clipboard with the given cache instance.
-         *
-         * @return \Silber\Bouncer\Bouncer 
-         * @static 
-         */
-        public static function cache($cache = null)
-        {
-            /** @var \Silber\Bouncer\Bouncer $instance */
-            return $instance->cache($cache);
-        }
-
-        /**
-         * Fully disable all query caching.
-         *
-         * @return \Silber\Bouncer\Bouncer 
-         * @static 
-         */
-        public static function dontCache()
-        {
-            /** @var \Silber\Bouncer\Bouncer $instance */
-            return $instance->dontCache();
-        }
-
-        /**
-         * Clear the cache.
-         *
-         * @return \Silber\Bouncer\Bouncer 
-         * @static 
-         */
-        public static function refresh($authority = null)
-        {
-            /** @var \Silber\Bouncer\Bouncer $instance */
-            return $instance->refresh($authority);
-        }
-
-        /**
-         * Clear the cache for the given authority.
-         *
-         * @return \Silber\Bouncer\Bouncer 
-         * @static 
-         */
-        public static function refreshFor($authority)
-        {
-            /** @var \Silber\Bouncer\Bouncer $instance */
-            return $instance->refreshFor($authority);
-        }
-
-        /**
-         * Set the access gate instance.
-         *
-         * @return \Silber\Bouncer\Bouncer 
-         * @static 
-         */
-        public static function setGate($gate)
-        {
-            /** @var \Silber\Bouncer\Bouncer $instance */
-            return $instance->setGate($gate);
-        }
-
-        /**
-         * Get the gate instance.
-         *
-         * @return \Illuminate\Contracts\Auth\Access\Gate|null 
-         * @static 
-         */
-        public static function getGate()
-        {
-            /** @var \Silber\Bouncer\Bouncer $instance */
-            return $instance->getGate();
-        }
-
-        /**
-         * Get the gate instance. Throw if not set.
-         *
-         * @return \Illuminate\Contracts\Auth\Access\Gate 
-         * @throws \RuntimeException
-         * @static 
-         */
-        public static function gate()
-        {
-            /** @var \Silber\Bouncer\Bouncer $instance */
-            return $instance->gate();
-        }
-
-        /**
-         * Determine whether the clipboard used is a cached clipboard.
-         *
-         * @return bool 
-         * @static 
-         */
-        public static function usesCachedClipboard()
-        {
-            /** @var \Silber\Bouncer\Bouncer $instance */
-            return $instance->usesCachedClipboard();
-        }
-
-        /**
-         * Define a new ability using a callback.
-         *
-         * @param string $ability
-         * @param callable|string $callback
-         * @return \Silber\Bouncer\Bouncer 
-         * @throws \InvalidArgumentException
-         * @static 
-         */
-        public static function define($ability, $callback)
-        {
-            /** @var \Silber\Bouncer\Bouncer $instance */
-            return $instance->define($ability, $callback);
-        }
-
-        /**
-         * Determine if the given ability should be granted for the current user.
-         *
-         * @param string $ability
-         * @param array|mixed $arguments
-         * @return \Illuminate\Auth\Access\Response 
-         * @throws \Illuminate\Auth\Access\AuthorizationException
-         * @static 
-         */
-        public static function authorize($ability, $arguments = [])
-        {
-            /** @var \Silber\Bouncer\Bouncer $instance */
-            return $instance->authorize($ability, $arguments);
-        }
-
-        /**
-         * Determine if the given ability is allowed.
-         *
-         * @param string $ability
-         * @param array|mixed $arguments
-         * @return bool 
-         * @static 
-         */
-        public static function can($ability, $arguments = [])
-        {
-            /** @var \Silber\Bouncer\Bouncer $instance */
-            return $instance->can($ability, $arguments);
-        }
-
-        /**
-         * Determine if any of the given abilities are allowed.
-         *
-         * @param array $abilities
-         * @param array|mixed $arguments
-         * @return bool 
-         * @static 
-         */
-        public static function canAny($abilities, $arguments = [])
-        {
-            /** @var \Silber\Bouncer\Bouncer $instance */
-            return $instance->canAny($abilities, $arguments);
-        }
-
-        /**
-         * Determine if the given ability is denied.
-         *
-         * @param string $ability
-         * @param array|mixed $arguments
-         * @return bool 
-         * @static 
-         */
-        public static function cannot($ability, $arguments = [])
-        {
-            /** @var \Silber\Bouncer\Bouncer $instance */
-            return $instance->cannot($ability, $arguments);
-        }
-
-        /**
-         * Determine if the given ability is allowed.
-         * 
-         * Alias for the "can" method.
-         *
-         * @deprecated 
-         * @param string $ability
-         * @param array|mixed $arguments
-         * @return bool 
-         * @static 
-         */
-        public static function allows($ability, $arguments = [])
-        {
-            /** @var \Silber\Bouncer\Bouncer $instance */
-            return $instance->allows($ability, $arguments);
-        }
-
-        /**
-         * Determine if the given ability is denied.
-         * 
-         * Alias for the "cannot" method.
-         *
-         * @deprecated 
-         * @param string $ability
-         * @param array|mixed $arguments
-         * @return bool 
-         * @static 
-         */
-        public static function denies($ability, $arguments = [])
-        {
-            /** @var \Silber\Bouncer\Bouncer $instance */
-            return $instance->denies($ability, $arguments);
-        }
-
-        /**
-         * Get an instance of the role model.
-         *
-         * @return \Silber\Bouncer\Database\Role 
-         * @static 
-         */
-        public static function role($attributes = [])
-        {
-            /** @var \Silber\Bouncer\Bouncer $instance */
-            return $instance->role($attributes);
-        }
-
-        /**
-         * Get an instance of the ability model.
-         *
-         * @return \Silber\Bouncer\Database\Ability 
-         * @static 
-         */
-        public static function ability($attributes = [])
-        {
-            /** @var \Silber\Bouncer\Bouncer $instance */
-            return $instance->ability($attributes);
-        }
-
-        /**
-         * Set Bouncer to run its checks before the policies.
-         *
-         * @param bool $boolean
-         * @return \Silber\Bouncer\Bouncer 
-         * @static 
-         */
-        public static function runBeforePolicies($boolean = true)
-        {
-            /** @var \Silber\Bouncer\Bouncer $instance */
-            return $instance->runBeforePolicies($boolean);
-        }
-
-        /**
-         * Register an attribute/callback to determine if a model is owned by a given authority.
-         *
-         * @param string|\Closure $model
-         * @param string|\Closure|null $attribute
-         * @return \Silber\Bouncer\Bouncer 
-         * @static 
-         */
-        public static function ownedVia($model, $attribute = null)
-        {
-            /** @var \Silber\Bouncer\Bouncer $instance */
-            return $instance->ownedVia($model, $attribute);
-        }
-
-        /**
-         * Set the model to be used for abilities.
-         *
-         * @param string $model
-         * @return \Silber\Bouncer\Bouncer 
-         * @static 
-         */
-        public static function useAbilityModel($model)
-        {
-            /** @var \Silber\Bouncer\Bouncer $instance */
-            return $instance->useAbilityModel($model);
-        }
-
-        /**
-         * Set the model to be used for roles.
-         *
-         * @param string $model
-         * @return \Silber\Bouncer\Bouncer 
-         * @static 
-         */
-        public static function useRoleModel($model)
-        {
-            /** @var \Silber\Bouncer\Bouncer $instance */
-            return $instance->useRoleModel($model);
-        }
-
-        /**
-         * Set the model to be used for users.
-         *
-         * @param string $model
-         * @return \Silber\Bouncer\Bouncer 
-         * @static 
-         */
-        public static function useUserModel($model)
-        {
-            /** @var \Silber\Bouncer\Bouncer $instance */
-            return $instance->useUserModel($model);
-        }
-
-        /**
-         * Set custom table names.
-         *
-         * @return \Silber\Bouncer\Bouncer 
-         * @static 
-         */
-        public static function tables($map)
-        {
-            /** @var \Silber\Bouncer\Bouncer $instance */
-            return $instance->tables($map);
-        }
-
-        /**
-         * Get the model scoping instance.
-         *
-         * @return mixed 
-         * @static 
-         */
-        public static function scope($scope = null)
-        {
-            /** @var \Silber\Bouncer\Bouncer $instance */
-            return $instance->scope($scope);
-        }
-
-            }
-    }
-
 namespace Illuminate\Support {
     /**
      * 
@@ -23961,6 +23495,36 @@ namespace Illuminate\Routing {
         public static function inertia($uri, $component, $props = [])
         {
             return \Illuminate\Routing\Router::inertia($uri, $component, $props);
+        }
+
+            }
+    /**
+     * 
+     *
+     */
+    class Route {
+        /**
+         * 
+         *
+         * @see \Spatie\Permission\PermissionServiceProvider::registerMacroHelpers()
+         * @param mixed $roles
+         * @static 
+         */
+        public static function role($roles = [])
+        {
+            return \Illuminate\Routing\Route::role($roles);
+        }
+
+        /**
+         * 
+         *
+         * @see \Spatie\Permission\PermissionServiceProvider::registerMacroHelpers()
+         * @param mixed $permissions
+         * @static 
+         */
+        public static function permission($permissions = [])
+        {
+            return \Illuminate\Routing\Route::permission($permissions);
         }
 
             }
@@ -24232,6 +23796,58 @@ namespace  {
         {
             /** @var \Illuminate\Database\Eloquent\Builder $instance */
             return $instance->hydrate($items);
+        }
+
+        /**
+         * Insert into the database after merging the model's default attributes, setting timestamps, and casting values.
+         *
+         * @param array<int, array<string, mixed>> $values
+         * @return bool 
+         * @static 
+         */
+        public static function fillAndInsert($values)
+        {
+            /** @var \Illuminate\Database\Eloquent\Builder $instance */
+            return $instance->fillAndInsert($values);
+        }
+
+        /**
+         * Insert (ignoring errors) into the database after merging the model's default attributes, setting timestamps, and casting values.
+         *
+         * @param array<int, array<string, mixed>> $values
+         * @return int 
+         * @static 
+         */
+        public static function fillAndInsertOrIgnore($values)
+        {
+            /** @var \Illuminate\Database\Eloquent\Builder $instance */
+            return $instance->fillAndInsertOrIgnore($values);
+        }
+
+        /**
+         * Insert a record into the database and get its ID after merging the model's default attributes, setting timestamps, and casting values.
+         *
+         * @param array<string, mixed> $values
+         * @return int 
+         * @static 
+         */
+        public static function fillAndInsertGetId($values)
+        {
+            /** @var \Illuminate\Database\Eloquent\Builder $instance */
+            return $instance->fillAndInsertGetId($values);
+        }
+
+        /**
+         * Enrich the given values by merging in the model's default attributes, adding timestamps, and casting values.
+         *
+         * @param array<int, array<string, mixed>> $values
+         * @return array<int, array<string, mixed>> 
+         * @static 
+         */
+        public static function fillForInsert($values)
+        {
+            /** @var \Illuminate\Database\Eloquent\Builder $instance */
+            return $instance->fillForInsert($values);
         }
 
         /**
@@ -24791,13 +24407,14 @@ namespace  {
          *
          * @param \Illuminate\Contracts\Database\Query\Expression|array|string $attributes
          * @param mixed $value
+         * @param bool $asConditions
          * @return \Illuminate\Database\Eloquent\Builder<static> 
          * @static 
          */
-        public static function withAttributes($attributes, $value = null)
+        public static function withAttributes($attributes, $value = null, $asConditions = true)
         {
             /** @var \Illuminate\Database\Eloquent\Builder $instance */
-            return $instance->withAttributes($attributes, $value);
+            return $instance->withAttributes($attributes, $value, $asConditions);
         }
 
         /**
@@ -25224,7 +24841,7 @@ namespace  {
         }
 
         /**
-         * Pass the query to a given callback.
+         * Pass the query to a given callback and then return it.
          *
          * @param callable($this):  mixed  $callback
          * @return \Illuminate\Database\Eloquent\Builder<static> 
@@ -25234,6 +24851,20 @@ namespace  {
         {
             /** @var \Illuminate\Database\Eloquent\Builder $instance */
             return $instance->tap($callback);
+        }
+
+        /**
+         * Pass the query to a given callback and return the result.
+         *
+         * @template TReturn
+         * @param (callable($this): TReturn) $callback
+         * @return (TReturn is null|void ? $this : TReturn)
+         * @static 
+         */
+        public static function pipe($callback)
+        {
+            /** @var \Illuminate\Database\Eloquent\Builder $instance */
+            return $instance->pipe($callback);
         }
 
         /**
@@ -25790,6 +25421,37 @@ namespace  {
         {
             /** @var \Illuminate\Database\Eloquent\Builder $instance */
             return $instance->orWhereBelongsTo($related, $relationshipName);
+        }
+
+        /**
+         * Add a "belongs to many" relationship where clause to the query.
+         *
+         * @param \Illuminate\Database\Eloquent\Model|\Illuminate\Database\Eloquent\Collection<int, \Illuminate\Database\Eloquent\Model> $related
+         * @param string|null $relationshipName
+         * @param string $boolean
+         * @return \Illuminate\Database\Eloquent\Builder<static> 
+         * @throws \Illuminate\Database\Eloquent\RelationNotFoundException
+         * @static 
+         */
+        public static function whereAttachedTo($related, $relationshipName = null, $boolean = 'and')
+        {
+            /** @var \Illuminate\Database\Eloquent\Builder $instance */
+            return $instance->whereAttachedTo($related, $relationshipName, $boolean);
+        }
+
+        /**
+         * Add a "belongs to many" relationship with an "or where" clause to the query.
+         *
+         * @param \Illuminate\Database\Eloquent\Model $related
+         * @param string|null $relationshipName
+         * @return \Illuminate\Database\Eloquent\Builder<static> 
+         * @throws \RuntimeException
+         * @static 
+         */
+        public static function orWhereAttachedTo($related, $relationshipName = null)
+        {
+            /** @var \Illuminate\Database\Eloquent\Builder $instance */
+            return $instance->orWhereAttachedTo($related, $relationshipName);
         }
 
         /**
@@ -27362,7 +27024,7 @@ namespace  {
          *
          * @param \Illuminate\Contracts\Database\Query\Expression|\Closure|string $column
          * @param \DateTimeInterface|string|int|float|null $operator
-         * @param \DateTimeInterface|string|int|float|null $value
+         * @param \Illuminate\Contracts\Database\Query\Expression|\DateTimeInterface|string|int|float|null $value
          * @param string $boolean
          * @return \Illuminate\Database\Eloquent\Builder<static> 
          * @static 
@@ -27378,7 +27040,7 @@ namespace  {
          *
          * @param \Illuminate\Contracts\Database\Query\Expression|\Closure|string $column
          * @param \DateTimeInterface|string|int|float|null $operator
-         * @param \DateTimeInterface|string|int|float|null $value
+         * @param \Illuminate\Contracts\Database\Query\Expression|\DateTimeInterface|string|int|float|null $value
          * @return \Illuminate\Database\Eloquent\Builder<static> 
          * @static 
          */
@@ -28682,7 +28344,6 @@ namespace  {
     class Vite extends \Illuminate\Support\Facades\Vite {}
     class Debugbar extends \Barryvdh\Debugbar\Facades\Debugbar {}
     class Octane extends \Laravel\Octane\Facades\Octane {}
-    class Bouncer extends \Silber\Bouncer\BouncerFacade {}
 }
 
 

@@ -6,18 +6,16 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\CompetitionTypeResource;
 use App\Models\Club;
 use App\Models\CompetitionType;
-use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\Resources\Json\JsonResource;
-use Silber\Bouncer\BouncerFacade;
+use Illuminate\Support\Facades\Gate;
 
 class CompetitionTypeController extends Controller
 {
-    /**
-     * @throws AuthorizationException
-     */
     public function index(Club $club): JsonResource
     {
-        BouncerFacade::authorize('list', getClubScopedModel(CompetitionType::class, $club->id));
+        if (! Gate::allows('list', [CompetitionType::class, $club->id])) {
+            abort(403);
+        }
 
         $competitionTypes = $club->competitionTypes;
 

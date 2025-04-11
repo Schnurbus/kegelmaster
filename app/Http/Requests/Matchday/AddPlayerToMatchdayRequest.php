@@ -2,9 +2,11 @@
 
 namespace App\Http\Requests\Matchday;
 
+use App\Models\Matchday;
+use App\Models\User;
+use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
-use Silber\Bouncer\BouncerFacade;
 
 class AddPlayerToMatchdayRequest extends FormRequest
 {
@@ -13,23 +15,28 @@ class AddPlayerToMatchdayRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        BouncerFacade::scope()->to($this->matchday->club_id);
+        /** @var User $user */
+        $user = $this->user();
 
-        return BouncerFacade::can('update', $this->matchday);
+        return $user->can('update', $this->route('matchday'));
     }
 
     /**
      * Get the validation rules that apply to the request.
      *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
+     * @return array<string, ValidationRule|array|string>
      */
     public function rules(): array
     {
+        /** @var Matchday $matchday */
+        $matchday = $this->route('matchday');
+
         return [
             'player_id' => [
                 'required',
                 'exists:players,id',
-                Rule::unique('matchday_player', 'player_id')->where('matchday_id', $this->matchday->id),
+                Rule::unique('matchday_player', 'player_id')
+                    ->where('matchday_id', $matchday->id),
             ],
         ];
     }

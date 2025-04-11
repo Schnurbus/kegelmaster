@@ -15,8 +15,9 @@ class IndexMatchdayRequest extends FormRequest
     {
         /** @var User $user */
         $user = $this->user();
+        $currentClubId = session('current_club_id');
 
-        return $user->can('list', getClubScopedModel(Matchday::class));
+        return $user->can('list', [Matchday::class, $currentClubId]);
     }
 
     /**

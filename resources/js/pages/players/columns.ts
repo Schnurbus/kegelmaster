@@ -28,7 +28,7 @@ export const columns: ColumnDef<Player>[] = [
     },
     {
         id: 'role',
-        accessorFn: (row) => row.role.title,
+        accessorFn: (row) => row.role.name,
         filterFn: 'arrIncludesSome',
         header: ({ column }) => {
             return h(

@@ -10,13 +10,11 @@ use App\Models\FeeTypeVersion;
 use App\Models\Matchday;
 use App\Models\Player;
 use App\Models\Transaction;
-use App\Models\User;
 use Exception;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use Silber\Bouncer\BouncerFacade;
 
 class MatchdayService
 {
@@ -85,8 +83,8 @@ class MatchdayService
             Log::info('Matchday deleted', ['user_id' => Auth::user()->id, 'matchday' => $matchday]);
 
             return true;
-        } catch (\Exception $exeption) {
-            Log::error('Error deleting matchday', ['exception' => $exeption->getMessage()]);
+        } catch (\Throwable $exception) {
+            Log::error('Error deleting matchday', ['exception' => $exception->getMessage()]);
         }
 
         return false;
@@ -98,29 +96,6 @@ class MatchdayService
             ->withCount('players')
             ->orderByDesc('date')
             ->get();
-    }
-
-    public function getMatchdaysWithPermissions(User $user, int $clubId)
-    {
-        BouncerFacade::scope()->to($clubId);
-
-        $matchdays = Matchday::where('club_id', $clubId)
-            ->withCount('players')
-            ->orderByDesc('date')
-            ->get();
-
-        return $matchdays->map(function ($matchday) use ($user) {
-            $permissions = [
-                'view' => $user->can('view', $matchday),
-                'update' => $user->can('update', $matchday),
-                'delete' => $user->can('delete', $matchday),
-            ];
-
-            $matchdayArray = $matchday->toArray();
-            $matchdayArray['can'] = $permissions;
-
-            return $matchdayArray;
-        });
     }
 
     public function addPlayerToMatchday(Matchday $matchday, int $playerId): bool

@@ -4,6 +4,7 @@ namespace App\Http\Requests\Player;
 
 use App\Models\Player;
 use App\Models\User;
+use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -17,27 +18,31 @@ class StorePlayerRequest extends FormRequest
         /** @var User $user */
         $user = $this->user();
 
-        return $user->can('create', getClubScopedModel(Player::class, $this->input('club_id')));
+        return $user->can('create', [Player::class, $this->input('club_id')]);
     }
 
     /**
      * Get the validation rules that apply to the request.
      *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
+     * @return array<string, ValidationRule|array|string>
      */
     public function rules(): array
     {
         return [
-            'club_id' => 'required|exists:clubs,id',
-            'name' => 'required|string|max:255|unique:players,name,NULL,id,club_id,'.$this->club_id,
-            'sex' => 'required|integer|in:1,2',
-            'active' => 'nullable|boolean',
-            'initial_balance' => 'required|numeric',
+            'club_id' => ['required', 'exists:clubs,id'],
+            'name' => [
+                'required',
+                'string',
+                'max:255',
+                'unique:players,name,NULL,id,club_id,'.$this->input('club_id'),
+            ],
+            'sex' => ['required', 'integer', 'in:1,2'],
+            'active' => ['nullable', 'boolean'],
+            'initial_balance' => ['required', 'numeric'],
             'role_id' => [
                 'required',
                 Rule::exists('roles', 'id')
-                    ->where('scope', $this->club_id)
-                    ->whereNot('name', 'owner'),
+                    ->where('club_id', $this->input('club_id')),
             ],
         ];
     }

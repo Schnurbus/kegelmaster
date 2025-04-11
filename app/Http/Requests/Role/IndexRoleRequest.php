@@ -15,8 +15,9 @@ class IndexRoleRequest extends FormRequest
     {
         /** @var User $user */
         $user = $this->user();
+        $currentClubId = session('current_club_id');
 
-        return $user->can('list', getClubScopedModel(Role::class));
+        return $user->can('list', [Role::class, $currentClubId]);
     }
 
     /**

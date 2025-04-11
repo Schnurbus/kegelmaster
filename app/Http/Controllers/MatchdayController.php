@@ -17,21 +17,21 @@ use App\Models\FeeEntry;
 use App\Models\FeeType;
 use App\Models\Matchday;
 use App\Models\Player;
+use App\Models\User;
 use App\Services\FeeTypeService;
 use App\Services\MatchdayService;
 use Exception;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
-use Silber\Bouncer\BouncerFacade;
 
 class MatchdayController extends Controller
 {
     use AuthorizesRequests;
 
-    protected $matchdayService;
+    protected MatchdayService $matchdayService;
 
-    protected $feeTypeService;
+    protected FeeTypeService $feeTypeService;
 
     public function __construct(MatchdayService $matchdayService, FeeTypeService $feeTypeService)
     {
@@ -44,15 +44,17 @@ class MatchdayController extends Controller
      */
     public function index(IndexMatchdayRequest $request): \Inertia\Response
     {
+        /** @var User $user */
+        $user = $request->user();
         $currentClubId = session('current_club_id');
 
         return Inertia::render('matchdays/index', [
             'matchdays' => fn () => $this->matchdayService->getByClubId($currentClubId),
             'can' => [
-                'create' => BouncerFacade::can('create', getClubScopedModel(Matchday::class)),
-                'delete' => BouncerFacade::can('delete', getClubScopedModel(Matchday::class)),
-                'update' => BouncerFacade::can('update', getClubScopedModel(Matchday::class)),
-                'view' => BouncerFacade::can('view', getClubScopedModel(Matchday::class)),
+                'create' => $user->can('create', [Matchday::class, $currentClubId]),
+                'delete' => $user->can('delete', Matchday::class),
+                'update' => $user->can('update', Matchday::class),
+                'view' => $user->can('view', Matchday::class),
             ],
         ]);
     }

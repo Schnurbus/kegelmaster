@@ -3,6 +3,7 @@
 namespace App\Http\Requests\FeeType;
 
 use App\Models\User;
+use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -22,7 +23,7 @@ class UpdateFeeTypeRequest extends FormRequest
     /**
      * Get the validation rules that apply to the request.
      *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
+     * @return array<string, ValidationRule|array|string>
      */
     public function rules(): array
     {
@@ -32,12 +33,12 @@ class UpdateFeeTypeRequest extends FormRequest
                 'string',
                 'max:255',
                 Rule::unique('fee_types')
-                    ->where('club_id', $this->club_id)
+                    ->where('club_id', $this->input('club_id'))
                     ->ignore($this->route('fee_type')),
             ],
-            'description' => 'nullable|string',
-            'amount' => 'required|numeric|min:0',
-            'position' => 'required|integer|min:0',
+            'description' => ['nullable', 'string'],
+            'amount' => ['required', 'numeric', 'min:0'],
+            'position' => ['required', 'integer', 'min:0'],
         ];
     }
 }

@@ -15,7 +15,7 @@
         "laravel/octane": "^2.8",
         "laravel/sanctum": "^4.0",
         "laravel/tinker": "^2.10.1",
-        "silber/bouncer": "^1.0",
+        "spatie/laravel-permission": "^6.16",
         "spiral/roadrunner-cli": "^2.6.0",
         "spiral/roadrunner-http": "^3.3.0",
         "tightenco/ziggy": "^2.4"
@@ -77,9 +77,7 @@
     },
     "extra": {
         "laravel": {
-            "dont-discover": [],
-            "providers": [
-                "Silber\\Bouncer\\BouncerServiceProvider"
+            "dont-discover": [
             ]
         }
     },

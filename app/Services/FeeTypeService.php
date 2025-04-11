@@ -9,13 +9,14 @@ use Exception;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Throwable;
 
 class FeeTypeService
 {
     /**
      * Create a new Fee Type
      *
-     * @throws Exception
+     * @throws Throwable
      */
     public function create(array $data): FeeType
     {
@@ -37,7 +38,7 @@ class FeeTypeService
 
                 return $feeType;
             });
-        } catch (Exception $exception) {
+        } catch (Throwable $exception) {
             Log::error('Error creating fee type', ['error' => $exception->getMessage()]);
             throw new Exception($exception->getMessage());
         }
@@ -46,7 +47,7 @@ class FeeTypeService
     }
 
     /**
-     * @throws Exception
+     * @throws Throwable
      */
     public function update(FeeType $feeType, array $data): FeeType
     {
@@ -61,15 +62,11 @@ class FeeTypeService
                     ]);
                 }
 
-                $feeType->update([
-                    'name' => $data['name'],
-                    'description' => $data['description'],
-                    'amount' => $data['amount'],
-                ]);
+                $feeType->update($data);
 
                 return $feeType;
             });
-        } catch (Exception $exception) {
+        } catch (Throwable $exception) {
             Log::error('Error creating fee type', ['error' => $exception->getMessage()]);
             throw new Exception($exception->getMessage());
         }
@@ -83,7 +80,7 @@ class FeeTypeService
     }
 
     /**
-     * Get all fee types for a matchday with their active versions
+     * Get all fee types for a matchDay with their active versions
      */
     public function getFeeTypesForMatchday(Matchday $matchday): Collection
     {

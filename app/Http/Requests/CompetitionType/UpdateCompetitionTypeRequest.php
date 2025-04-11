@@ -3,6 +3,7 @@
 namespace App\Http\Requests\CompetitionType;
 
 use App\Models\User;
+use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -22,7 +23,7 @@ class UpdateCompetitionTypeRequest extends FormRequest
     /**
      * Get the validation rules that apply to the request.
      *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
+     * @return array<string, ValidationRule|array|string>
      */
     public function rules(): array
     {
@@ -32,14 +33,13 @@ class UpdateCompetitionTypeRequest extends FormRequest
                 'string',
                 'max:255',
                 Rule::unique('competition_types')
-                    ->where('club_id', $this->club_id)
+                    ->where('club_id', $this->input('club_id'))
                     ->ignore($this->route('competition_type')),
             ],
-            'description' => 'nullable|string',
-            'type' => 'required|numeric|in:1,2,3',
-            'is_sex_specific' => 'required|boolean',
-            'position' => 'required|integer|min:0',
-            'club_id' => 'required|exists:clubs,id',
+            'description' => ['nullable', 'string'],
+            'type' => ['required', 'numeric', 'in:1,2,3'],
+            'is_sex_specific' => ['required', 'boolean'],
+            'position' => ['required', 'integer', 'min:0'],
         ];
     }
 }
