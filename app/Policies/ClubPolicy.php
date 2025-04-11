@@ -23,11 +23,16 @@ class ClubPolicy
      */
     public function view(User $user, Club $club): bool
     {
-        if ($club->user_id === $user->id) {
+        if (setClubContext($user, $club->id)) {
             return true;
         }
 
-        return $user->can('view', $club);
+        $hasPlayer = $user->players()
+            ->where('club_id', $club->id)
+            ->exists();
+        $hasPermission = $user->can('view.Club');
+
+        return $hasPlayer && $hasPermission;
     }
 
     /**
@@ -43,11 +48,16 @@ class ClubPolicy
      */
     public function update(User $user, Club $club): bool
     {
-        if ($club->user_id === $user->id) {
+        if (setClubContext($user, $club->id)) {
             return true;
         }
 
-        return $user->can('view', $club);
+        $hasPlayer = $user->players()
+            ->where('club_id', $club->id)
+            ->exists();
+        $hasPermission = $user->can('update.Club');
+
+        return $hasPlayer && $hasPermission;
     }
 
     /**
@@ -59,6 +69,6 @@ class ClubPolicy
             return true;
         }
 
-        return $user->can('view', $club);
+        return false;
     }
 }
