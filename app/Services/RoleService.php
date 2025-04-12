@@ -13,6 +13,7 @@ use Exception;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Spatie\Permission\Models\Permission;
 use Throwable;
 
 class RoleService
@@ -163,7 +164,8 @@ class RoleService
                 foreach ($actions as $action => $isGranted) {
                     if ($isGranted) {
                         $entityName = ucfirst($entity);
-                        $permissionsToSync[] = "{$action}.{$entityName}";
+                        $permission = Permission::findOrCreate("{$action}.{$entityName}");
+                        $permissionsToSync[] = $permission->name;
                     }
                 }
             }
