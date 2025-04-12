@@ -157,27 +157,18 @@ class RoleService
     protected function syncRolePermissions(Role $role, array $permissions): void
     {
         try {
-            // Get existing permissions to avoid unnecessary DB operations
-            $existingPermissions = $role->permissions->pluck('name')->toArray();
             $permissionsToSync = [];
-            $permissionClass = config('permission.models.permission');
 
-            // Iterate through the permission structure
             foreach ($permissions as $entity => $actions) {
                 foreach ($actions as $action => $isGranted) {
                     if ($isGranted) {
-                        $permissionName = "{$action}.{$entity}";
-
-                        // Find or create the permission if it doesn't exist
-                        $permission = $permissionClass::findOrCreate($permissionName, 'web', $role->club_id);
-
-                        $permissionsToSync[] = $permission->id;
+                        $entityName = ucfirst($entity);
+                        $permissionsToSync[] = "{$action}.{$entityName}";
                     }
                 }
             }
 
-            // Sync permissions to the role
-            $role->permissions()->sync($permissionsToSync);
+            $role->syncPermissions($permissionsToSync);
 
             Log::info('Role permissions synced', [
                 'role_id' => $role->id,
