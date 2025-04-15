@@ -1,5 +1,28 @@
 # Changelog
 
+## [1.6.0](https://github.com/Schnurbus/kegelmaster/compare/v1.5.1...v1.6.0) (2025-04-15)
+
+
+### Features
+
+* migrate roles to players ([#98](https://github.com/Schnurbus/kegelmaster/issues/98)) ([90cb8ad](https://github.com/Schnurbus/kegelmaster/commit/90cb8add470d594d2028230f17d2af24a85bb892))
+
+
+### Bug Fixes
+
+* club policy & prune migrations ([#97](https://github.com/Schnurbus/kegelmaster/issues/97)) ([2b50425](https://github.com/Schnurbus/kegelmaster/commit/2b50425ee08472c6a96ed763783c5e04e5fd39c4))
+* **deps:** update dependency @internationalized/date to v3.8.0 ([#94](https://github.com/Schnurbus/kegelmaster/issues/94)) ([0fff5ca](https://github.com/Schnurbus/kegelmaster/commit/0fff5ca7e7e43b41c62da5058c3e871263038315))
+* **deps:** update dependency @tanstack/vue-table to v8.21.3 ([#101](https://github.com/Schnurbus/kegelmaster/issues/101)) ([d5d118d](https://github.com/Schnurbus/kegelmaster/commit/d5d118d02a958e2ef4085499438cc76a8e8a9b6d))
+* **deps:** update lucide monorepo to ^0.488.0 ([#100](https://github.com/Schnurbus/kegelmaster/issues/100)) ([7799c0f](https://github.com/Schnurbus/kegelmaster/commit/7799c0f43d1bb4551acc26ee5bf13f277cc0a07c))
+* **deps:** update tailwindcss monorepo to v4.1.4 ([#102](https://github.com/Schnurbus/kegelmaster/issues/102)) ([f8c9f6d](https://github.com/Schnurbus/kegelmaster/commit/f8c9f6d61eb234c8671daa2900a2bf2601e42059))
+
+
+### Miscellaneous Chores
+
+* **deps:** update dependency @rollup/rollup-linux-x64-gnu to v4.40.0 ([#99](https://github.com/Schnurbus/kegelmaster/issues/99)) ([81b4abe](https://github.com/Schnurbus/kegelmaster/commit/81b4abe6888a6c0e8ddbdc67e364e53242bee498))
+* **deps:** update dependency @types/node to v22.14.1 ([#96](https://github.com/Schnurbus/kegelmaster/issues/96)) ([b9a0377](https://github.com/Schnurbus/kegelmaster/commit/b9a0377c3074137b4668d6be04af5c6967bc4a98))
+* **deps:** update dependency typescript-eslint to v8.30.1 ([#103](https://github.com/Schnurbus/kegelmaster/issues/103)) ([b196e2c](https://github.com/Schnurbus/kegelmaster/commit/b196e2c59cb44fbb0bccbe3ea601fbe17f7c0e01))
+
 ## [1.5.1](https://github.com/Schnurbus/kegelmaster/compare/v1.5.0...v1.5.1) (2025-04-11)
 
 
