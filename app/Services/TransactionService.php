@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Enums\TransactionType;
+use App\Models\Club;
 use App\Models\Player;
 use App\Models\Transaction;
 use Exception;
@@ -34,6 +35,7 @@ readonly class TransactionService
     public function createTransaction(array $transactionData): array|Transaction|null
     {
         try {
+            /** @var TransactionType $type */
             $type = $transactionData['type'];
 
             // Case 1: Transaction type EXPENSE (5) doesn't require player_id
@@ -53,7 +55,7 @@ readonly class TransactionService
 
             // Case 2: No player_id provided but required
             if (! isset($transactionData['player_id'])) {
-                throw new Exception('player_id is required for transaction type '.$type);
+                throw new \InvalidArgumentException('player_id is required for transaction type '.$type->label());
             }
 
             // Case 3: Payment transaction (type 3) with potential multiple players
@@ -64,6 +66,7 @@ readonly class TransactionService
                     : [$transactionData['player_id']];
 
                 $autoTip = $transactionData['auto_tip'] ?? false;
+                unset($transactionData['auto_tip']);
 
                 // Process the payment transaction for one or more players
                 return $this->processPaymentTransaction($playerIds, $transactionData['amount'], $autoTip, $transactionData);
@@ -72,7 +75,7 @@ readonly class TransactionService
             // Case 4: Other transaction types (always single player)
             // Validate that player_id is not an array for non-payment transactions
             if (is_array($transactionData['player_id'])) {
-                throw new Exception('Multiple player_ids are only supported for payment transactions');
+                throw new \InvalidArgumentException('Multiple player_ids are only supported for payment transactions');
             }
 
             /** @var Transaction $transaction */
@@ -86,6 +89,8 @@ readonly class TransactionService
             ]);
 
             return $transaction;
+        } catch (\InvalidArgumentException $e) {
+            throw $e;
         } catch (Exception $e) {
             Log::error('Error creating transaction', [
                 'error' => $e->getMessage(),
@@ -118,15 +123,16 @@ readonly class TransactionService
         $players = Player::whereIn('id', $playerIds)->get();
 
         if ($players->isEmpty()) {
-            throw new Exception('No valid players found');
+            throw new \InvalidArgumentException('No valid players found');
         }
 
         // Calculate total balance of all players
-        $totalBalance = $players->sum('balance');
+        $totalBalance = (float) $players->sum('balance');
         $totalAbsBalance = abs($totalBalance);
 
+        Log::debug('processPaymentTransaction', ['total_balance' => $totalBalance, 'total_abs_balance' => $totalAbsBalance, 'amount' => $amount]);
         // If amount is less than or equal to total balance, distribute evenly
-        if ($amount <= $totalAbsBalance) {
+        if ($amount <= $totalAbsBalance || ($totalBalance > 0 && ! $autoTip)) {
             return $this->distributePaymentEvenly($players, $amount, $baseTransactionData);
         }
 
@@ -140,25 +146,29 @@ readonly class TransactionService
                     continue;
                 } // Skip players with non-negative balance
 
+                $player->load('club');
                 $playerTransactionData = array_merge($baseTransactionData, [
                     'player_id' => $player->id,
-                    'amount' => abs($player->balance),
+                    'amount' => (float) abs($player->balance),
                 ]);
 
                 /** @var Transaction $transaction */
                 $transaction = Transaction::create($playerTransactionData);
                 $this->playerService->recalculateBalance($player);
+                $this->clubService->recalculateBalance($player->club);
                 $transactions[] = $transaction;
 
                 Log::info('Multi-player payment: Balance zeroed', [
                     'transaction_id' => $transaction->id,
                     'player_id' => $player->id,
-                    'amount' => abs($player->balance),
+                    'amount' => (float) abs($player->balance),
                 ]);
             }
 
             // Handle remaining amount
             $remainingAmount = $amount - $totalAbsBalance;
+
+            Log::debug('Multi-player payment: Balance zeroed', ['remainingAmount' => $remainingAmount]);
 
             if ($remainingAmount > 0) {
                 if ($autoTip) {
@@ -172,6 +182,7 @@ readonly class TransactionService
 
                     /** @var Transaction $tipTransaction */
                     $tipTransaction = Transaction::create($tipData);
+                    $this->clubService->recalculateBalance($players->first()->club);
                     $transactions[] = $tipTransaction;
 
                     Log::info('Multi-player payment: Tip created for remaining amount', [
@@ -222,9 +233,11 @@ readonly class TransactionService
 
                 /** @var Transaction $paymentTransaction */
                 $paymentTransaction = Transaction::create($paymentData);
+
                 /** @var Transaction $tipTransaction */
                 $tipTransaction = Transaction::create($tipData);
                 $this->playerService->recalculateBalance($player);
+                $this->clubService->recalculateBalance($player->club);
 
                 Log::info('Payment with auto-tip created', [
                     'payment_id' => $paymentTransaction->id,
@@ -240,17 +253,21 @@ readonly class TransactionService
 
         // Regular payment transaction
         $transactionData['player_id'] = $player->id;
-        /** @var Transaction $transaction */
-        $transaction = Transaction::create($transactionData);
-        $this->playerService->recalculateBalance($player);
 
-        Log::info('Single player payment created', [
-            'transaction_id' => $transaction->id,
-            'player_id' => $player->id,
-            'amount' => $amount,
-        ]);
+        return DB::transaction(function () use ($player, $amount, $transactionData) {
+            /** @var Transaction $transaction */
+            $transaction = Transaction::create($transactionData);
+            $this->playerService->recalculateBalance($player);
+            $this->clubService->recalculateBalance($player->club);
 
-        return $transaction;
+            Log::info('Single player payment created', [
+                'transaction_id' => $transaction->id,
+                'player_id' => $player->id,
+                'amount' => $amount,
+            ]);
+
+            return $transaction;
+        });
     }
 
     /**
@@ -268,7 +285,7 @@ readonly class TransactionService
         });
 
         if ($playersWithDebt->isEmpty()) {
-            throw new Exception('No players with debt found to distribute payment');
+            throw new \InvalidArgumentException('No players with debt found to distribute payment');
         }
 
         $playerCount = $playersWithDebt->count();
@@ -284,7 +301,8 @@ readonly class TransactionService
              * @var Player $player
              */
             foreach ($playersWithDebt as $index => $player) {
-                $playerAmount = $baseAmountPerPlayer;
+                $playerAmount = (float) $baseAmountPerPlayer;
+                $player->load('club');
 
                 // Add 1 cent to the first $remainderCents players
                 if ($index < $remainderCents) {
@@ -298,6 +316,8 @@ readonly class TransactionService
 
                 /** @var Transaction $transaction */
                 $transaction = Transaction::create($playerTransactionData);
+                $this->playerService->recalculateBalance($player);
+                $this->clubService->recalculateBalance($player->club);
                 $transactions[] = $transaction;
 
                 Log::info('Payment distributed evenly', [
@@ -333,6 +353,7 @@ readonly class TransactionService
              */
             foreach ($players as $index => $player) {
                 $playerAmount = $baseAmount;
+                $player->load('club');
 
                 // Add 1 cent to the first $remainderCents players
                 if ($index < $remainderCents) {
@@ -341,23 +362,34 @@ readonly class TransactionService
 
                 $playerTransactionData = array_merge($baseTransactionData, [
                     'player_id' => $player->id,
-                    'amount' => $playerAmount,
+                    'amount' => (float) $playerAmount,
                 ]);
 
                 /** @var Transaction $transaction */
                 $transaction = Transaction::create($playerTransactionData);
+                $this->playerService->recalculateBalance($player);
+                $this->clubService->recalculateBalance($player->club);
                 $transactions[] = $transaction;
 
                 Log::info('Remaining amount distributed proportionally', [
                     'transaction_id' => $transaction->id,
                     'player_id' => $player->id,
-                    'amount' => $playerAmount,
+                    'amount' => (float) $playerAmount,
                     'extra_cent' => $index < $remainderCents,
                 ]);
             }
 
             return $transactions;
         });
+    }
+
+    protected function processPlayerTransaction(Player $player, array $transactionData): Transaction
+    {
+        $transaction = Transaction::create($transactionData);
+        $this->playerService->recalculateBalance($player);
+        $this->clubService->recalculateBalance($player->club);
+
+        return $transaction;
     }
 
     /**

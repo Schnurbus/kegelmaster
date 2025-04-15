@@ -13,6 +13,7 @@ use Exception;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Spatie\Permission\Models\Permission;
 use Throwable;
 
 class RoleService
@@ -45,7 +46,7 @@ class RoleService
                 'name' => $data['name'],
                 'is_base_fee_active' => $data['is_base_fee_active'],
                 'club_id' => $data['club_id'],
-                'guard_name' => 'web',
+                'guard_name' => 'player',
             ]);
 
             if (isset($data['permissions']) && is_array($data['permissions'])) {
@@ -65,7 +66,6 @@ class RoleService
     {
         Log::info('Updating role', [
             'role_id' => $role->id,
-            'club_id' => $data['club_id'],
             'name' => $data['name'],
         ]);
 
@@ -163,7 +163,10 @@ class RoleService
                 foreach ($actions as $action => $isGranted) {
                     if ($isGranted) {
                         $entityName = ucfirst($entity);
-                        $permissionsToSync[] = "{$action}.{$entityName}";
+                        $permission = Permission::findOrCreate(
+                            "{$action}.{$entityName}",
+                            'player');
+                        $permissionsToSync[] = $permission->name;
                     }
                 }
             }

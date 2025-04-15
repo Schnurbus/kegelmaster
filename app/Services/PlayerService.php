@@ -6,6 +6,7 @@ use App\Enums\TransactionType;
 use App\Models\CompetitionEntry;
 use App\Models\FeeEntry;
 use App\Models\Player;
+use App\Models\Role;
 use App\Models\Transaction;
 use Exception;
 use Illuminate\Database\Eloquent\Collection;
@@ -56,10 +57,14 @@ class PlayerService
                 $this->recalculateBalance($player);
             }
 
-            if ($player->user_id) {
-                $role = $player->role;
-                $player->user->syncRoles($role);
-            }
+            $role = Role::find($playerData['role_id']);
+
+            $player->syncRoles($role);
+
+            //            if ($player->user_id) {
+            //                $role = $player->role;
+            //                $player->user->syncRoles($role);
+            //            }
 
             return $player;
         } catch (Exception $exception) {

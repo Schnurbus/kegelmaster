@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Player;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -23,13 +24,21 @@ class ClubSelectController extends Controller
         setPermissionsTeamId($clubId);
 
         $isClubOwner = $user->clubs()->where('id', $clubId)->exists();
-        $hasPlayer = $user->players()
+        $player = $user->players()
             ->where('club_id', $clubId)
-            ->exists();
+            ->first();
 
-        if (! $isClubOwner && ! $hasPlayer) {
+        if (! $isClubOwner && ! isset($player)) {
             abort(403);
         }
+
+        //        if ($player) {
+        //            Auth::guard('player')->login($player);
+        //        }
+        //        if (isset($player)) {
+        //            /** @var Player $player */
+        //            $user->syncRoles($player->role);
+        //        }
 
         Log::info('Changing current club for user {user}', ['user' => Auth::user(), 'club_id' => $clubId]);
 

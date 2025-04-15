@@ -2,6 +2,7 @@
 
 namespace App\Policies;
 
+use App\Enums\PermissionsEnum;
 use App\Models\Club;
 use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
@@ -27,12 +28,9 @@ class ClubPolicy
             return true;
         }
 
-        $hasPlayer = $user->players()
-            ->where('club_id', $club->id)
-            ->exists();
-        $hasPermission = $user->can('view.Club');
+        $player = $user->player($club->id);
 
-        return $hasPlayer && $hasPermission;
+        return $player && $player->can(PermissionsEnum::VIEW_CLUB->value);
     }
 
     /**
@@ -52,12 +50,10 @@ class ClubPolicy
             return true;
         }
 
-        $hasPlayer = $user->players()
-            ->where('club_id', $club->id)
-            ->exists();
-        $hasPermission = $user->can('update.Club');
+        $player = $user->player($club->id);
 
-        return $hasPlayer && $hasPermission;
+        return $player && $player->can(PermissionsEnum::UPDATE_CLUB->value);
+
     }
 
     /**

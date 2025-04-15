@@ -2,6 +2,7 @@
 
 namespace App\Policies;
 
+use App\Enums\PermissionsEnum;
 use App\Models\Matchday;
 use App\Models\User;
 
@@ -16,9 +17,9 @@ class MatchdayPolicy
             return true;
         }
 
-        return $user->players()
-            ->where('club_id', $clubId)
-            ->exists() && $user->can('list.Matchday');
+        $player = $user->player($clubId);
+
+        return $player && $player->can(PermissionsEnum::LIST_MATCHDAY->value);
     }
 
     /**
@@ -36,12 +37,9 @@ class MatchdayPolicy
             return true;
         }
 
-        $hasPlayer = $user->players()
-            ->where('club_id', $clubId)
-            ->exists();
-        $hasPermission = $user->can('view.Matchday');
+        $player = $user->player($clubId);
 
-        return $hasPlayer && $hasPermission;
+        return $player && $player->can(PermissionsEnum::VIEW_MATCHDAY->value);
     }
 
     /**
@@ -53,12 +51,9 @@ class MatchdayPolicy
             return true;
         }
 
-        $hasPlayer = $user->players()
-            ->where('club_id', $clubId)
-            ->exists();
-        $hasPermission = $user->can('create.Matchday');
+        $player = $user->player($clubId);
 
-        return $hasPlayer && $hasPermission;
+        return $player && $player->can(PermissionsEnum::CREATE_MATCHDAY->value);
     }
 
     /**
@@ -76,12 +71,9 @@ class MatchdayPolicy
             return true;
         }
 
-        $hasPlayer = $user->players()
-            ->where('club_id', $clubId)
-            ->exists();
-        $hasPermission = $user->can('update.Matchday');
+        $player = $user->player($clubId);
 
-        return $hasPlayer && $hasPermission;
+        return $player && $player->can(PermissionsEnum::UPDATE_MATCHDAY->value);
     }
 
     /**
@@ -99,11 +91,8 @@ class MatchdayPolicy
             return true;
         }
 
-        $hasPlayer = $user->players()
-            ->where('club_id', $clubId)
-            ->exists();
-        $hasPermission = $user->can('delete.Matchsday');
+        $player = $user->player($clubId);
 
-        return $hasPlayer && $hasPermission;
+        return $player && $player->can(PermissionsEnum::DELETE_MATCHDAY->value);
     }
 }

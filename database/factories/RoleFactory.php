@@ -2,16 +2,16 @@
 
 namespace Database\Factories;
 
+use App\Models\Club;
 use App\Models\FeeType;
 use App\Models\Matchday;
 use App\Models\Player;
 use App\Models\Role;
 use App\Models\Transaction;
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Silber\Bouncer\BouncerFacade;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Role>
+ * @extends Factory<Role>
  */
 class RoleFactory extends Factory
 {
@@ -23,7 +23,7 @@ class RoleFactory extends Factory
         'transaction' => Transaction::class,
     ];
 
-    private $permissions = [
+    protected $permissions = [
         'Gast' => [
             'player' => [
                 'list' => true,
@@ -145,27 +145,8 @@ class RoleFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'name' => $this->faker->unique()->word(),
+            'club_id' => Club::factory(),
         ];
-    }
-
-    public function configure(): static
-    {
-        return $this->afterCreating(function (Role $role) {
-            BouncerFacade::scope()->to(1);
-            foreach ($this->permissions[$role->title] as $entity => $actions) {
-                if (! isset($this->entityMap[$entity])) {
-                    continue;
-                }
-
-                $modelClass = $this->entityMap[$entity];
-
-                foreach ($actions as $action => $allowed) {
-                    if ($allowed) {
-                        BouncerFacade::allow($role)->to($action, $modelClass);
-                    }
-                }
-            }
-        });
     }
 }

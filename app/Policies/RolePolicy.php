@@ -2,6 +2,7 @@
 
 namespace App\Policies;
 
+use App\Enums\PermissionsEnum;
 use App\Models\Role;
 use App\Models\User;
 
@@ -16,9 +17,9 @@ class RolePolicy
             return true;
         }
 
-        return $user->players()
-            ->where('club_id', $clubId)
-            ->exists() && $user->can('list.Role');
+        $player = $user->player($clubId);
+
+        return $player && $player->can(PermissionsEnum::LIST_ROLE->value);
     }
 
     /**
@@ -36,12 +37,9 @@ class RolePolicy
             return true;
         }
 
-        $hasPlayer = $user->players()
-            ->where('club_id', $clubId)
-            ->exists();
-        $hasPermission = $user->can('view.Role');
+        $player = $user->player($clubId);
 
-        return $hasPlayer && $hasPermission;
+        return $player && $player->can(PermissionsEnum::VIEW_ROLE->value);
     }
 
     /**
@@ -53,12 +51,9 @@ class RolePolicy
             return true;
         }
 
-        $hasPlayer = $user->players()
-            ->where('club_id', $clubId)
-            ->exists();
-        $hasPermission = $user->can('create.Role');
+        $player = $user->player($clubId);
 
-        return $hasPlayer && $hasPermission;
+        return $player && $player->can(PermissionsEnum::CREATE_ROLE->value);
     }
 
     /**
@@ -76,12 +71,9 @@ class RolePolicy
             return true;
         }
 
-        $hasPlayer = $user->players()
-            ->where('club_id', $clubId)
-            ->exists();
-        $hasPermission = $user->can('update.Role');
+        $player = $user->player($clubId);
 
-        return $hasPlayer && $hasPermission;
+        return $player && $player->can(PermissionsEnum::UPDATE_ROLE->value);
     }
 
     /**
@@ -99,11 +91,8 @@ class RolePolicy
             return true;
         }
 
-        $hasPlayer = $user->players()
-            ->where('club_id', $clubId)
-            ->exists();
-        $hasPermission = $user->can('delete.Role');
+        $player = $user->player($clubId);
 
-        return $hasPlayer && $hasPermission;
+        return $player && $player->can(PermissionsEnum::DELETE_ROLE->value);
     }
 }

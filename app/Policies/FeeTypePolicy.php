@@ -2,6 +2,7 @@
 
 namespace App\Policies;
 
+use App\Enums\PermissionsEnum;
 use App\Models\FeeType;
 use App\Models\User;
 
@@ -16,9 +17,10 @@ class FeeTypePolicy
             return true;
         }
 
-        return $user->players()
-            ->where('club_id', $clubId)
-            ->exists() && $user->can('list.FeeType');
+        $player = $user->player($clubId);
+
+        return $player && $player->can(PermissionsEnum::LIST_FEE_TYPE->value);
+
     }
 
     /**
@@ -36,12 +38,10 @@ class FeeTypePolicy
             return true;
         }
 
-        $hasPlayer = $user->players()
-            ->where('club_id', $clubId)
-            ->exists();
-        $hasPermission = $user->can('view.FeeType');
+        $player = $user->player($clubId);
 
-        return $hasPlayer && $hasPermission;
+        return $player && $player->can(PermissionsEnum::VIEW_FEE_TYPE->value);
+
     }
 
     /**
@@ -53,12 +53,10 @@ class FeeTypePolicy
             return true;
         }
 
-        $hasPlayer = $user->players()
-            ->where('club_id', $clubId)
-            ->exists();
-        $hasPermission = $user->can('create.FeeType');
+        $player = $user->player($clubId);
 
-        return $hasPlayer && $hasPermission;
+        return $player && $player->can(PermissionsEnum::CREATE_FEE_TYPE->value);
+
     }
 
     /**
@@ -76,12 +74,10 @@ class FeeTypePolicy
             return true;
         }
 
-        $hasPlayer = $user->players()
-            ->where('club_id', $clubId)
-            ->exists();
-        $hasPermission = $user->can('update.FeeType');
+        $player = $user->player($clubId);
 
-        return $hasPlayer && $hasPermission;
+        return $player && $player->can(PermissionsEnum::UPDATE_FEE_TYPE->value);
+
     }
 
     /**
@@ -99,11 +95,9 @@ class FeeTypePolicy
             return true;
         }
 
-        $hasPlayer = $user->players()
-            ->where('club_id', $clubId)
-            ->exists();
-        $hasPermission = $user->can('delete.FeeType');
+        $player = $user->player($clubId);
 
-        return $hasPlayer && $hasPermission;
+        return $player && $player->can(PermissionsEnum::DELETE_FEE_TYPE->value);
+
     }
 }

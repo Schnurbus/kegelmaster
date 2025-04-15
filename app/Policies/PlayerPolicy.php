@@ -2,6 +2,7 @@
 
 namespace App\Policies;
 
+use App\Enums\PermissionsEnum;
 use App\Models\Player;
 use App\Models\User;
 
@@ -16,9 +17,9 @@ class PlayerPolicy
             return true;
         }
 
-        return $user->players()
-            ->where('club_id', $clubId)
-            ->exists() && $user->can('list.Player');
+        $player = $user->player($clubId);
+
+        return $player && $player->can(PermissionsEnum::LIST_PLAYER->value);
     }
 
     /**
@@ -36,12 +37,9 @@ class PlayerPolicy
             return true;
         }
 
-        $hasPlayer = $user->players()
-            ->where('club_id', $clubId)
-            ->exists();
-        $hasPermission = $user->can('view.Player');
+        $player = $user->player($clubId);
 
-        return $hasPlayer && $hasPermission;
+        return $player && $player->can(PermissionsEnum::VIEW_PLAYER->value);
     }
 
     /**
@@ -53,12 +51,9 @@ class PlayerPolicy
             return true;
         }
 
-        $hasPlayer = $user->players()
-            ->where('club_id', $clubId)
-            ->exists();
-        $hasPermission = $user->can('create.Player');
+        $player = $user->player($clubId);
 
-        return $hasPlayer && $hasPermission;
+        return $player && $player->can(PermissionsEnum::CREATE_PLAYER->value);
     }
 
     /**
@@ -76,12 +71,9 @@ class PlayerPolicy
             return true;
         }
 
-        $hasPlayer = $user->players()
-            ->where('club_id', $clubId)
-            ->exists();
-        $hasPermission = $user->can('update.Player');
+        $player = $user->player($clubId);
 
-        return $hasPlayer && $hasPermission;
+        return $player && $player->can(PermissionsEnum::UPDATE_PLAYER->value);
     }
 
     /**
@@ -99,11 +91,8 @@ class PlayerPolicy
             return true;
         }
 
-        $hasPlayer = $user->players()
-            ->where('club_id', $clubId)
-            ->exists();
-        $hasPermission = $user->can('delete.Player');
+        $player = $user->player($clubId);
 
-        return $hasPlayer && $hasPermission;
+        return $player && $player->can(PermissionsEnum::DELETE_PLAYER->value);
     }
 }

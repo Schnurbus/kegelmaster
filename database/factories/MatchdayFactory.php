@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Club;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -17,7 +18,8 @@ class MatchdayFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'club_id' => Club::factory(),
+            'date' => $this->faker->date(),
         ];
     }
 }
