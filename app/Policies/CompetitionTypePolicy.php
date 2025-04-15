@@ -2,6 +2,7 @@
 
 namespace App\Policies;
 
+use App\Enums\PermissionsEnum;
 use App\Models\CompetitionType;
 use App\Models\User;
 
@@ -16,10 +17,9 @@ class CompetitionTypePolicy
             return true;
         }
 
-        return $user->players()
-            ->where('club_id', $clubId)
-            ->exists() && $user->can('list.CompetitionType');
+        $player = $user->player($clubId);
 
+        return $player && $player->can(PermissionsEnum::LIST_COMPETITION_TYPE->value);
     }
 
     /**
@@ -37,12 +37,10 @@ class CompetitionTypePolicy
             return true;
         }
 
-        $hasPlayer = $user->players()
-            ->where('club_id', $clubId)
-            ->exists();
-        $hasPermission = $user->can('view.CompetitionType');
+        $player = $user->player($clubId);
 
-        return $hasPlayer && $hasPermission;
+        return $player && $player->can(PermissionsEnum::VIEW_COMPETITION_TYPE->value);
+
     }
 
     /**
@@ -54,12 +52,10 @@ class CompetitionTypePolicy
             return true;
         }
 
-        $hasPlayer = $user->players()
-            ->where('club_id', $clubId)
-            ->exists();
-        $hasPermission = $user->can('create.CompetitionType');
+        $player = $user->player($clubId);
 
-        return $hasPlayer && $hasPermission;
+        return $player && $player->can(PermissionsEnum::CREATE_COMPETITION_TYPE->value);
+
     }
 
     /**
@@ -77,12 +73,10 @@ class CompetitionTypePolicy
             return true;
         }
 
-        $hasPlayer = $user->players()
-            ->where('club_id', $clubId)
-            ->exists();
-        $hasPermission = $user->can('update.CompetitionType');
+        $player = $user->player($clubId);
 
-        return $hasPlayer && $hasPermission;
+        return $player && $player->can(PermissionsEnum::UPDATE_COMPETITION_TYPE->value);
+
     }
 
     /**
@@ -100,11 +94,8 @@ class CompetitionTypePolicy
             return true;
         }
 
-        $hasPlayer = $user->players()
-            ->where('club_id', $clubId)
-            ->exists();
-        $hasPermission = $user->can('delete.CompetitionType');
+        $player = $user->player($clubId);
 
-        return $hasPlayer && $hasPermission;
+        return $player && $player->can(PermissionsEnum::DELETE_COMPETITION_TYPE->value);
     }
 }

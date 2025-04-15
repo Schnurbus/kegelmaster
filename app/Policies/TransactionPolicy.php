@@ -2,6 +2,7 @@
 
 namespace App\Policies;
 
+use App\Enums\PermissionsEnum;
 use App\Models\Transaction;
 use App\Models\User;
 
@@ -16,9 +17,9 @@ class TransactionPolicy
             return true;
         }
 
-        return $user->players()
-            ->where('club_id', $clubId)
-            ->exists() && $user->can('list.Transaction');
+        $player = $user->player($clubId);
+
+        return $player && $player->can(PermissionsEnum::LIST_TRANSACTION->value);
     }
 
     /**
@@ -36,12 +37,10 @@ class TransactionPolicy
             return true;
         }
 
-        $hasPlayer = $user->players()
-            ->where('club_id', $clubId)
-            ->exists();
-        $hasPermission = $user->can('view.Transaction');
+        $player = $user->player($clubId);
 
-        return $hasPlayer && $hasPermission;
+        return $player && $player->can(PermissionsEnum::VIEW_TRANSACTION->value);
+
     }
 
     /**
@@ -53,12 +52,10 @@ class TransactionPolicy
             return true;
         }
 
-        $hasPlayer = $user->players()
-            ->where('club_id', $clubId)
-            ->exists();
-        $hasPermission = $user->can('create.Transaction');
+        $player = $user->player($clubId);
 
-        return $hasPlayer && $hasPermission;
+        return $player && $player->can(PermissionsEnum::CREATE_TRANSACTION->value);
+
     }
 
     /**
@@ -76,12 +73,10 @@ class TransactionPolicy
             return true;
         }
 
-        $hasPlayer = $user->players()
-            ->where('club_id', $clubId)
-            ->exists();
-        $hasPermission = $user->can('update.Transaction');
+        $player = $user->player($clubId);
 
-        return $hasPlayer && $hasPermission;
+        return $player && $player->can(PermissionsEnum::UPDATE_TRANSACTION->value);
+
     }
 
     /**
@@ -99,11 +94,9 @@ class TransactionPolicy
             return true;
         }
 
-        $hasPlayer = $user->players()
-            ->where('club_id', $clubId)
-            ->exists();
-        $hasPermission = $user->can('delete.Transaction');
+        $player = $user->player($clubId);
 
-        return $hasPlayer && $hasPermission;
+        return $player && $player->can(PermissionsEnum::DELETE_TRANSACTION->value);
+
     }
 }

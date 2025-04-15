@@ -60,11 +60,11 @@ function createClubWithRolesAndPermissions(array $permissions = []): Club
     $club = Club::factory()->create();
 
     // Player-Rolle mit Berechtigungen erstellen
-    $playerRole = Role::create(['name' => 'player', 'guard_name' => 'web', 'club_id' => $club->id]);
+    $playerRole = Role::create(['name' => 'player', 'guard_name' => 'player', 'club_id' => $club->id]);
 
     // Berechtigungen erstellen und zuweisen
     foreach ($permissions as $permission) {
-        Permission::create(['name' => $permission, 'guard_name' => 'web', 'club_id' => $club->id])
+        Permission::create(['name' => $permission, 'guard_name' => 'player', 'club_id' => $club->id])
             ->assignRole($playerRole);
     }
 

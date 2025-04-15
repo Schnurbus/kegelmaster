@@ -2,9 +2,9 @@
 
 namespace App\Policies;
 
+use App\Enums\PermissionsEnum;
 use App\Models\Player;
 use App\Models\User;
-use Illuminate\Support\Facades\Log;
 
 class PlayerPolicy
 {
@@ -13,15 +13,13 @@ class PlayerPolicy
      */
     public function list(User $user, int $clubId): bool
     {
-        Log::debug('list.Player', ['club_id' => $clubId]);
         if (setClubContext($user, $clubId)) {
             return true;
         }
-        Log::debug('list.Player', ['players' => $user->players, 'can' => $user->can('list.Player')]);
 
-        return $user->players()
-            ->where('club_id', $clubId)
-            ->exists() && $user->can('list.Player');
+        $player = $user->player($clubId);
+
+        return $player && $player->can(PermissionsEnum::LIST_PLAYER->value);
     }
 
     /**
@@ -39,12 +37,9 @@ class PlayerPolicy
             return true;
         }
 
-        $hasPlayer = $user->players()
-            ->where('club_id', $clubId)
-            ->exists();
-        $hasPermission = $user->can('view.Player');
+        $player = $user->player($clubId);
 
-        return $hasPlayer && $hasPermission;
+        return $player && $player->can(PermissionsEnum::VIEW_PLAYER->value);
     }
 
     /**
@@ -56,12 +51,9 @@ class PlayerPolicy
             return true;
         }
 
-        $hasPlayer = $user->players()
-            ->where('club_id', $clubId)
-            ->exists();
-        $hasPermission = $user->can('create.Player');
+        $player = $user->player($clubId);
 
-        return $hasPlayer && $hasPermission;
+        return $player && $player->can(PermissionsEnum::CREATE_PLAYER->value);
     }
 
     /**
@@ -79,12 +71,9 @@ class PlayerPolicy
             return true;
         }
 
-        $hasPlayer = $user->players()
-            ->where('club_id', $clubId)
-            ->exists();
-        $hasPermission = $user->can('update.Player');
+        $player = $user->player($clubId);
 
-        return $hasPlayer && $hasPermission;
+        return $player && $player->can(PermissionsEnum::UPDATE_PLAYER->value);
     }
 
     /**
@@ -102,11 +91,8 @@ class PlayerPolicy
             return true;
         }
 
-        $hasPlayer = $user->players()
-            ->where('club_id', $clubId)
-            ->exists();
-        $hasPermission = $user->can('delete.Player');
+        $player = $user->player($clubId);
 
-        return $hasPlayer && $hasPermission;
+        return $player && $player->can(PermissionsEnum::DELETE_PLAYER->value);
     }
 }

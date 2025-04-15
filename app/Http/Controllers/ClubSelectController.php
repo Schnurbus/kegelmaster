@@ -32,10 +32,13 @@ class ClubSelectController extends Controller
             abort(403);
         }
 
-        if (isset($player)) {
-            /** @var Player $player */
-            $user->syncRoles($player->role);
-        }
+        //        if ($player) {
+        //            Auth::guard('player')->login($player);
+        //        }
+        //        if (isset($player)) {
+        //            /** @var Player $player */
+        //            $user->syncRoles($player->role);
+        //        }
 
         Log::info('Changing current club for user {user}', ['user' => Auth::user(), 'club_id' => $clubId]);
 

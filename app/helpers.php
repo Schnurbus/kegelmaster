@@ -3,7 +3,6 @@
 use App\Enums\ToastType;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Support\Facades\Log;
 
 function translations(string $json): mixed
 {
@@ -62,15 +61,6 @@ if (! function_exists('setClubContext')) {
     {
         setPermissionsTeamId($clubId);
 
-        $isClubOwner = $user->clubs()->where('id', $clubId)->exists();
-
-        if ($isClubOwner) {
-            Log::debug('Club owner check passed', [
-                'user_id' => $user->id,
-                'club_id' => $clubId,
-            ]);
-        }
-
-        return $isClubOwner;
+        return $user->clubs()->where('id', $clubId)->exists();
     }
 }

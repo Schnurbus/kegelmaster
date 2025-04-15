@@ -46,7 +46,7 @@ class RoleService
                 'name' => $data['name'],
                 'is_base_fee_active' => $data['is_base_fee_active'],
                 'club_id' => $data['club_id'],
-                'guard_name' => 'web',
+                'guard_name' => 'player',
             ]);
 
             if (isset($data['permissions']) && is_array($data['permissions'])) {
@@ -163,7 +163,9 @@ class RoleService
                 foreach ($actions as $action => $isGranted) {
                     if ($isGranted) {
                         $entityName = ucfirst($entity);
-                        $permission = Permission::findOrCreate("{$action}.{$entityName}");
+                        $permission = Permission::findOrCreate(
+                            "{$action}.{$entityName}",
+                            'player');
                         $permissionsToSync[] = $permission->name;
                     }
                 }

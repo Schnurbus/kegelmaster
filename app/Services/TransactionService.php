@@ -55,7 +55,7 @@ readonly class TransactionService
 
             // Case 2: No player_id provided but required
             if (! isset($transactionData['player_id'])) {
-                throw new Exception('player_id is required for transaction type '.$type->label());
+                throw new \InvalidArgumentException('player_id is required for transaction type '.$type->label());
             }
 
             // Case 3: Payment transaction (type 3) with potential multiple players
@@ -75,7 +75,7 @@ readonly class TransactionService
             // Case 4: Other transaction types (always single player)
             // Validate that player_id is not an array for non-payment transactions
             if (is_array($transactionData['player_id'])) {
-                throw new Exception('Multiple player_ids are only supported for payment transactions');
+                throw new \InvalidArgumentException('Multiple player_ids are only supported for payment transactions');
             }
 
             /** @var Transaction $transaction */
@@ -89,6 +89,8 @@ readonly class TransactionService
             ]);
 
             return $transaction;
+        } catch (\InvalidArgumentException $e) {
+            throw $e;
         } catch (Exception $e) {
             Log::error('Error creating transaction', [
                 'error' => $e->getMessage(),
@@ -121,7 +123,7 @@ readonly class TransactionService
         $players = Player::whereIn('id', $playerIds)->get();
 
         if ($players->isEmpty()) {
-            throw new Exception('No valid players found');
+            throw new \InvalidArgumentException('No valid players found');
         }
 
         // Calculate total balance of all players
@@ -283,7 +285,7 @@ readonly class TransactionService
         });
 
         if ($playersWithDebt->isEmpty()) {
-            throw new Exception('No players with debt found to distribute payment');
+            throw new \InvalidArgumentException('No players with debt found to distribute payment');
         }
 
         $playerCount = $playersWithDebt->count();

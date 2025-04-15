@@ -28,4 +28,24 @@ class PlayerFactory extends Factory
             'initial_balance' => 0,
         ];
     }
+
+    public function withRole(string $roleName): static
+    {
+        return $this->afterCreating(function (Player $player) use ($roleName) {
+            $role = Role::where('name', $roleName)
+                ->where('guard_name', $player->guard_name ?? 'player')
+                ->first();
+
+            // Falls die Rolle nicht existiert, erstelle sie
+            if (! $role) {
+                $role = Role::create([
+                    'name' => $roleName,
+                    'guard_name' => $player->guard_name ?? 'player',
+                ]);
+            }
+
+            // Weise die Rolle dem Player zu
+            $player->assignRole($role);
+        });
+    }
 }

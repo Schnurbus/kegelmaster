@@ -106,6 +106,14 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->hasMany(Player::class);
     }
 
+    public function player(int $clubId): ?Player
+    {
+        /** @var Player|null $player */
+        $player = $this->players()->where('club_id', $clubId)->first();
+
+        return $player;
+    }
+
     public function currentPlayer(): ?Player
     {
         $currentClubId = session('current_club_id');

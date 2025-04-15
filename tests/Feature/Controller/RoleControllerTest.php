@@ -1,6 +1,6 @@
 <?php
 
-use App\Enums\PermissionsEnum\PermissionsEnum;
+use App\Enums\PermissionsEnum;
 use App\Models\Club;
 use App\Models\Player;
 use App\Models\Role;
@@ -19,7 +19,7 @@ use function Pest\Laravel\post;
 uses(RefreshDatabase::class);
 
 beforeEach(function () {
-    parent::setUp();
+    // parent::setUp();
     $this->app->make(\Spatie\Permission\PermissionRegistrar::class)->forgetCachedPermissions();
     $this->user = User::factory()->create();
 
@@ -154,64 +154,70 @@ test('owner can update role', function () {
     assertDatabaseHas('roles', ['name' => 'Test Role 2']);
 });
 
-test('user cannot list roles', function () {
+test('user list roles', function () {
     $club = Club::factory()->create();
-    $role = Role::factory()->create(['club_id' => $club->id, 'name' => 'Test Role']);
+
     $user = User::factory()->create();
-    $player = Player::factory()->create([
-        'club_id' => $club->id,
-        'user_id' => $user->id,
-        'role_id' => $role->id,
-    ]);
 
-    $response = actingAs($user)->post('/set-current-club', ['club_id' => $club->id]);
-    $response->assertStatus(302);
+    $userWithoutPlayer = User::factory()->create();
 
-    actingAs($user)->get('/role')->assertStatus(403);
+    actingAs($userWithoutPlayer)
+        ->withCookie('currentClubId', strval($club->id))
+        ->get('/role')
+        ->assertStatus(403);
 });
 
-test('user can list roles', function () {
+test('user can/cannot view role', function () {
     $club = Club::factory()->create();
-    $role = Role::factory()->create(['club_id' => $club->id, 'name' => 'Test Role']);
-
-    Permission::create(['name' => PermissionsEnum::LISTROLES->value]);
-    $role->givePermissionTo(PermissionsEnum::LISTROLES->value);
-    $player = Player::factory()->create([
-        'club_id' => $club->id,
-        'user_id' => $this->user->id,
-        'role_id' => $role->id,
-    ]);
-
-    $response = actingAs($this->user)->post('/set-current-club', ['club_id' => $club->id]);
-    $response->assertStatus(302);
-
-    expect($this->user->getAllPermissions()->count())->toBe(1);
-
-    actingAs($this->user)->get('/role')->assertStatus(200);
-});
-
-test('user with active player having list.Player permission can list players', function () {
-    $club = createClubWithRolesAndPermissions(['list.Player']);
-    $result = createUserWithPlayerInClub($club);
-    $user = $result['user'];
-
     setPermissionsTeamId($club->id);
 
-    $response = $this->actingAs($user)
-        ->withSession(['current_club_id' => $club->id])
-        ->get('/players');
+    $roleWithPermissions = Role::factory()
+        ->for($club, 'club')
+        ->create(['name' => 'View Role', 'guard_name' => 'player']);
+    $permission = Permission::findOrCreate(PermissionsEnum::VIEW_ROLE->value, 'player');
+    $roleWithPermissions->givePermissionTo($permission);
 
-    $response->assertStatus(200);
+    Role::factory()
+        ->for($club, 'club')
+        ->create(['name' => 'No View Role', 'guard_name' => 'player']);
 
-    // Zweiter Club ohne diese Berechtigung
-    $clubWithoutPerm = createClubWithRolesAndPermissions([]);
-    $resultWithoutPerm = createUserWithPlayerInClub($clubWithoutPerm);
-    $playerWithoutPerm = $resultWithoutPerm['player'];
+    $userWithPlayerAndRole = User::factory()->create();
+    $userWithPlayer = User::factory()->create();
+    $userWithOtherClub = User::factory()->create();
+    $userWithoutPlayer = User::factory()->create();
 
-    // Derselbe User, aber anderer aktiver Player ohne Berechtigung
-    $response = $this->actingAs($user)
-        ->withSession(['current_club_id' => $club->id])
-        ->get('/players');
+    $playerWithRole = Player::factory()
+        ->for($userWithPlayerAndRole, 'user')
+        ->for($club, 'club')
+        ->withRole('View Role')
+        ->create();
 
-    $response->assertStatus(403); // Zugriff verweigert
+    $playerWithoutRole = Player::factory()
+        ->for($userWithPlayer, 'user')
+        ->for($club, 'club')
+        ->withRole('No List Role')
+        ->create();
+
+    $otherClub = Club::factory()->create();
+    $playerWithOtherClub = Player::factory()
+        ->for($userWithOtherClub, 'user')
+        ->for($otherClub, 'club')
+        ->create();
+
+    actingAs($userWithPlayerAndRole)
+        ->withCookie('currentClubId', strval($club->id))
+        ->get('/role/'.$roleWithPermissions->id)
+        ->assertStatus(200);
+    actingAs($userWithPlayer)
+        ->withCookie('currentClubId', strval($club->id))
+        ->get('/role/'.$roleWithPermissions->id)
+        ->assertStatus(403);
+    actingAs($userWithOtherClub)
+        ->withCookie('currentClubId', strval($club->id))
+        ->get('/role/'.$roleWithPermissions->id)
+        ->assertStatus(403);
+    actingAs($userWithoutPlayer)
+        ->withCookie('currentClubId', strval($club->id))
+        ->get('/role/'.$roleWithPermissions->id)
+        ->assertStatus(403);
 });

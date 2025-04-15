@@ -108,9 +108,19 @@ class PlayerController extends Controller
      */
     public function edit(EditPlayerRequest $request, Player $player): Response
     {
+        /** @var User $user */
+        $user = $request->user();
+        $currentClubId = session('current_club_id');
+
         return Inertia::render('players/edit', [
             'player' => $player->load('role'),
-            'roles' => Role::all(),
+            'roles' => Role::where('club_id', $currentClubId)->get(),
+            'can' => [
+                'create' => $user->can('create', [Role::class, $currentClubId]),
+                'delete' => $user->can('delete', Role::class),
+                'update' => $user->can('update', Role::class),
+                'view' => $user->can('view', Role::class),
+            ],
         ]);
     }
 

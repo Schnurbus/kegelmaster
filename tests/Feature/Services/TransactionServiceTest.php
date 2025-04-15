@@ -60,7 +60,7 @@ it('throws exception when player_id is missing for non-expense transaction', fun
     ];
 
     expect(fn () => $this->transactionService->createTransaction($transactionData))
-        ->toThrow(Exception::class,
+        ->toThrow(\InvalidArgumentException::class,
             'player_id is required for transaction type '.TransactionType::FEE->label());
 });
 
@@ -353,7 +353,7 @@ it('throws exception for array of player_ids in non-payment transaction', functi
     ];
 
     expect(fn () => $this->transactionService->createTransaction($transactionData))
-        ->toThrow(Exception::class, 'Multiple player_ids are only supported for payment transactions');
+        ->toThrow(\InvalidArgumentException::class, 'Multiple player_ids are only supported for payment transactions');
 });
 
 it('throws exception when no valid players found', function () {
@@ -368,7 +368,7 @@ it('throws exception when no valid players found', function () {
     ];
 
     expect(fn () => $this->transactionService->createTransaction($transactionData))
-        ->toThrow(Exception::class, 'No valid players found');
+        ->toThrow(\InvalidArgumentException::class, 'No valid players found');
 });
 
 it('throws exception when no players with debt found', function () {
@@ -393,7 +393,7 @@ it('throws exception when no players with debt found', function () {
     ];
 
     expect(fn () => $this->transactionService->createTransaction($transactionData))
-        ->toThrow(Exception::class, 'No players with debt found to distribute payment');
+        ->toThrow(\InvalidArgumentException::class, 'No players with debt found to distribute payment');
 });
 
 it('handles database transaction rollback on error', function () {
