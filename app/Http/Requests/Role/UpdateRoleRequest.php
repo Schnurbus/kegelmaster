@@ -32,7 +32,6 @@ class UpdateRoleRequest extends FormRequest
         $role = $this->route('role');
 
         return [
-            'club_id' => ['required', 'exists:clubs,id'],
             'name' => [
                 'required',
                 'string',

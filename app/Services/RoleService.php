@@ -66,7 +66,6 @@ class RoleService
     {
         Log::info('Updating role', [
             'role_id' => $role->id,
-            'club_id' => $data['club_id'],
             'name' => $data['name'],
         ]);
 

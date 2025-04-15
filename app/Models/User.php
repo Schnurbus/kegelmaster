@@ -26,7 +26,7 @@ use Spatie\Permission\Traits\HasRoles;
  * @property-read int|null $clubs_count
  * @property-read \Illuminate\Notifications\DatabaseNotificationCollection<int, \Illuminate\Notifications\DatabaseNotification> $notifications
  * @property-read int|null $notifications_count
- * @property-read Collection<int, \App\Models\Player> $players
+ * @property-read Collection<int, Player> $players
  * @property-read int|null $players_count
  * @property-read Collection<int, \App\Models\Role> $roles
  * @property-read int|null $roles_count
@@ -104,5 +104,18 @@ class User extends Authenticatable implements MustVerifyEmail
     public function players(): HasMany
     {
         return $this->hasMany(Player::class);
+    }
+
+    public function currentPlayer(): ?Player
+    {
+        $currentClubId = session('current_club_id');
+        if (empty($currentClubId)) {
+            return null;
+        }
+
+        /** @var Player|null $player */
+        $player = $this->players()->where('club_id', $currentClubId)->first();
+
+        return $player;
     }
 }

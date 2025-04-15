@@ -4,6 +4,7 @@ namespace App\Policies;
 
 use App\Models\Player;
 use App\Models\User;
+use Illuminate\Support\Facades\Log;
 
 class PlayerPolicy
 {
@@ -12,9 +13,11 @@ class PlayerPolicy
      */
     public function list(User $user, int $clubId): bool
     {
+        Log::debug('list.Player', ['club_id' => $clubId]);
         if (setClubContext($user, $clubId)) {
             return true;
         }
+        Log::debug('list.Player', ['players' => $user->players, 'can' => $user->can('list.Player')]);
 
         return $user->players()
             ->where('club_id', $clubId)

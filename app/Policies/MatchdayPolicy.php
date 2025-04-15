@@ -36,12 +36,16 @@ class MatchdayPolicy
             return true;
         }
 
-        $hasPlayer = $user->players()
-            ->where('club_id', $clubId)
-            ->exists();
-        $hasPermission = $user->can('view.Matchday');
+        $player = $user->currentPlayer();
 
-        return $hasPlayer && $hasPermission;
+        return $player && $player->can('view.Matchday');
+
+        //        $hasPlayer = $user->players()
+        //            ->where('club_id', $clubId)
+        //            ->exists();
+        //        $hasPermission = $user->can('view.Matchday');
+        //
+        //        return $hasPlayer && $hasPermission;
     }
 
     /**

@@ -15,7 +15,7 @@ class ShowMatchdayRequest extends FormRequest
         /** @var User $user */
         $user = $this->user();
 
-        return $user->can('create', $this->route('matchday'));
+        return $user->can('view', $this->route('matchday'));
     }
 
     /**

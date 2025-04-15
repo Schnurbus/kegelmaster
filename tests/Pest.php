@@ -11,6 +11,12 @@
 |
 */
 
+use App\Models\Club;
+use App\Models\Player;
+use App\Models\Role;
+use App\Models\User;
+use Spatie\Permission\Models\Permission;
+
 pest()->extend(Tests\TestCase::class)
     ->use(Illuminate\Foundation\Testing\RefreshDatabase::class)
     ->in('Feature');
@@ -44,4 +50,42 @@ expect()->extend('toBeOne', function () {
 function something()
 {
     // ..
+}
+
+/**
+ * Club mit definierten Rollen und Berechtigungen einrichten
+ */
+function createClubWithRolesAndPermissions(array $permissions = []): Club
+{
+    $club = Club::factory()->create();
+
+    // Player-Rolle mit Berechtigungen erstellen
+    $playerRole = Role::create(['name' => 'player', 'guard_name' => 'web', 'club_id' => $club->id]);
+
+    // Berechtigungen erstellen und zuweisen
+    foreach ($permissions as $permission) {
+        Permission::create(['name' => $permission, 'guard_name' => 'web', 'club_id' => $club->id])
+            ->assignRole($playerRole);
+    }
+
+    return $club;
+}
+
+/**
+ * User mit Player in einem Club erstellen
+ */
+function createUserWithPlayerInClub(Club $club, string $roleName = 'player'): array
+{
+    $user = User::factory()->create();
+    $role = Role::where('name', $roleName)->first();
+    $player = Player::factory()->create([
+        'user_id' => $user->id,
+        'club_id' => $club->id,
+        'role_id' => $role->id,
+    ]);
+
+    return [
+        'user' => $user,
+        'player' => $player,
+    ];
 }

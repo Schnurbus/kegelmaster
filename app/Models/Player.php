@@ -8,6 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Foundation\Auth\Access\Authorizable;
+use Spatie\Permission\Traits\HasRoles;
 
 /**
  * App\Models\Player
@@ -56,7 +58,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Player extends Model
 {
     /** @use HasFactory<\Database\Factories\PlayerFactory> */
-    use HasFactory;
+    use Authorizable, HasFactory, HasRoles;
 
     protected $fillable = [
         'name',
