@@ -1,5 +1,28 @@
 # Changelog
 
+## [1.6.1](https://github.com/Schnurbus/kegelmaster/compare/v1.6.0...v1.6.1) (2025-04-18)
+
+
+### Bug Fixes
+
+* **deps:** update dependency laravel/framework to v12.9.0 ([#105](https://github.com/Schnurbus/kegelmaster/issues/105)) ([727c4e1](https://github.com/Schnurbus/kegelmaster/commit/727c4e1e71a4147000279093439b023b02184d8e))
+* **deps:** update dependency laravel/framework to v12.9.2 ([#109](https://github.com/Schnurbus/kegelmaster/issues/109)) ([9c194a4](https://github.com/Schnurbus/kegelmaster/commit/9c194a41eec05c09412ffee6bfc5fdd6fab96eae))
+* **deps:** update dependency laravel/octane to v2.9.1 ([#104](https://github.com/Schnurbus/kegelmaster/issues/104)) ([798b07c](https://github.com/Schnurbus/kegelmaster/commit/798b07c13d1b8a858f11227a5e5749c619cdc6b7))
+* **deps:** update dependency vite to v6.3.0 ([#108](https://github.com/Schnurbus/kegelmaster/issues/108)) ([f1e1e93](https://github.com/Schnurbus/kegelmaster/commit/f1e1e9354da2226ae9ca514774c0aed7cb3961a7))
+* **deps:** update dependency vite to v6.3.1 ([#110](https://github.com/Schnurbus/kegelmaster/issues/110)) ([4834d41](https://github.com/Schnurbus/kegelmaster/commit/4834d41afe4ee65e4b9f8d3860ffe4645c9e011b))
+* **deps:** update dependency vite to v6.3.2 ([#113](https://github.com/Schnurbus/kegelmaster/issues/113)) ([f6af3de](https://github.com/Schnurbus/kegelmaster/commit/f6af3dea721c6afead4aaa51eb3ebf76a5ba4fa6))
+* **deps:** update dependency zod to v3.24.3 ([#111](https://github.com/Schnurbus/kegelmaster/issues/111)) ([336e19c](https://github.com/Schnurbus/kegelmaster/commit/336e19c69e6772f18c16e29c05f0dc7249ba75d4))
+* **deps:** update lucide monorepo to ^0.489.0 ([#114](https://github.com/Schnurbus/kegelmaster/issues/114)) ([5b83cbc](https://github.com/Schnurbus/kegelmaster/commit/5b83cbc9492c1cb51314ebaf42bf118b8b1bf972))
+* **deps:** update lucide monorepo to ^0.494.0 ([#115](https://github.com/Schnurbus/kegelmaster/issues/115)) ([e5c9a40](https://github.com/Schnurbus/kegelmaster/commit/e5c9a405b8c06b034c046a4bb75ceae13876bd76))
+* **deps:** update lucide monorepo to ^0.501.0 ([#117](https://github.com/Schnurbus/kegelmaster/issues/117)) ([0b0a975](https://github.com/Schnurbus/kegelmaster/commit/0b0a975f989671972749ec3b9276c74cd0c722c3))
+
+
+### Miscellaneous Chores
+
+* **deps:** update dependency barryvdh/laravel-debugbar to v3.15.4 ([#107](https://github.com/Schnurbus/kegelmaster/issues/107)) ([8004025](https://github.com/Schnurbus/kegelmaster/commit/8004025adecd3c9bc70427019b8c24bdc21c61d3))
+* **deps:** update dependency pestphp/pest to v3.8.2 ([#112](https://github.com/Schnurbus/kegelmaster/issues/112)) ([ae3cb38](https://github.com/Schnurbus/kegelmaster/commit/ae3cb38c93f1890be6578251149bf8f2bc2ee5f6))
+* **deps:** update eslint monorepo to v9.25.0 ([#116](https://github.com/Schnurbus/kegelmaster/issues/116)) ([1725d42](https://github.com/Schnurbus/kegelmaster/commit/1725d42e962d799970dc73cbe1353371b7450e67))
+
 ## [1.6.0](https://github.com/Schnurbus/kegelmaster/compare/v1.5.1...v1.6.0) (2025-04-15)
 
 
