@@ -69,6 +69,7 @@ class Player extends Authenticatable
         'sex',
         'active',
         'role_id',
+        'initial_balance',
     ];
 
     protected $casts = [
