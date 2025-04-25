@@ -62,7 +62,7 @@ const breadcrumbs: BreadcrumbItem[] = [
                             </div>
                         </template>
                         <Label class="font-semibold">{{ t('Role') }}:</Label>
-                        <div>{{ props.player.role.title }}</div>
+                        <div>{{ props.player.role.name }}</div>
                         <Label class="font-semibold">{{ t('Created at') }}:</Label>
                         <div>{{ d(props.player.created_at) }}</div>
                         <Label class="font-semibold">{{ t('Balance') }}:</Label>

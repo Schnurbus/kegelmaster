@@ -96,7 +96,7 @@ class PlayerController extends Controller
         $player->load(['user', 'role']);
 
         return Inertia::render('players/show', [
-            'player' => $player,
+            'player' => $player->load('role'),
             'feeEntries' => $this->playerService->getFeeStatistics($player)->toArray(),
             'competitionEntries' => $this->playerService->getCompetitionStatistics($player)->toArray(),
             'transactions' => $this->playerService->getTransactionStatistics($player)->toArray(),
