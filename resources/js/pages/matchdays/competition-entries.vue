@@ -13,7 +13,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import type { CompetitionEntry, CompetitionType, FeeEntry, Matchday, Player } from '@/types/entities';
+import type { CompetitionEntry, CompetitionType, Matchday, Player } from '@/types/entities';
 import { useForm } from '@inertiajs/vue3';
 import { Check, Pencil, Trash2, X } from 'lucide-vue-next';
 import { computed, nextTick, ref } from 'vue';
@@ -113,7 +113,6 @@ const removePlayer = (playerId: number) => {
 
     removePlayerForm.post(route('matchdays.remove-player', {id: props.matchday.id }));
 };
-const sortedPlayers = computed(() => [...props.players].sort((a, b) => (a.name < b.name ? -1 : 1)));
 </script>
 <template>
     <Table>
@@ -127,7 +126,7 @@ const sortedPlayers = computed(() => [...props.players].sort((a, b) => (a.name <
             </TableRow>
         </TableHeader>
         <TableBody>
-            <TableRow v-for="player in sortedPlayers" :key="player.id">
+            <TableRow v-for="player in props.players" :key="player.id">
                 <TableCell class="font-medium">{{ player.name }}</TableCell>
 
                 <TableCell
