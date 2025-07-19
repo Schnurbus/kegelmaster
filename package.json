@@ -23,7 +23,7 @@
         "prettier-plugin-organize-imports": "^4.1.0",
         "prettier-plugin-tailwindcss": "^0.6.11",
         "typescript-eslint": "^8.27.0",
-        "vue-tsc": "^2.2.8"
+        "vue-tsc": "^3.0.0"
     },
     "dependencies": {
         "@headlessui/vue": "^1.7.23",
