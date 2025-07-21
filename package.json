@@ -38,7 +38,7 @@
         "@unovis/ts": "^1.5.1",
         "@unovis/vue": "^1.5.1",
         "@vee-validate/zod": "^4.15.0",
-        "@vitejs/plugin-vue": "^5.2.3",
+        "@vitejs/plugin-vue": "^6.0.0",
         "@vueuse/core": "^13.0.0",
         "apexcharts": "^4.5.0",
         "autoprefixer": "^10.4.21",
