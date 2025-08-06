@@ -43,9 +43,9 @@ readonly class TransactionService
                 // Ensure player_id is null for EXPENSE transactions
                 $transactionData['player_id'] = null;
 
-                /** @var Club $club */
+                /** @var Club|null $club */
                 $club = Club::find($transactionData['club_id']);
-                if (!$club) {
+                if (is_null($club)) {
                     throw new \InvalidArgumentException('Club not found');
                 }
 
@@ -87,9 +87,9 @@ readonly class TransactionService
                 throw new \InvalidArgumentException('Multiple player_ids are only supported for payment transactions');
             }
 
-            /** @var Player $player */
+            /** @var Player|null $player */
             $player = Player::find($transactionData['player_id']);
-            if (! $player) {
+            if (is_null($player)) {
                 throw new \InvalidArgumentException('Player not found');
             }
 

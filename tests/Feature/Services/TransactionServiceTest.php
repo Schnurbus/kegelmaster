@@ -39,6 +39,10 @@ it('creates a expense transaction without player_id', function () {
         'notes' => 'Test expense transaction',
     ];
 
+    $this->clubService->shouldReceive('recalculateBalance')
+        ->once()
+        ->with(Mockery::type(Club::class));
+
     $transaction = $this->transactionService->createTransaction($transactionData);
 
     expect($transaction)->toBeInstanceOf(Transaction::class)
@@ -60,8 +64,10 @@ it('throws exception when player_id is missing for non-expense transaction', fun
     ];
 
     expect(fn () => $this->transactionService->createTransaction($transactionData))
-        ->toThrow(\InvalidArgumentException::class,
-            'player_id is required for transaction type '.TransactionType::FEE->label());
+        ->toThrow(
+            \InvalidArgumentException::class,
+            'player_id is required for transaction type '.TransactionType::FEE->label()
+        );
 });
 
 it('creates a simple payment transaction for single player', function () {
