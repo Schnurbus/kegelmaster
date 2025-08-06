@@ -42,8 +42,17 @@ readonly class TransactionService
             if ($type === TransactionType::EXPENSE) {
                 // Ensure player_id is null for EXPENSE transactions
                 $transactionData['player_id'] = null;
+
+                /** @var Club|null $club */
+                $club = Club::find($transactionData['club_id']);
+                if (is_null($club)) {
+                    throw new \InvalidArgumentException('Club not found');
+                }
+
                 /** @var Transaction $transaction */
                 $transaction = Transaction::create($transactionData);
+
+                $this->clubService->recalculateBalance($club);
 
                 Log::info('EXPENSE transaction created', [
                     'transaction_id' => $transaction->id,
@@ -78,8 +87,13 @@ readonly class TransactionService
                 throw new \InvalidArgumentException('Multiple player_ids are only supported for payment transactions');
             }
 
-            /** @var Transaction $transaction */
-            $transaction = Transaction::create($transactionData);
+            /** @var Player|null $player */
+            $player = Player::find($transactionData['player_id']);
+            if (is_null($player)) {
+                throw new \InvalidArgumentException('Player not found');
+            }
+
+            $transaction = $this->processPlayerTransaction($player, $transactionData);
 
             Log::info('Transaction created', [
                 'transaction_id' => $transaction->id,
