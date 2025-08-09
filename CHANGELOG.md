@@ -1,5 +1,22 @@
 # Changelog
 
+## [1.6.3](https://github.com/Schnurbus/kegelmaster/compare/v1.6.2...v1.6.3) (2025-08-09)
+
+
+### Bug Fixes
+
+* **deps:** update dependency laravel/framework to v12.22.0 ([#377](https://github.com/Schnurbus/kegelmaster/issues/377)) ([afa2eeb](https://github.com/Schnurbus/kegelmaster/commit/afa2eeb5cd779fafd70611718d7b30351e141b09))
+* **deps:** update dependency laravel/framework to v12.22.1 ([#380](https://github.com/Schnurbus/kegelmaster/issues/380)) ([b11f2ae](https://github.com/Schnurbus/kegelmaster/commit/b11f2ae5cd5014c01dff9021c91d5b727ffa22ac))
+* **deps:** update dependency laravel/octane to v2.12.1 ([#376](https://github.com/Schnurbus/kegelmaster/issues/376)) ([2ad46a0](https://github.com/Schnurbus/kegelmaster/commit/2ad46a0a8dfed808d9657464e20032bb7c306aca))
+* **deps:** update lucide monorepo to ^0.537.0 ([#374](https://github.com/Schnurbus/kegelmaster/issues/374)) ([92675ed](https://github.com/Schnurbus/kegelmaster/commit/92675ed1ea98886e3fae4cb963eda3af6d19f6e4))
+* **deps:** update lucide monorepo to ^0.539.0 ([#378](https://github.com/Schnurbus/kegelmaster/issues/378)) ([a43dc81](https://github.com/Schnurbus/kegelmaster/commit/a43dc813727357f3aa319a444f7fa9095ed1eea3))
+
+
+### Miscellaneous Chores
+
+* **deps:** update dependency @types/node to v22.17.1 ([#379](https://github.com/Schnurbus/kegelmaster/issues/379)) ([99e8d7a](https://github.com/Schnurbus/kegelmaster/commit/99e8d7ae97b61061cee7df3a5217a75ac723a389))
+* **deps:** update eslint monorepo to v9.33.0 ([#381](https://github.com/Schnurbus/kegelmaster/issues/381)) ([0a7a73a](https://github.com/Schnurbus/kegelmaster/commit/0a7a73a8ae4fd9ec0b746d17c98841610505ecbd))
+
 ## [1.6.2](https://github.com/Schnurbus/kegelmaster/compare/v1.6.1...v1.6.2) (2025-08-06)
 
 
