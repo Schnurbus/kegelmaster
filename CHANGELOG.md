@@ -1,5 +1,51 @@
 # Changelog
 
+## [1.6.3](https://github.com/Schnurbus/kegelmaster/compare/v1.6.2...v1.6.3) (2025-08-25)
+
+
+### Bug Fixes
+
+* **deps:** update dependency @inertiajs/vue3 to v2.1.0 ([#388](https://github.com/Schnurbus/kegelmaster/issues/388)) ([3fa0197](https://github.com/Schnurbus/kegelmaster/commit/3fa0197a88e7bd70349a772d6b4bb12b4c13b767))
+* **deps:** update dependency @inertiajs/vue3 to v2.1.1 ([#391](https://github.com/Schnurbus/kegelmaster/issues/391)) ([767dafb](https://github.com/Schnurbus/kegelmaster/commit/767dafbe5744116fc708cd5cbfa085a7bb6bd6fa))
+* **deps:** update dependency @inertiajs/vue3 to v2.1.2 ([#393](https://github.com/Schnurbus/kegelmaster/issues/393)) ([960e760](https://github.com/Schnurbus/kegelmaster/commit/960e76082cafa64d3ad57ed67951bad848ed3959))
+* **deps:** update dependency @unovis/vue to v1.6.0 ([#394](https://github.com/Schnurbus/kegelmaster/issues/394)) ([2557c33](https://github.com/Schnurbus/kegelmaster/commit/2557c333b5f608433287f5f07eb54e15ce747b51))
+* **deps:** update dependency @vueuse/core to v13.7.0 ([#396](https://github.com/Schnurbus/kegelmaster/issues/396)) ([74accb6](https://github.com/Schnurbus/kegelmaster/commit/74accb6d8fbe622786a13fdd9479df8114139fbd))
+* **deps:** update dependency concurrently to v9.2.1 ([#412](https://github.com/Schnurbus/kegelmaster/issues/412)) ([ba0d391](https://github.com/Schnurbus/kegelmaster/commit/ba0d39146f13245134835b3961c296c8e31904a4))
+* **deps:** update dependency inertiajs/inertia-laravel to v2.0.5 ([#387](https://github.com/Schnurbus/kegelmaster/issues/387)) ([b1d10e7](https://github.com/Schnurbus/kegelmaster/commit/b1d10e7908976a8824c619da67ffc1be842a97eb))
+* **deps:** update dependency laravel/framework to v12.22.0 ([#377](https://github.com/Schnurbus/kegelmaster/issues/377)) ([afa2eeb](https://github.com/Schnurbus/kegelmaster/commit/afa2eeb5cd779fafd70611718d7b30351e141b09))
+* **deps:** update dependency laravel/framework to v12.22.1 ([#380](https://github.com/Schnurbus/kegelmaster/issues/380)) ([b11f2ae](https://github.com/Schnurbus/kegelmaster/commit/b11f2ae5cd5014c01dff9021c91d5b727ffa22ac))
+* **deps:** update dependency laravel/framework to v12.23.0 ([#385](https://github.com/Schnurbus/kegelmaster/issues/385)) ([b2369f7](https://github.com/Schnurbus/kegelmaster/commit/b2369f771193d9104483fb6f2cde4b05cd640ed8))
+* **deps:** update dependency laravel/framework to v12.23.1 ([#386](https://github.com/Schnurbus/kegelmaster/issues/386)) ([5043b03](https://github.com/Schnurbus/kegelmaster/commit/5043b03cc4c13fa1b56f19fc9f7d4a221f4fcbd3))
+* **deps:** update dependency laravel/framework to v12.24.0 ([#389](https://github.com/Schnurbus/kegelmaster/issues/389)) ([3222c06](https://github.com/Schnurbus/kegelmaster/commit/3222c063ad14eb73392b5e148329055a1f1ef550))
+* **deps:** update dependency laravel/framework to v12.25.0 ([#399](https://github.com/Schnurbus/kegelmaster/issues/399)) ([33d4ab1](https://github.com/Schnurbus/kegelmaster/commit/33d4ab18c5ae8e6be964ea0f97c903132c106a85))
+* **deps:** update dependency laravel/octane to v2.12.1 ([#376](https://github.com/Schnurbus/kegelmaster/issues/376)) ([2ad46a0](https://github.com/Schnurbus/kegelmaster/commit/2ad46a0a8dfed808d9657464e20032bb7c306aca))
+* **deps:** update dependency vue to v3.5.19 ([#406](https://github.com/Schnurbus/kegelmaster/issues/406)) ([d899c12](https://github.com/Schnurbus/kegelmaster/commit/d899c121491a0ee4bfdcd3b04fb2892b3b1145b7))
+* **deps:** update lucide monorepo to ^0.537.0 ([#374](https://github.com/Schnurbus/kegelmaster/issues/374)) ([92675ed](https://github.com/Schnurbus/kegelmaster/commit/92675ed1ea98886e3fae4cb963eda3af6d19f6e4))
+* **deps:** update lucide monorepo to ^0.539.0 ([#378](https://github.com/Schnurbus/kegelmaster/issues/378)) ([a43dc81](https://github.com/Schnurbus/kegelmaster/commit/a43dc813727357f3aa319a444f7fa9095ed1eea3))
+* **deps:** update lucide monorepo to ^0.540.0 ([#397](https://github.com/Schnurbus/kegelmaster/issues/397)) ([4a72463](https://github.com/Schnurbus/kegelmaster/commit/4a724632e14a69c1a69a88f489b5783ad3057c44))
+* **deps:** update lucide monorepo to ^0.541.0 ([#408](https://github.com/Schnurbus/kegelmaster/issues/408)) ([ae2a91c](https://github.com/Schnurbus/kegelmaster/commit/ae2a91c274b731680e0c92e8cfd035eddedb8940))
+* **deps:** update tailwindcss monorepo to v4.1.12 ([#390](https://github.com/Schnurbus/kegelmaster/issues/390)) ([264a879](https://github.com/Schnurbus/kegelmaster/commit/264a87938331d6be4382c902e5740a6d7292821c))
+
+
+### Miscellaneous Chores
+
+* **deps:** update dependency @iconify-json/radix-icons to v1.2.4 ([#382](https://github.com/Schnurbus/kegelmaster/issues/382)) ([ebab7d3](https://github.com/Schnurbus/kegelmaster/commit/ebab7d3403b8e83e26c848b1f923163a939d66a3))
+* **deps:** update dependency @rollup/rollup-linux-x64-gnu to v4.46.3 ([#395](https://github.com/Schnurbus/kegelmaster/issues/395)) ([6591bb3](https://github.com/Schnurbus/kegelmaster/commit/6591bb39da377b09c27ab3b9bee16e1acf6299d0))
+* **deps:** update dependency @rollup/rollup-linux-x64-gnu to v4.46.4 ([#401](https://github.com/Schnurbus/kegelmaster/issues/401)) ([2ec2086](https://github.com/Schnurbus/kegelmaster/commit/2ec20865f6134c15ec762063ae6219829edfd860))
+* **deps:** update dependency @rollup/rollup-linux-x64-gnu to v4.47.1 ([#407](https://github.com/Schnurbus/kegelmaster/issues/407)) ([144dee1](https://github.com/Schnurbus/kegelmaster/commit/144dee14600fd1d7b44bf5f5ea66f4d5f8e913ea))
+* **deps:** update dependency @rollup/rollup-linux-x64-gnu to v4.48.0 ([#410](https://github.com/Schnurbus/kegelmaster/issues/410)) ([84e7ac0](https://github.com/Schnurbus/kegelmaster/commit/84e7ac08eef58f2fa9d056c077bee1e333e40dca))
+* **deps:** update dependency @rollup/rollup-linux-x64-gnu to v4.48.1 ([#411](https://github.com/Schnurbus/kegelmaster/issues/411)) ([56c405c](https://github.com/Schnurbus/kegelmaster/commit/56c405ca1b814a0be44a56b570b9026045128297))
+* **deps:** update dependency @types/node to v22.17.1 ([#379](https://github.com/Schnurbus/kegelmaster/issues/379)) ([99e8d7a](https://github.com/Schnurbus/kegelmaster/commit/99e8d7ae97b61061cee7df3a5217a75ac723a389))
+* **deps:** update dependency @types/node to v22.17.2 ([#392](https://github.com/Schnurbus/kegelmaster/issues/392)) ([faa405c](https://github.com/Schnurbus/kegelmaster/commit/faa405c9175b5b01794ae0c4b4b2efb21aec9a29))
+* **deps:** update dependency larastan/larastan to v3.6.1 ([#413](https://github.com/Schnurbus/kegelmaster/issues/413)) ([ddc1371](https://github.com/Schnurbus/kegelmaster/commit/ddc13715ed859bb7c2ff5f7f0bbd7e88d250e2f9))
+* **deps:** update dependency pestphp/pest to v3.8.3 ([#400](https://github.com/Schnurbus/kegelmaster/issues/400)) ([c749d90](https://github.com/Schnurbus/kegelmaster/commit/c749d9088c67265ec8863290ddb09639c40e4106))
+* **deps:** update dependency pestphp/pest to v3.8.4 ([#403](https://github.com/Schnurbus/kegelmaster/issues/403)) ([2a60a76](https://github.com/Schnurbus/kegelmaster/commit/2a60a76460e543dae338c174cd5a64f32e26cc44))
+* **deps:** update dependency typescript-eslint to v8.39.1 ([#384](https://github.com/Schnurbus/kegelmaster/issues/384)) ([bdfd649](https://github.com/Schnurbus/kegelmaster/commit/bdfd6496ed563b2cf93965ae356c9a62daa1a765))
+* **deps:** update dependency typescript-eslint to v8.40.0 ([#398](https://github.com/Schnurbus/kegelmaster/issues/398)) ([ea2974a](https://github.com/Schnurbus/kegelmaster/commit/ea2974a1460413df2ff3dd31ffc0078836c19d2c))
+* **deps:** update dependency vue-tsc to v3.0.6 ([#402](https://github.com/Schnurbus/kegelmaster/issues/402)) ([79b2eca](https://github.com/Schnurbus/kegelmaster/commit/79b2ecac0f760998f048446ec9bcd8040556723c))
+* **deps:** update eslint monorepo to v9.33.0 ([#381](https://github.com/Schnurbus/kegelmaster/issues/381)) ([0a7a73a](https://github.com/Schnurbus/kegelmaster/commit/0a7a73a8ae4fd9ec0b746d17c98841610505ecbd))
+* **deps:** update eslint monorepo to v9.34.0 ([#409](https://github.com/Schnurbus/kegelmaster/issues/409)) ([872e956](https://github.com/Schnurbus/kegelmaster/commit/872e9565d6c7bbdfd9c2500c01551512d85ce9a2))
+
 ## [1.6.2](https://github.com/Schnurbus/kegelmaster/compare/v1.6.1...v1.6.2) (2025-08-06)
 
 
